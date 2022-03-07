@@ -215,11 +215,11 @@ contains
     !> radiator obj
     class(aerosol_radiator_t), intent(inout) :: this
     !> Grid warehouse
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
+    class(grid_warehouse_t), intent(inout)    :: gridWareHouse
     !> Profile warehouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    class(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
     !> RadXfer cross section warehouse
-    type(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    class(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
 
     !> Local variables
     integer(ik) :: wNdx

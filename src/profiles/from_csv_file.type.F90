@@ -81,7 +81,8 @@ contains
           do
             read(InputLine,*,iostat=istat) zd, Value
             if( istat /= Ok ) then
-              call die_msg( 560768229, "Invalid data format in " // Filespec%to_char() )
+              call die_msg( 560768229, "Invalid data format in " // Filespec%to_char() &
+                            // ": '" // trim( InputLine ) // "'" )
             endif
             Profile = [Profile,Value]
             zdata = [zdata,zd]

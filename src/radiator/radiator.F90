@@ -109,11 +109,11 @@ contains
     !> radiator obj
     class(radiator_t), intent(inout)               :: this
     !> Grid warehouse
-    type(grid_warehouse_t), intent(inout)          :: gridWareHouse
+    class(grid_warehouse_t), intent(inout)          :: gridWareHouse
     !> Profile warehouse
-    type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
+    class(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
     !> RadXfer cross section warehouse
-    type(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    class(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
 
     !> Local variables
     real(dk) , parameter  :: km2cm = 1.e5_dk
@@ -157,7 +157,6 @@ contains
 
     !> set radiator state members
     CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse )
-    call diagout( 'o2xs.new',CrossSection )
     do wNdx = 1,lambdaGrid%ncells_
       this%state_%layer_OD_(:,wNdx) = radiatorProfile%layer_dens_ * CrossSection(:,wNdx)
     enddo

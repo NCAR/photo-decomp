@@ -55,8 +55,8 @@ contains
     !> radXfer configuration data
     type(config_t), intent(inout) :: config
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    class(grid_warehouse_t),    intent(inout) :: gridWareHouse
+    class(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
 
     !> New radiative xfer cross section obj
     class(radXfer_xsect_warehouse_t), pointer :: radXfer_xsect_obj

@@ -1,0 +1,16 @@
+{
+  "Grids" : {
+    "Vertical Z" : {
+      "Grid type" : "Equal interval",
+      "Grid begins at" : 2.01,
+      "Grid ends at" : 162.01,
+      "Grid cell delta" : 20.0
+    },
+    "Photolysis, wavelength" : {
+      "Grid type" : "Equal interval",
+      "Grid begins at" : 40.0,
+      "Grid ends at" : 76.0,
+      "Grid cell delta" : 10.0
+    }
+  }
+}
