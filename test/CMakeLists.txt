@@ -33,6 +33,9 @@ add_std_test(radXfer_test)
 add_executable(radiator_test unit/radiator/radiator.F90 unit/radiator/mock_profile_warehouse.F90)
 add_std_test(radiator_test)
 
+add_executable(aerosol_radiator_test unit/radiator/aerosol_radiator.F90 unit/radiator/mock_profile_warehouse.F90)
+add_std_test(aerosol_radiator_test)
+
 add_executable(radiator_core_test radiator/radiator_core.F90 radiator/radiator_test.F90)
 add_std_test(radiator_core_test)
 

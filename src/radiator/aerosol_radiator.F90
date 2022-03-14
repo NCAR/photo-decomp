@@ -83,9 +83,12 @@ contains
     allocate( this%state_%layer_SSA_(zGrid%ncells_,lambdaGrid%ncells_) )
     allocate( this%state_%layer_G_(zGrid%ncells_,lambdaGrid%ncells_) )
 
+    allocate( interp3_t :: theInterpolator )
+
 !> read json config
     call radiator_config%get( "Optical depth", Aerosol_config, Iam )
     call Aerosol_config%get( "Values", input_OD, Iam )
+    call Aerosol_config%get( "altitude <km>", input_zgrid, Iam )
     nInputBins = size(input_OD)
     if( nInputBins > 1 ) then
 !> interpolate input OD to state variable
@@ -93,17 +96,13 @@ contains
       write(*,*) Iam // 'size input_OD = ',nInputBins
       write(*,*) Iam // 'input_OD'
       write(*,'(1p10g15.7)') input_OD
-      call diagout( 'rawOD.new',input_OD )
+      ! input data should be point values at vertical column interfaces
+      ! adjust to mid-layer values
       input_OD(:nInputBins-1) = .5_dk*(input_OD(:nInputBins-1)+input_OD(2:))
       write(*,'(1p10g15.7)') input_OD(:nInputBins-1)
-      call diagout( 'inpaerOD.new',input_OD(:nInputBins-1) )
-
-      allocate( interp3_t :: theInterpolator )
-      input_zgrid = (/ (real(k,dk),k=0,nInputBins-1) /)
       write(*,*) Iam // 'input zgrid'
       write(*,'(1p10g15.7)') input_zgrid
-      rad_OD = theInterpolator%interpolate( zGrid%edge_, input_zgrid,input_OD, 1 )
-      call diagout( 'cz.aer.new',rad_OD )
+      rad_OD = theInterpolator%interpolate( zGrid%edge_, input_zgrid, input_OD, 1 )
       write(*,*) 'size interpolated_OD = ',size(rad_OD)
       write(*,*) 'size interpolated_OD = ',sizeof(rad_OD)
       write(*,*) Iam // 'interpolated OD'
@@ -113,6 +112,7 @@ contains
       enddo
     else
       this%state_%layer_OD_ = input_OD(1)
+      rad_OD = this%state_%layer_OD_(:,1)
     endif
     
     call radiator_config%get( "Single scattering albedo", Aerosol_config, Iam )
@@ -121,13 +121,16 @@ contains
       call die_msg( 234999,"Aerosol single scattering albedo must be a scalar" )
 !> interpolate input SSA to state variable
     else
-      winput_SSA = input_OD(:nInputBins-1) * input_SSA(1)
-      this%state_%layer_SSA_(:,1) = theInterpolator%interpolate( zGrid%edge_, input_zgrid,winput_SSA, 1 )
-      call diagout( 'omz.aer.new',this%state_%layer_SSA_(:,1) )
-!     this%state_%layer_SSA_ = input_SSA(1)
-      do binNdx = 2,lambdaGrid%ncells_
-        this%state_%layer_SSA_(:,binNdx) = this%state_%layer_SSA_(:,1) 
-      enddo
+      if( nInputBins > 1 ) then
+        winput_SSA = input_OD(:nInputBins-1) * input_SSA(1)
+        this%state_%layer_SSA_(:,1) = theInterpolator%interpolate( zGrid%edge_, input_zgrid,winput_SSA, 1 )
+!       this%state_%layer_SSA_ = input_SSA(1)
+        do binNdx = 2,lambdaGrid%ncells_
+          this%state_%layer_SSA_(:,binNdx) = this%state_%layer_SSA_(:,1) 
+        enddo
+      else
+        this%state_%layer_SSA_(:,:) = input_OD(1) * input_SSA(1)
+      endif
       write(*,*) Iam // 'SSA from config'
       write(*,*) Iam // 'size SSA = ',size(input_SSA)
       write(*,*) input_SSA
@@ -139,13 +142,16 @@ contains
       call die_msg( 234999,"Aerosol asymmetry factor must be a scalar" )
 !> interpolate input G to state variable
     else
-      winput_G = input_OD(:nInputBins-1) * input_G(1)
-      this%state_%layer_G_(:,1) = theInterpolator%interpolate( zGrid%edge_, input_zgrid,winput_G, 1 )
-      call diagout( 'gz.aer.new',this%state_%layer_G_(:,1) )
-!     this%state_%layer_G_ = input_G(1)
-      do binNdx = 2,lambdaGrid%ncells_
-        this%state_%layer_G_(:,binNdx) = this%state_%layer_G_(:,1) 
-      enddo
+      if( nInputBins > 1 ) then
+        winput_G = input_OD(:nInputBins-1) * input_G(1)
+        this%state_%layer_G_(:,1) = theInterpolator%interpolate( zGrid%edge_, input_zgrid,winput_G, 1 )
+!       this%state_%layer_G_ = input_G(1)
+        do binNdx = 2,lambdaGrid%ncells_
+          this%state_%layer_G_(:,binNdx) = this%state_%layer_G_(:,1) 
+        enddo
+      else
+        this%state_%layer_G_(:,:) = input_OD(1) * input_G(1)
+      endif
       write(*,*) Iam // 'G from config'
       write(*,*) Iam // 'size G = ',size(input_G)
       write(*,*) input_G
@@ -156,7 +162,7 @@ contains
     write(*,*) Iam // 'tau550, alpha from config'
     write(*,*) tau550, alpha
 
-    if( tau550 > nzero ) then
+    if( tau550 > 0.235_dk ) then
       coldens = max( sum( this%state_%layer_OD_(:,1) ),pzero )
       ODscaling = (tau550/coldens) * scaling_factor**alpha
       do binNdx = 1,lambdaGrid%ncells_

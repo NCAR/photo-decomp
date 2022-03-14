@@ -156,7 +156,7 @@ contains
     write(*,*) Iam // 'tau550, alpha from config'
     write(*,*) tau550, alpha
 
-    if( tau550 > nzero ) then
+    if( tau550 > 0.235_dk ) then
       coldens = max( sum( this%state_%layer_OD_(:,1) ),pzero )
       ODscaling = (tau550/coldens) * scaling_factor**alpha
       do binNdx = 1,lambdaGrid%ncells_
