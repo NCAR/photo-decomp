@@ -142,7 +142,7 @@
 
 * scale with new column tau at 550 nm
 
-      IF(tau550 > 0.235 ) THEN
+      IF(tau550 > pzero ) THEN
          DO i = 1, nz-1
             cz(i) = cz(i) * (tau550/colold) * (550./340.)**alpha 
          ENDDO
