@@ -1,0 +1,10 @@
+{
+   "Grids": {
+      "Vertical Z": {
+         "Grid type": "Equal interval",
+         "Grid begins at" : 0.0,
+         "Grid ends at" : 120.0,
+         "Grid cell delta" : 1.0
+      }
+   }
+}

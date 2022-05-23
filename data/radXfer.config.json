@@ -1,0 +1,29 @@
+{
+   "radiative xfer cross sections": {
+      "O3": {
+         "cross section": {
+            "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
+            "cross section type": "O3 cross section"
+         }
+      },
+      "O2": {
+         "cross section": {
+            "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
+            "cross section type": "base cross section",
+            "lower extrapolation": "boundary"
+         }
+      },
+      "NO2": {
+         "cross section": {
+            "netcdf files": ["data/XSQY/NO2_cross_section_1.nc"],
+            "cross section type": "tint cross section"
+         }
+      },
+      "SO2": {
+         "cross section": {
+            "netcdf files": ["data/XSQY/SO2_cross_section_1.nc"],
+            "cross section type": "base cross section"
+         }
+      }
+    }
+}

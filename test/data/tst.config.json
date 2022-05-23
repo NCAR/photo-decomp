@@ -1,0 +1,4 @@
+{
+  "Components": [ "Radiative transfer", "Photorates", "Doserates" ],
+  "Angles": [ 10.0, 20.0, 30.0 ]
+}

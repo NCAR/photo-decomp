@@ -1,0 +1,51 @@
+{
+   "Grids": {
+      "Vertical Z": {
+         "Grid type": "Equal interval",
+         "Grid begins at" : 0.0,
+         "Grid ends at" : 120.0,
+         "Grid cell delta" : 1.0
+      },
+      "Photolysis, wavelength": {
+         "Grid type": "From csv file",
+         "Filespec": "../data/DATAE1/GRIDS/combined.grid"
+      }
+   },
+   "Profiles": {
+      "O3": {
+         "Profile type": "O3 from csv file",
+         "Filespec": "../data/DATAE1/ATM/ussa.ozone"
+      },
+      "Air": {
+         "Profile type": "Air from csv file",
+         "Filespec": "../data/DATAE1/ATM/ussa.dens"
+      },
+      "O2": {
+         "Profile type": "O2 from csv file",
+         "Filespec": "../data/DATAE1/ATM/ussa.dens"
+      },
+      "Temperature": {
+         "Profile type": "From csv file",
+         "Filespec": "../data/DATAE1/ATM/ussa.temp"
+      },
+      "UnitTest": {
+         "Profile type": "From csv file",
+         "Filespec": "../test/data/test.ozone"
+      }
+   },
+   "Radiative xfer cross sections": {
+      "Air": {
+         "cross section": {
+            "cross section type": "Air cross section"
+         }
+      }
+   },
+   "Radiators": {
+      "Air": {
+        "radiator type": "Base radiator"
+      },
+      "CO2": {
+        "radiator type": "Base radiator"
+      }
+    }
+}
