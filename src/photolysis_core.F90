@@ -6,9 +6,9 @@
 
 module photolysis_core
 
-  use musica_config,        only : config_t
-  use musica_string,        only : string_t
-  use musica_assert,        only : assert
+  use musica_config,            only : config_t
+  use musica_string,            only : string_t
+  use musica_assert,            only : assert
   use musica_constants,         only : ik => musica_ik, dk => musica_dk, lk => musica_lk
   use micm_grid_warehouse,      only : grid_warehouse_t
   use micm_1d_grid,             only : abs_1d_grid_t
@@ -16,6 +16,7 @@ module photolysis_core
   use spherical_geom_type,      only : spherical_geom_t
   use la_srb_type,              only : la_srb_t
   use radXfer_component_core,   only : radXfer_component_core_t
+  use photorates_component_core, only : photorates_component_core_t
 
   implicit none
 
@@ -28,7 +29,8 @@ module photolysis_core
     type(spherical_geom_t), pointer     :: sphericalGeom_ => null()
     type(la_srb_t), pointer             :: la_srb_ => null()
     type(string_t), allocatable         :: diagnostics_(:)
-    type(radXfer_component_core_t), pointer :: radXfer_component_ => null()
+    type(radXfer_component_core_t), pointer    :: radXfer_component_ => null()
+    type(photorates_component_core_t), pointer :: photorates_component_ => null()
   contains
     procedure :: run
     final     :: finalize
@@ -105,19 +107,32 @@ contains
     Handle = 'O3' ; aProfile => photolysis_core_obj%ProfileWareHouse_%get_Profile( Handle )
     call diagout( 'vpco3.new', aProfile%layer_dens_ )
 
-    !> set up the components
+    !> set up the components; first call radiative transfer component
     iter => components_config%get_iterator()
     do while( iter%next() )
       keyChar = components_config%key(iter)
-      write(*,*) ' '
-      write(*,*) Iam,'key = ',trim(keyChar)
-      keyString = keyChar
-      call components_config%get( iter, component_config, Iam )
-      call component_config%add( 'type', keyString, Iam )
       if( keyChar == 'Radiative transfer' ) then
+        write(*,*) ' '
+        write(*,*) Iam,'key = ',trim(keyChar)
+        call components_config%get( iter, component_config, Iam )
         photolysis_core_obj%radXfer_component_ => &
                radXfer_component_core_t( component_config, photolysis_core_obj%GridWareHouse_, &
                                          photolysis_core_obj%ProfileWareHouse_ )
+        exit
+      endif
+    enddo
+
+    !> photo and dose rate components
+    call iter%reset()
+    do while( iter%next() )
+      keyChar = components_config%key(iter)
+      if( keyChar == 'Photo reaction rate constants' ) then
+        write(*,*) ' '
+        write(*,*) Iam,'key = ',trim(keyChar)
+        call components_config%get( iter, component_config, Iam )
+        photolysis_core_obj%photorates_component_ => &
+               photorates_component_core_t( component_config, photolysis_core_obj%GridWareHouse_, &
+                                            photolysis_core_obj%ProfileWareHouse_ )
       endif
     enddo
     deallocate( iter )
@@ -139,7 +154,7 @@ contains
 
   use micm_Profile,                 only : abs_Profile_t
   use micm_radiator_warehouse,      only : radiator_warehouse_t
-  use photolysis_radiator,          only : radiator_t
+  use micm_abs_radiator_type,       only : abs_radiator_t
   use abstract_radXfer_type,        only : radField_t
   use debug,                        only : diagout
 
@@ -149,10 +164,11 @@ contains
   !> Local variables
   character(len=*), parameter :: Iam = 'Photolysis core run: '
 
-  integer(ik)                 :: i_ndx, i_diag
-  character(len=2)            :: number
+  integer(ik)                    :: i_ndx, i_diag
+  real(dk), allocatable          :: photoRates(:,:)
+  character(len=2)               :: number
   class(abs_Profile_t), pointer  :: SZAngles
-  class(radiator_t), pointer     :: aRadiator => null()
+  class(abs_radiator_t), pointer :: aRadiator => null()
   class(radField_t), allocatable :: radiationFld
   type(string_t)                 :: Handle
 
@@ -163,16 +179,25 @@ contains
   Handle = 'Sza' ; SZAngles => this%ProfileWareHouse_%get_Profile( Handle )
 
   ! calculate the radiation field
+sza_loop: &
   do i_ndx = 1,size(SZAngles%edge_val_)
     write(*,*) Iam // 'calculating rad field @ i_ndx,sza = ',i_ndx,SZAngles%edge_val_(i_ndx)
     if( associated( this%sphericalGeom_ ) ) then
       call this%sphericalGeom_%setSphericalParams( SZAngles%edge_val_(i_ndx), this%GridWareHouse_ )
     endif
     call this%RadXfer_component_%upDate( this%la_srb_, this%sphericalGeom_, this%GridWareHouse_, &
-                                        this%ProfileWareHouse_, radiationFld )
+                                         this%ProfileWareHouse_, radiationFld )
     write(number,'(i2.2)') i_ndx
     call diagout( 'radField.' // number // '.new',radiationFld%fdr_+radiationFld%fup_+radiationFld%fdn_ )
-  enddo
+    if( associated(this%photorates_component_) ) then
+      if( allocated(photoRates) ) then
+        deallocate(photoRates)
+      endif
+      call this%photorates_component_%upDate( this%la_srb_, this%sphericalGeom_, &
+                                              this%GridWareHouse_, this%ProfileWareHouse_, &
+                                              radiationFld, photoRates, number )
+    endif
+  enddo sza_loop
 
   ! diagnostic output
   do i_diag = 1, size( this%diagnostics_ )

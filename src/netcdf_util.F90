@@ -37,7 +37,7 @@
 !-----------------------------------------------------
 !  open the netcdf file
 !-----------------------------------------------------
-   call ncObj%initialize(filespec, ierr=stat, status='old', action='r')
+   call ncObj%initialize(filespec, ierr=stat, action='r')
    if( stat /= noErr ) then
      write(*,*) Iam,'retcode from initialize = ',stat
      stop 'FileOpenError'

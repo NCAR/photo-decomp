@@ -18,8 +18,10 @@ program test_Profile
   integer :: i_arg
 
   !> Get the model configuration file and options from the command line
-  if( command_argument_count( ) /= 1 ) call fail_run( )
-  call get_command_argument( command_argument_count( ), argument )
+! if( command_argument_count( ) /= 1 ) call fail_run( )
+! call get_command_argument( command_argument_count( ), argument )
+! argument = 'data/Profile.tst.org.config.json'
+  argument = 'data/Profile.tst.config.json'
 
   configFileSpec = argument
   call test_Profile_t( configFileSpec )
@@ -89,7 +91,9 @@ contains
     !> Get copy of the Unit test
     Handle = 'UnitTest'
     aProfile => theProfileWarehouse%get_Profile( Handle )
-    call assert( 412238770, all( aProfile%edge_val_ .eq. 7.7e11_dk ) )
+    write(*,*) Iam // 'UnitTest'
+    write(*,'(1p10g15.7)') aProfile%mid_val_
+    call assert( 412238770, all( aProfile%mid_val_ .eq. 7.7e11_dk ) )
 
     deallocate( aProfile )
 
@@ -108,6 +112,13 @@ contains
     write(*,*) ' '
     write(*,*) Iam // 'O3 on model z grid'
     write(*,'(1p10g15.7)') O3Profile%edge_val_
+
+    deallocate( O3Profile )
+
+    !> Get copy of etfl profile
+    Handle = 'Etfl'
+!   aProfile => theProfileWarehouse%get_Profile( Handle )
+!   write(*,*) Iam // 'Handle = ',aProfile%handle_
 
     write(*,*) Iam // 'leaving'
 

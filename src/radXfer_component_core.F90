@@ -135,7 +135,8 @@ contains
     use musica_string,                 only : to_char
     use micm_1d_grid,                  only : abs_1d_grid_t
     use micm_radiator_warehouse,       only : warehouse_iterator_t
-    use photolysis_radiator,           only : radiator_t, radiator_state_t
+    use micm_abs_radiator_type,        only : abs_radiator_t
+    use micm_abs_radiator_type,        only : radiator_state_t
     use micm_Profile,                  only : abs_Profile_t
     use spherical_geom_type,           only : spherical_geom_t
     use la_srb_type,                   only : la_srb_t
@@ -164,7 +165,7 @@ contains
     real(dk), allocatable                :: airVcol(:), airScol(:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter
-    class(radiator_t), pointer           :: aRadiator => null()
+    class(abs_radiator_t), pointer       :: aRadiator => null()
     class(abs_Profile_t), pointer        :: airProfile => null()
 
     write(*,*) ' '

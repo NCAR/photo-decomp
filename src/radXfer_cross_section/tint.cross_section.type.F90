@@ -8,17 +8,21 @@
 module micm_radXfer_tint_cross_section_type
 
   use micm_radXfer_abs_cross_section_type,     only : abs_cross_section_t
-  use musica_constants,                        only : musica_dk, musica_ik
+  use musica_constants,                        only : dk => musica_dk, ik => musica_ik, lk => musica_lk
 
   implicit none
 
   private
   public :: tint_cross_section_t
 
+  integer(ik), parameter :: iONE  = 1_ik
+  real(dk), parameter    :: rZERO = 0.0_dk
+  real(dk), parameter    :: rONE  = 1.0_dk
+
   type cross_section_parms_t
-    real(musica_dk), allocatable :: temperature(:)
-    real(musica_dk), allocatable :: deltaT(:)
-    real(musica_dk), allocatable :: array(:,:)
+    real(dk), allocatable :: temperature(:)
+    real(dk), allocatable :: deltaT(:)
+    real(dk), allocatable :: array(:,:)
   end type cross_section_parms_t
 
   !> Calculator for tint_cross_section
@@ -39,7 +43,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize tint_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse )
+  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -52,6 +56,7 @@ contains
 
     !> base cross section type
     class(tint_cross_section_t), intent(inout) :: this
+    logical(lk), optional, intent(in)          :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout) :: config
     !> The warehouses
@@ -59,18 +64,15 @@ contains
     type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
 
 !   local variables
-    integer(musica_ik), parameter :: iONE = 1_musica_ik
-    real(musica_dk), parameter :: rZERO = 0.0_musica_dk
-    real(musica_dk), parameter :: rONE  = 1.0_musica_dk
     character(len=*), parameter :: Iam = 'tint cross section initialize: '
     character(len=*), parameter :: Hdr = 'cross_section_'
 
-    integer(musica_ik) :: retcode
-    integer(musica_ik) :: parmNdx, fileNdx, Ndxl, Ndxu
-    integer(musica_ik) :: nParms, nTemps
-    real(musica_dk)              :: tmp
-    real(musica_dk), allocatable :: data_lambda(:)
-    real(musica_dk), allocatable :: data_parameter(:)
+    integer(ik) :: retcode
+    integer(ik) :: parmNdx, fileNdx, Ndxl, Ndxu
+    integer(ik) :: nParms, nTemps
+    real(dk)              :: tmp
+    real(dk), allocatable :: data_lambda(:)
+    real(dk), allocatable :: data_parameter(:)
     logical :: found, monopos
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable :: netcdf_obj
@@ -168,7 +170,7 @@ file_loop: &
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
+  function run( this, gridWareHouse, ProfileWareHouse, atMidpoint ) result( cross_section )
 
     use micm_grid_warehouse,             only : grid_warehouse_t
     use micm_1d_grid,                    only : abs_1d_grid_t
@@ -179,18 +181,20 @@ file_loop: &
     !> Arguments
     !> base cross section
     class(tint_cross_section_t), intent(in)       :: this
+    logical(lk), optional, intent(in)             :: atMidPoint
     !> The warehouses
     type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(Profile_warehouse_t), intent(inout)      :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=musica_dk), allocatable             :: cross_section(:,:)
+    real(kind=dk), allocatable             :: cross_section(:,:)
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radXfer tint cross section calculate: '
-    integer(musica_ik) :: nTemp
-    integer(musica_ik) :: fileNdx, tNdx, layer
-    real(musica_dk)    :: Tadj, Tstar
-    real(musica_dk), allocatable  :: wrkCrossSection(:,:)
+    integer(ik) :: nTemp, nzdim
+    integer(ik) :: fileNdx, tNdx, k
+    real(dk)    :: Tadj, Tstar
+    real(dk), allocatable  :: wrkCrossSection(:,:)
+    real(dk), allocatable  :: modelTemp(:)
     class(abs_1d_grid_t), pointer :: zGrid
     class(abs_1d_grid_t), pointer :: lambdaGrid
     class(abs_Profile_t), pointer :: mdlTemperature
@@ -205,23 +209,35 @@ file_loop: &
     Handle = 'Temperature'
     mdlTemperature => ProfileWareHouse%get_Profile( Handle )
 
-    allocate( wrkCrossSection(lambdaGrid%ncells_,zGrid%ncells_) )
-    wrkCrossSection = 0.0_musica_dk
+    nzdim = zGrid%ncells_ + iONE
+    if( present(atMidPoint) ) then
+      if( atMidpoint ) then
+        nzdim = nzdim - iONE
+        modelTemp = mdlTemperature%mid_val_
+      else
+        modelTemp = mdlTemperature%edge_val_
+      endif
+    else
+      modelTemp = mdlTemperature%edge_val_
+    endif
 
-    do fileNdx = 1,size(this%cross_section_parms)
-      associate( Temp => this%cross_section_parms(fileNdx)%temperature, wrkXsect => this%cross_section_parms(fileNdx) )
-      nTemp = size( Temp )
-      do layer = 1,zGrid%ncells_
-        Tadj   = min( max( mdlTemperature%mid_val_(layer),Temp(1) ),Temp(nTemp) )
+    allocate( wrkCrossSection(lambdaGrid%ncells_,nzdim) )
+    wrkCrossSection = rZERO
+
+    do fileNdx = iONE,size(this%cross_section_parms)
+      associate( dataTemp => this%cross_section_parms(fileNdx)%temperature, wrkXsect => this%cross_section_parms(fileNdx) )
+      nTemp = size( dataTemp )
+      do k = 1,nzdim
+        Tadj   = min( max( modelTemp(k),dataTemp(iONE) ),dataTemp(nTemp) )
         do tNdx = 2,nTemp 
-          if( Tadj <= Temp(tNdx) ) then
+          if( Tadj <= dataTemp(tNdx) ) then
             exit
           endif
         enddo
-        tNdx = tNdx - 1
-        Tstar = (Tadj - Temp(tNdx))/wrkXsect%deltaT(tNdx)
-        wrkCrossSection(:,layer) = wrkCrossSection(:,layer) + wrkXsect%array(:,tNdx) &
-                                 + Tstar * (wrkXsect%array(:,tNdx+1) - wrkXsect%array(:,tNdx))
+        tNdx = tNdx - iONE
+        Tstar = (Tadj - dataTemp(tNdx))/wrkXsect%deltaT(tNdx)
+        wrkCrossSection(:,k) = wrkCrossSection(:,k) + wrkXsect%array(:,tNdx) &
+                               + Tstar * (wrkXsect%array(:,tNdx+1) - wrkXsect%array(:,tNdx))
       enddo
       end associate
     enddo
@@ -240,7 +256,7 @@ file_loop: &
    type(tint_cross_section_t), intent(inout) :: this
 
    character(len=*), parameter :: Iam = 'tint cross section finalize: '
-   integer(musica_ik) :: ndx
+   integer(ik) :: ndx
 
    write(*,*) Iam,'entering'
 

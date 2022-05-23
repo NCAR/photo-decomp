@@ -23,6 +23,7 @@ contains
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
     use micm_from_csv_file_Profile,      only : fromCsvFile_t
+    use micm_etfl_from_csv_file_Profile, only : etflfromCsvFile_t
     use micm_air_from_csv_file_Profile,  only : airfromCsvFile_t
     use micm_o2_from_csv_file_Profile,   only : o2fromCsvFile_t
     use micm_o3_from_csv_file_Profile,   only : o3fromCsvFile_t
@@ -53,6 +54,8 @@ contains
     select case( Profile_type%to_char() )
       case( 'From csv file' )
         allocate( fromCsvFile_t :: new_Profile_t )
+      case( 'Etfl from csv file' )
+        allocate( etflfromCsvFile_t :: new_Profile_t )
       case( 'From config file' )
         allocate( fromConfig_t :: new_Profile_t )
       case( 'SrfAlbedo from config file' )

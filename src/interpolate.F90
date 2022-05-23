@@ -13,7 +13,7 @@
    implicit none
 
    integer(ik), parameter :: iONE = 1_ik
-   real(ik),    parameter :: rZERO = 0.0_dk
+   real(dk),    parameter :: rZERO = 0.0_dk
 
    type, abstract :: abs_interpolator_t
      character(len=10) :: handle_
@@ -167,14 +167,16 @@
       real(dk), allocatable   :: ytarget(:)
 
 ! local:
-      integer(ik) :: ng, n
-      integer(ik) :: ngintv
+      integer(ik) :: ng, n, ngintv
       integer(ik) :: i, k, jstart
       real(dk) :: area, xgl, xgu
       real(dk) :: darea, slope
       real(dk) :: a1, a2, b1, b2
 
-      allocate( ytarget(size(xtarget)-1) )
+      n  = size(xsrc)
+      ng = size(xtarget)
+
+      allocate( ytarget(ng-1) )
 
 !  test for correct ordering of data, by increasing value of x
       if( any( xsrc(1:n-1) >= xsrc(2:n) ) ) then
@@ -191,8 +193,6 @@
       ENDIF
 
       ytarget = rZERO
-      n  = size(xsrc)
-      ng = size(xtarget)
 !  find the integral of each grid interval and use this to 
 !  calculate the average y value for the interval      
 !  xgl and xgu are the lower and upper limits of the grid interval
@@ -442,18 +442,18 @@
       if( present(FoldIn) ) then
         IF( FoldIn /= 0_ik .and. FoldIn /= iONE ) THEN
           call die_msg( 2000,'Foldin must be 0 or 1' )
-          do_FoldIn = FoldIn == 1_ik
         ENDIF
+        do_FoldIn = FoldIn == 1_ik
       else
         call die_msg( 2001,'Foldin argument not present' )
       endif
 
-      allocate( ytarget(size(xtarget)-1) )
 
       n  = size(xsrc)
       ng = size(xtarget)
-! do interpolation
 
+      allocate( ytarget(ng-1) )
+! do interpolation
       jstart  = iONE
       ytarget = rZERO
 
@@ -475,8 +475,8 @@
 
            DO WHILE( xsrc(j) <= xtarget(i+iONE) .and. j < n )
               a1 = MAX(xsrc(j),xtarget(i))
-              a2 = MIN(xsrc(j+iONE),xtarget(i+1))
-              sum = sum + ytarget(j) * (a2-a1)
+              a2 = MIN(xsrc(j+iONE),xtarget(i+iONE))
+              sum = sum + ysrc(j) * (a2-a1)
               j = j+iONE
            ENDDO
            ytarget(i) = sum /(xtarget(i+iONE) - xtarget(i))

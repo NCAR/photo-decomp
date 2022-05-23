@@ -33,6 +33,8 @@
      stop 'OpnErr'
    endif
 
+   close(unit=44)
+
    write(*,*) 'diagnostic_1d: exiting'
 
    end subroutine diagnostic_1d
@@ -42,22 +44,29 @@
    character(len=*), intent(in) :: filename
    real(dk), intent(in)         :: variable(:)
 
+   character(len=*), parameter  :: Iam = 'diagnostic_1d_dk: '
+
    integer :: ios
+   character(len=256) :: iomsg
 
-   write(*,*) 'diagnostic_1d_dk: entering'
+   write(*,*) Iam // 'entering'
 
-   open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios)
+   open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios,iomsg=iomsg)
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to open ',filename,'; error = ',ios
+     write(*,*) trim(iomsg)
      stop 'OpnErr'
    endif
-   write(unit=44,iostat=ios) variable
+   write(unit=44,iostat=ios,iomsg=iomsg) variable
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to write ',filename,'; error = ',ios
-     stop 'OpnErr'
+     write(*,*) trim(iomsg)
+     stop 'WriteErr'
    endif
 
-   write(*,*) 'diagnostic_1d_dk: exiting'
+   close(unit=44)
+
+   write(*,*) Iam // 'exiting'
 
    end subroutine diagnostic_1d_dk
 
@@ -79,6 +88,8 @@
      stop 'OpnErr'
    endif
 
+   close(unit=44)
+
    end subroutine diagnostic_2d
 
    subroutine diagnostic_2d_dk( filename, variable )
@@ -87,17 +98,23 @@
    real(dk), intent(in)         :: variable(:,:)
 
    integer :: ios
+   character(len=512) :: iomsg
 
-   open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios)
+   open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios,iomsg=iomsg)
    if( ios /= 0 ) then
-     write(*,*) 'diagnostic_2d: failed to open ',filename,'; error = ',ios
+     write(*,*) 'diagnostic_2d_dk: failed to open ',filename,'; error = ',ios
+     write(*,*) trim(iomsg)
+     call execute_command_line('pwd')
      stop 'OpnErr'
    endif
-   write(unit=44,iostat=ios) variable
+   write(unit=44,iostat=ios,iomsg=iomsg) variable
    if( ios /= 0 ) then
-     write(*,*) 'diagnostic_2d: failed to write ',filename,'; error = ',ios
-     stop 'OpnErr'
+     write(*,*) 'diagnostic_2d_dk: failed to write ',filename,'; error = ',ios
+     write(*,*) trim(iomsg)
+     stop 'WriteErr'
    endif
+
+   close(unit=44)
 
    end subroutine diagnostic_2d_dk
 

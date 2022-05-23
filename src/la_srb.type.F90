@@ -306,9 +306,10 @@ has_la_srb: &
     real(dk), intent(inout) :: o2xs(:,:)
 
     !> Local variables
+    character(len=*), parameter :: Iam = 'la_srb xs: '
     real(dk), parameter :: o2Vmr = .2095_dk
 
-    integer(ik) :: nz, nzm1, nw, i, iz, iw
+    integer(ik) :: nz, nzm1, i, iz, iw
     real(dk)    :: secchi(size(Airscol))
     real(dk)    :: o2scol(size(Airscol))
     class(abs_1d_grid_t), pointer :: zGrid
@@ -328,6 +329,9 @@ has_la_srb: &
 !----------------------------------------------------------------------
     real(dk)    :: o2xsk(size(Airscol),nsrb)
 
+    write(*,*) ' '
+    write(*,*) Iam // 'entering'
+
 has_la_srb: &
     if( this%has_la_srb ) then
 !-----------------------------------------------------------------------------
@@ -341,7 +345,6 @@ has_la_srb: &
       Handle = 'Temperature'
       temperature => ProfileWareHouse%get_Profile( Handle )
 
-      nw   = lambdaGrid%ncells_ + iONE
       nzm1 = zGrid%ncells_
       nz   = nzm1 +  iONE
       !>----------------------------------------------------------------------
@@ -380,6 +383,9 @@ has_la_srb: &
         enddo
       endif
     endif has_la_srb
+
+    write(*,*) ' '
+    write(*,*) Iam // 'exiting'
 
     end subroutine la_srb_xs
 

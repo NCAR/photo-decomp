@@ -8,7 +8,7 @@
 module micm_radXfer_base_cross_section_type
 
   use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
-  use musica_constants,                    only : musica_dk, musica_ik
+  use musica_constants,                    only : dk => musica_dk, ik => musica_ik, lk => musica_lk
 
   implicit none
 
@@ -16,8 +16,8 @@ module micm_radXfer_base_cross_section_type
   public :: base_cross_section_t
 
   type cross_section_parms_t
-    real(musica_dk), allocatable :: temperature(:)
-    real(musica_dk), allocatable :: array(:,:)
+    real(dk), allocatable :: temperature(:)
+    real(dk), allocatable :: array(:,:)
   end type cross_section_parms_t
 
   !> Calculator for base_cross_section
@@ -33,43 +33,45 @@ module micm_radXfer_base_cross_section_type
     final     :: finalize
   end type base_cross_section_t
 
+  integer(ik), parameter :: iONE = 1_ik
+  real(dk), parameter    :: rZERO = 0.0_dk
+  real(dk), parameter    :: rONE  = 1.0_dk
+
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize base_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse )
+  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
     use netcdf_util,                     only : netcdf_t
     use photo_utils,                     only : inter2
     use musica_assert,                   only : die_msg
-    use micm_grid_warehouse,         only : grid_warehouse_t
-    use micm_1d_grid,                only : abs_1d_grid_t
-    use micm_Profile_warehouse, only : Profile_warehouse_t
-    use micm_Profile,           only : abs_Profile_t
+    use micm_grid_warehouse,             only : grid_warehouse_t
+    use micm_1d_grid,                    only : abs_1d_grid_t
+    use micm_Profile_warehouse,          only : Profile_warehouse_t
+    use micm_Profile,                    only : abs_Profile_t
 
     !> base cross section type
     class(base_cross_section_t), intent(inout) :: this
+    logical(lk), optional, intent(in)          :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout) :: config
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
+    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
     type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
 
 !   local variables
-    integer(musica_ik), parameter :: iONE = 1_musica_ik
-    real(musica_dk), parameter :: rZERO = 0.0_musica_dk
-    real(musica_dk), parameter :: rONE  = 1.0_musica_dk
-    character(len=*), parameter :: Iam = 'base cross section initialize: '
-    character(len=*), parameter :: Hdr = 'cross_section_'
+    character(len=*), parameter   :: Iam = 'base cross section initialize: '
+    character(len=*), parameter   :: Hdr = 'cross_section_'
 
-    integer(musica_ik) :: retcode
-    integer(musica_ik) :: parmNdx, fileNdx
-    integer(musica_ik) :: nParms
-    real(musica_dk), allocatable :: data_lambda(:)
-    real(musica_dk), allocatable :: data_parameter(:)
+    integer(ik) :: retcode
+    integer(ik) :: parmNdx, fileNdx
+    integer(ik) :: nParms
+    real(dk), allocatable :: data_lambda(:)
+    real(dk), allocatable :: data_parameter(:)
     logical :: found
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable :: netcdf_obj
@@ -89,12 +91,12 @@ has_netcdf_file: &
     if( found ) then
       allocate( this%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = 1,size(this%cross_section_parms)
+      do fileNdx = iONE,size(this%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
         nParms = size(netcdf_obj%parameters,dim=2)
-        if( nParms < 1 ) then
+        if( nParms < iONE ) then
           write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  parameters array has < 1 column'
           call die_msg( 400000002, msg )
         endif
@@ -104,7 +106,7 @@ file_loop: &
           if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
             allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
           endif
-          do parmNdx = 1,nParms
+          do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
             call this%addpnts( config, data_lambda, data_parameter )
@@ -130,37 +132,46 @@ file_loop: &
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
+  function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
     use micm_grid_warehouse,         only : grid_warehouse_t
     use micm_1d_grid,                only : abs_1d_grid_t
-    use micm_Profile_warehouse, only : Profile_warehouse_t
+    use micm_Profile_warehouse,      only : Profile_warehouse_t
     use musica_string,               only : string_t
 
     !> base cross section
     class(base_cross_section_t), intent(in)    :: this
+    logical(lk), optional, intent(in)          :: atMidPoint
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=musica_dk), allocatable          :: cross_section(:,:)
+    real(kind=dk), allocatable          :: cross_section(:,:)
 
     !> Local variables
-    integer :: colndx
+    integer(ik) :: colndx
+    integer(ik) :: nzdim
     character(len=*), parameter :: Iam = 'radXfer base cross section calculate: '
     class(abs_1d_grid_t), pointer :: zGrid
     type(string_t)                :: Handle
-    real(musica_dk), allocatable  :: wrkCrossSection(:,:)
+    real(dk), allocatable         :: wrkCrossSection(:,:)
 
     write(*,*) Iam,'entering'
 
     Handle = 'Vertical Z'
     zGrid => gridWareHouse%get_grid( Handle )
 
-    allocate( wrkCrossSection(size(this%cross_section_parms(1)%array,dim=1),zGrid%ncells_) )
+    nzdim = zGrid%ncells_ + iONE
+    if( present(atMidPoint) ) then
+      if( atMidpoint ) then
+        nzdim = nzdim - iONE
+      endif
+    endif
+
+    allocate( wrkCrossSection(size(this%cross_section_parms(1)%array,dim=1),nzdim) )
 
     !> Just copy the lambda interpolated array
-    do colndx = 1,zGrid%ncells_
+    do colndx = iONE,nzdim
       wrkCrossSection(:,colndx) = this%cross_section_parms(1)%array(:,1)
     enddo
  
@@ -178,7 +189,7 @@ file_loop: &
    type(base_cross_section_t), intent(inout) :: this
 
    character(len=*), parameter :: Iam = 'base cross section finalize: '
-   integer(musica_ik) :: ndx
+   integer(ik) :: ndx
 
    write(*,*) Iam,'entering'
 

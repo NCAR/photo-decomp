@@ -1,41 +1,33 @@
       MODULE TUV_PARAMS
 
+      use musica_constants, only : ik => musica_ik, dk => musica_dk
+
       IMPLICIT NONE
 
-!* BROADLY USED PARAMETERS:
-!*_________________________________________________
-!* i/o file unit numbers
-      INTEGER, PARAMETER :: kout = 53, kin = 12
-!*_________________________________________________
-!* altitude, wavelength, time (or solar zenith angle) grids
-      INTEGER, PARAMETER :: kz = 125, kw = 1000, kt = 100
-!*_________________________________________________
-!* number of weighting functions
-      INTEGER, PARAMETER :: ks = 60, kj = 150, kdom = 200
 !* delta for adding points at beginning or end of data grids
-      REAL, PARAMETER :: deltax = 1.e-5
+      REAL(dk), PARAMETER :: deltax = 1.e-5_dk
 
 !* some constants...
 
 !* pi:
-      REAL, PARAMETER :: pi = 3.1415926535898
+      REAL(dk), PARAMETER :: pi = 3.1415926535898_dk
 
 !* radius of the earth, km:
-      REAL, PARAMETER :: radius = 6.371E+3
+      REAL(dk), PARAMETER :: radius = 6.371E+3_dk
 
 !* Planck constant x speed of light, J m
 
-      REAL, PARAMETER :: hc = 6.626068E-34 * 2.99792458E8
+      REAL(dk), PARAMETER :: hc = 6.626068e-34_dk * 2.99792458e8_dk
 
 !* largest number of the machine:
-      REAL, PARAMETER :: largest = 1.E+36
+      REAL(dk), PARAMETER :: largest = 1.E+36_dk
 
 !* small numbers (positive and negative)
-      REAL, PARAMETER :: pzero = +10./largest
-      REAL, PARAMETER :: nzero = -10./largest
+      REAL(dk), PARAMETER :: pzero =  10._dk/largest
+      REAL(dk), PARAMETER :: nzero = -10._dk/largest
 
 !* machine precision
-      REAL, PARAMETER :: precis = 1.e-7
+      REAL(dk), PARAMETER :: precis = 1.e-7_dk
 
 !* More physical constants:
 !*_________________________________________________________________

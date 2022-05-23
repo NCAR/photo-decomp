@@ -3,6 +3,7 @@
 
 set(PROFILE_SRC profiles/abstract.Profile.type.F90
                 profiles/from_csv_file.type.F90
+                profiles/etfl.from_csv_file.type.F90
                 profiles/from_config.type.F90
                 profiles/srfAlbedo_from_config.type.F90
                 profiles/air.from_csv_file.type.F90

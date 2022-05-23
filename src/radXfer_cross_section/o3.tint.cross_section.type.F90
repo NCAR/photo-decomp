@@ -8,21 +8,21 @@
 module micm_radXfer_o3_tint_cross_section_type
 
   use micm_radXfer_tint_cross_section_type,    only : tint_cross_section_t
-  use musica_constants,                        only : musica_dk, musica_ik
+  use musica_constants,                        only : dk => musica_dk, ik => musica_ik, lk => musica_lk
 
   implicit none
 
   private
   public :: o3_tint_cross_section_t
 
-  integer(musica_ik), parameter :: iONE = 1_musica_ik
-  integer(musica_ik), parameter :: iTWO = 2_musica_ik
-  real(musica_dk), parameter :: rZERO = 0.0_musica_dk
-  real(musica_dk), parameter :: rONE  = 1.0_musica_dk
+  integer(ik), parameter :: iONE = 1_ik
+  integer(ik), parameter :: iTWO = 2_ik
+  real(dk), parameter :: rZERO = 0.0_dk
+  real(dk), parameter :: rONE  = 1.0_dk
 
   !> Calculator for o3_tint_cross_section
   type, extends(tint_cross_section_t) :: o3_tint_cross_section_t
-    real(musica_dk) :: v185(1), v195(1), v345(1)
+    real(dk) :: v185(1), v195(1), v345(1)
   contains
     !> Initialize the cross section
     procedure :: initialize
@@ -37,7 +37,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize o3_tint_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse )
+  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -50,28 +50,29 @@ contains
 
     !> o3 tint cross section type
     class(o3_tint_cross_section_t), intent(inout) :: this
+    logical(lk), optional, intent(in)             :: atMidPoint
     !> cross section configuration object
-    type(config_t), intent(inout) :: config
+    type(config_t), intent(inout)                 :: config
     !> The warehouses
     type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(Profile_warehouse_t), intent(inout)      :: ProfileWareHouse
 
     !> Local variables
-    real(musica_dk), parameter  :: refracDensity = 2.45e19_musica_dk
-    real(musica_dk), parameter  :: w185 = 185._musica_dk
-    real(musica_dk), parameter  :: w195 = 195._musica_dk
-    real(musica_dk), parameter  :: w345 = 345._musica_dk
+    real(dk), parameter  :: refracDensity = 2.45e19_dk
+    real(dk), parameter  :: w185 = 185._dk
+    real(dk), parameter  :: w195 = 195._dk
+    real(dk), parameter  :: w345 = 345._dk
 
     character(len=*), parameter :: Iam = 'o3 tint cross section initialize: '
     character(len=*), parameter :: Hdr = 'cross_section_'
 
-    integer(musica_ik) :: retcode, nmdlLambda
-    integer(musica_ik) :: parmNdx, fileNdx, Ndxl, Ndxu
-    integer(musica_ik) :: nParms, nTemps
-    real(musica_dk)              :: tmp
-    real(musica_dk), allocatable :: refracNdx(:)
-    real(musica_dk), allocatable :: data_lambda(:)
-    real(musica_dk), allocatable :: data_parameter(:)
+    integer(ik) :: retcode, nmdlLambda
+    integer(ik) :: parmNdx, fileNdx, Ndxl, Ndxu
+    integer(ik) :: nParms, nTemps
+    real(dk)              :: tmp
+    real(dk), allocatable :: refracNdx(:)
+    real(dk), allocatable :: data_lambda(:)
+    real(dk), allocatable :: data_parameter(:)
     logical :: found, monopos
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable   :: netcdf_obj
@@ -172,31 +173,33 @@ file_loop: &
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
+  function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
     use micm_grid_warehouse,             only : grid_warehouse_t
     use micm_1d_grid,                    only : abs_1d_grid_t
-    use micm_Profile_warehouse,     only : Profile_warehouse_t
-    use micm_Profile,               only : abs_Profile_t
+    use micm_Profile_warehouse,          only : Profile_warehouse_t
+    use micm_Profile,                    only : abs_Profile_t
     use musica_string,                   only : string_t
 
     !> Arguments
     !> o3 tint cross section
     class(o3_tint_cross_section_t), intent(in) :: this
+    logical(lk), optional, intent(in)          :: atMidPoint
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=musica_dk), allocatable             :: cross_section(:,:)
+    real(kind=dk), allocatable          :: cross_section(:,:)
 
-    real(musica_dk), parameter :: rZERO = 0.0_musica_dk
+    real(dk), parameter :: rZERO = 0.0_dk
     character(len=*), parameter :: Iam = 'o3 tint cross section calculate: '
 
-    integer(musica_ik) :: layer
-    integer(musica_ik) :: nTemp
-    integer(musica_ik) :: fileNdx, tNdx, wNdx
-    real(musica_dk)    :: Tadj, Tstar
-    real(musica_dk), allocatable  :: wrkCrossSection(:,:)
+    integer(ik) :: k
+    integer(ik) :: nTemp
+    integer(ik) :: fileNdx, tNdx, wNdx, nzdim
+    real(dk)    :: Tadj, Tstar
+    real(dk), allocatable :: modelTemp(:)
+    real(dk), allocatable :: wrkCrossSection(:,:)
     class(abs_1d_grid_t), pointer :: zGrid
     class(abs_1d_grid_t), pointer :: lambdaGrid
     class(abs_Profile_t), pointer :: mdlTemperature
@@ -211,42 +214,53 @@ file_loop: &
     Handle = 'Temperature'
     mdlTemperature => ProfileWareHouse%get_Profile( Handle )
 
-    allocate( wrkCrossSection(lambdaGrid%ncells_,zGrid%ncells_) )
+    !> temperature at model cell midpoint or edge
+    nzdim     = zGrid%ncells_ + 1
+    if( present(atMidPoint) ) then
+      if( atMidpoint ) then
+        nzdim = nzdim - 1
+        modelTemp = mdlTemperature%mid_val_
+      else
+        modelTemp = mdlTemperature%edge_val_
+      endif
+    else
+      modelTemp = mdlTemperature%edge_val_
+    endif
+
+    allocate( wrkCrossSection(lambdaGrid%ncells_,nzdim) )
     wrkCrossSection = rZERO
 
-layer_loop: &
-    do layer = 1,zGrid%ncells_
+vert_loop: &
+    do k = 1,nzdim
 lambda_loop: &
     do wNdx = iONE,lambdaGrid%ncells_
-!     associate( lambda => lambdaGrid%mid_(wNdx) )
       associate( lambda => lambdaGrid%edge_(wNdx) )
         if( lambda < this%v185(1) ) then
-          fileNdx = 3_musica_ik
+          fileNdx = 3_ik
         elseif( this%v185(1) <= lambda .and. lambda < this%v195(1) ) then
-          fileNdx = 4_musica_ik
+          fileNdx = 4_ik
         elseif( this%v195(1) <= lambda .and. lambda < this%v345(1) ) then
-          fileNdx = 2_musica_ik
+          fileNdx = 2_ik
         else
-          wrkCrossSection(wNdx,layer) = wrkCrossSection(wNdx,layer) + this%cross_section_parms(1)%array(wNdx,1)
+          wrkCrossSection(wNdx,k) = wrkCrossSection(wNdx,k) + this%cross_section_parms(1)%array(wNdx,1)
           cycle lambda_loop
         endif
       end associate
-      associate( Temp => this%cross_section_parms(fileNdx)%temperature, wrkXsect => this%cross_section_parms(fileNdx) )
-      nTemp = size( Temp )
-      Tadj  = min( max( mdlTemperature%mid_val_(layer),Temp(iONE) ),Temp(nTemp) )
+      associate( dataTemp => this%cross_section_parms(fileNdx)%temperature, wrkXsect => this%cross_section_parms(fileNdx) )
+      nTemp = size( dataTemp )
+      Tadj  = min( max( modelTemp(k),dataTemp(iONE) ),dataTemp(nTemp) )
       do tNdx = iTWO,nTemp 
-        if( Tadj <= Temp(tNdx) ) then
+        if( Tadj <= dataTemp(tNdx) ) then
           exit
         endif
       enddo
       tNdx = tNdx - iONE
-      Tstar = (Tadj - Temp(tNdx))/wrkXsect%deltaT(tNdx)
-      wrkCrossSection(wNdx,layer) = wrkCrossSection(wNdx,layer) &
-                            + wrkXsect%array(wNdx,tNdx) &
-                            + Tstar * (wrkXsect%array(wNdx,tNdx+1) - wrkXsect%array(wNdx,tNdx))
+      Tstar = (Tadj - dataTemp(tNdx))/wrkXsect%deltaT(tNdx)
+      wrkCrossSection(wNdx,k) = wrkCrossSection(wNdx,k) + wrkXsect%array(wNdx,tNdx) &
+                              + Tstar * (wrkXsect%array(wNdx,tNdx+1) - wrkXsect%array(wNdx,tNdx))
       end associate
     enddo lambda_loop
-    enddo layer_loop
+    enddo vert_loop
 
     cross_section = transpose( wrkCrossSection )
 
@@ -261,31 +275,31 @@ lambda_loop: &
     !> o3 tint cross section
     class(o3_tint_cross_section_t), intent(in) :: this
     !> input vacuum wavelength, nm and air density, molec cm-3
-    real(musica_dk), intent(in)                :: atmDensity
-    real(musica_dk), intent(in)                :: wavelength(:)
+    real(dk), intent(in)                :: atmDensity
+    real(dk), intent(in)                :: wavelength(:)
 
     !> result
-    real(musica_dk)                            :: refrac(size(wavelength))
+    real(dk)                            :: refrac(size(wavelength))
 
-    real(musica_dk), parameter :: rONE = 1.0_musica_dk
-    real(musica_dk), parameter :: divisor = 2.69e19_musica_dk * 273.15_musica_dk/288.15_musica_dk
+    real(dk), parameter :: rONE = 1.0_dk
+    real(dk), parameter :: divisor = 2.69e19_dk * 273.15_dk/288.15_dk
 
-    integer(musica_ik) :: wNdx
+    integer(ik) :: wNdx
 ! output refractive index for standard air
 ! (dry air at 15 deg. C, 101.325 kPa, 0.03% CO2)
-    real(musica_dk) :: wrk, sig, sigsq
+    real(dk) :: wrk, sig, sigsq
 
 ! from CRC Handbook, originally from Edlen, B., Metrologia, 2, 71, 1966.
 ! valid from 200 nm to 2000 nm
 ! beyond this range, use constant value
 
     do wNdx = iONE,size(wavelength)
-      wrk = min( max( wavelength(wNdx),200._musica_dk ),2000._musica_dk ) 
-      sig = 1.e3_musica_dk/wrk
+      wrk = min( max( wavelength(wNdx),200._dk ),2000._dk ) 
+      sig = 1.e3_dk/wrk
       sigsq = sig * sig
 
-      wrk = 8342.13_musica_dk + 2406030._musica_dk/(130._musica_dk - sigsq) &
-          + 15997._musica_dk/(38.9_musica_dk - sigsq)
+      wrk = 8342.13_dk + 2406030._dk/(130._dk - sigsq) &
+          + 15997._dk/(38.9_dk - sigsq)
 
 ! adjust to local air density
 
@@ -293,7 +307,7 @@ lambda_loop: &
 
 ! index of refraction:
 
-      refrac(wNdx) = rONE + 1.e-8_musica_dk * wrk
+      refrac(wNdx) = rONE + 1.e-8_dk * wrk
     enddo
 
     end function refraction

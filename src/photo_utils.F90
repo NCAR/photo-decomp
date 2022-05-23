@@ -1,7 +1,7 @@
 
   module photo_utils
 
-  use musica_constants, only : musica_ik, musica_dk
+  use musica_constants, only : musica_ik, musica_dk, musica_lk
   use musica_assert,    only : die_msg
 
   implicit none
@@ -14,7 +14,7 @@
 
   contains
   
-    subroutine inter2(xto,yto,xfrom,yfrom,ierr)
+    subroutine inter2(xto,yto,xfrom,yfrom,ierr,debug)
 !-----------------------------------------------------------------------------*
 !=  PURPOSE:                                                                 =*
 !=  Map input data given on single, discrete points onto a set of target     =*
@@ -49,6 +49,7 @@
       real(musica_dk), intent(in)  :: xfrom(:), yfrom(:)
       real(musica_dk), intent(in)  :: xto(:)
       real(musica_dk), intent(out) :: yto(:)
+      logical(musica_lk), intent(in), optional :: debug
 
 ! local:
       character(len=*), parameter :: Iam = 'inter2: '
@@ -59,6 +60,13 @@
       real(musica_dk)    :: area, xtol, xtou
       real(musica_dk)    :: slope
       real(musica_dk)    :: a1, a2, b1, b2
+      logical(musica_lk) :: debugging
+
+      if( present(debug) ) then
+        debugging = debug
+      else
+        debugging = .false._musica_lk
+      endif
 
       ierr   = 0_musica_ik
       nfrom  = size(xfrom)

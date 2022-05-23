@@ -27,7 +27,7 @@
                            result( radField )
 
    use musica_string,                   only : string_t
-   use photolysis_radiator,             only : radiator_t, radiator_state_t
+   use micm_abs_radiator_type,          only : radiator_state_t
    use micm_grid_warehouse,             only : grid_warehouse_t
    use micm_Profile_warehouse,          only : Profile_warehouse_t
    use micm_radiator_warehouse,         only : radiator_warehouse_t
@@ -35,6 +35,7 @@
    use spherical_geom_type,             only : spherical_geom_t
    use micm_1d_grid,                    only : abs_1d_grid_t
    use micm_Profile,                    only : abs_Profile_t
+   use micm_abs_radiator_type,          only : abs_radiator_t
    use linalgebra_type,                 only : linalgebra_t
    use debug,                           only : diagout
 
@@ -94,7 +95,7 @@
     real(dk), allocatable                :: asym_accum(:,:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter
-    class(radiator_t), allocatable       :: aRadiator
+    class(abs_radiator_t), allocatable   :: aRadiator
     type(radiator_state_t)               :: atmRadiatorState
     class(abs_1d_grid_t), pointer        :: zGrid
     class(abs_1d_grid_t), pointer        :: lambdaGrid

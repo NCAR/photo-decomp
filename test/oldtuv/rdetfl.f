@@ -1,5 +1,7 @@
       MODULE ETFL
 
+      use debug,      only : diagout
+
       IMPLICIT NONE
 
       private
@@ -66,368 +68,15 @@
       REAL :: yg2(size(wl))
       REAL :: yg3(size(wl))
       REAL :: yg4(size(wl))
+      REAL :: wrk(size(wl)-1)
 
       INTEGER :: msun
-
-*_______________________________________________________________________
-* select desired extra-terrestrial solar irradiance, using msun:
-
-*  1 =   extsol.flx:  De Luisi, JGR 80, 345-354, 1975
-*                     280-400 nm, 1 nm steps.
-*  2 =   lowsun3.flx:  Lowtran (John Bahr, priv. comm.)
-*                      173.974-500000 nm, ca. 0.1 nm steps in UV-B
-*  3 =   modtran1.flx:  Modtran (Gail Anderson, priv. comm.)
-*                       200.55-949.40, 0.05 nm steps
-*  4 =   nicolarv.flx:  wvl<300 nm from Nicolet, Plan. Sp. Sci., 29,  951-974, 1981.
-*                       wvl>300 nm supplied by Thekaekera, Arvesen Applied Optics 8, 
-*                       11, 2215-2232, 1969 (also see Thekaekera, Applied Optics, 13,
-*                       3, 518, 1974) but with corrections recommended by:
-*                       Nicolet, Plan. Sp. Sci., 37, 1249-1289, 1989.
-*                       270.0-299.0 nm in 0.5 nm steps
-*                       299.6-340.0 nm in ca. 0.4 nm steps
-*                       340.0-380.0 nm in ca. 0.2 nm steps
-*                       380.0-470.0 nm in ca. 0.1 nm steps   
-*  5 =  solstice.flx:  From:   MX%"ROTTMAN@virgo.hao.ucar.edu" 12-OCT-1994 13:03:01.62
-*                      Original data gave Wavelength in vacuum
-*                      (Converted to wavelength in air using Pendorf, 1967, J. Opt. Soc. Am.)
-*                      279.5 to 420 nm, 0.24 nm spectral resolution, approx 0.07 nm steps
-*  6 =  suntoms.flx: (from TOMS CD-ROM).  280-340 nm, 0.05 nm steps.
-*  7 =  neckel.flx:  H.Neckel and D.Labs, "The Solar Radiation Between 3300 and 12500 A",
-*                    Solar Physics v.90, pp.205-258 (1984).
-*                    1 nm between 330.5 and 529.5 nm
-*                    2 nm between 631.0 and 709.0 nm
-*                    5 nm between 872.5 and 1247.4 nm
-*                    Units: must convert to W m-2 nm-1 from photons cm-2 s-1 nm-1
-*  8 =  atlas3.flx:  ATLAS3-SUSIM 13 Nov 94 high resolution (0.15 nm FWHM)
-*                    available by ftp from susim.nrl.navy.mil
-*                    atlas3_1994_317_a.dat, downloaded 30 Sept 98.
-*                    150-407.95 nm, in 0.05 nm steps
-*                    (old version from Dianne Prinz through Jim Slusser)
-*                    orig wavelengths in vac, correct here to air.
-*  9 =  solstice.flx:  solstice 1991-1996, average
-*                    119.5-420.5 nm in 1 nm steps
-
-* 10 =  susim_hi.flx:  SUSIM SL2 high resolution
-*                      120.5-400.0 in 0.05 nm intervals (0.15 nm resolution)
-* 11 =  wmo85.flx: from WMO 1985 Atmospheric Ozone (report no. 16)
-*                  on variable-size bins.  Original values are per bin, not
-*                  per nm.
-* 12 = combine susim_hi.flx for .lt. 350 nm, neckel.flx for .gt. 350 nm.
-*
-* 13 = combine 
-*     for wl(iw) .lt. 150.01                                susim_hi.flx
-*     for wl(iw) .ge. 150.01 and wl(iw) .le. 400            atlas3.flx 
-*     for wl(iw) .gt. 400                                   Neckel & Labs 
-*
-* 14 = combine 
-*     for wl(iw) .le. 350                                   susim_hi.flx
-*     for wl(iw) .gt. 350                                   Neckel & Labs 
-*
-* 15 = combine
-*    for wl(iw) .lt. 150.01                                 susim_hi.flx
-*    for wl(iw) .ge. 150.01 .and. wl(iw) .lt. 200.07        atlas3.flx
-*    for wl(iw) .ge. 200.07 .and. wl(iw) .le. 1000.99       Chance and Kurucz 2010
-*    for wl(iw) .gt. 1000.99                                Neckel & Labs 
 
       msun = 15
 
 * simple files are read and interpolated here in-line. Reading of 
 * more complex files may be done with longer code in a read#.f subroutine.
 
-      IF (msun .EQ. 1) THEN
-         fil = 'data/DATAE1/SUN/extsol.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 3
-         n =121
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 2) THEN
-         fil = 'data/DATAE1/SUN/lowsun3.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 3
-         n = 4327
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 3) THEN
-         fil = 'data/DATAE1/SUN/modtran1.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 6
-         n = 14980
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 4) THEN
-         fil = 'data/DATAE1/SUN/nicolarv.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 8
-         n = 1260
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 5) THEN
-* unofficial - do not use
-         fil = 'DATAE2/SUN/solstice.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 11
-         n = 2047
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 6) THEN
-* unofficial - do not use
-         fil = 'DATAE2/SUN/suntoms.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 3
-         n = 1200
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-            y1(i) = y1(i)* 1.e-3
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 7) THEN
-         fil = 'data/DATAE1/SUN/neckel.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 11
-         n = 496
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) dum, y1(i)
-            if (dum .lt. 630.0) x1(i) = dum - 0.5
-            if (dum .gt. 630.0 .and. dum .lt. 870.0) x1(i) = dum - 1.0
-            if (dum .gt. 870.0) x1(i) = dum - 2.5
-            y1(i) = y1(i) * 1.E4 * hc / (dum * 1.E-9)
-         ENDDO
-         CLOSE (kin)
-         x1(n+1) = x1(n) + 2.5
-         do i = 1, n
-            y1(i) = y1(i) * (x1(i+1)-x1(i))
-         enddo
-         call inter3(nw,wl,yg2,n+1,x1,y1,0)
-         do iw = 1, nw-1
-            yg1(iw) = yg1(iw) / (wl(iw+1)-wl(iw))
-         enddo
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 8) THEN
-         nhead = 5
-         fil = 'data/DATAE1/SUN/atlas3_1994_317_a.dat'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 13
-         n = 5160
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-            y1(i) = y1(i) * 1.E-3
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 9) THEN
-         fil = 'data/DATAE1/SUN/solstice.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 2
-         n = 302
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg1,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 10) THEN
-         WRITE(kout,*) 'data/DATAE1/SUN/susim_hi.flx'
-         CALL read1(nw,wl,yg1)
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-
-      ELSEIF (msun .EQ. 11) THEN
-         WRITE(kout,*) 'data/DATAE1/SUN/wmo85.flx'
-         CALL read2(nw,wl,yg1)
-         DO iw = 1, nw-1
-            f(iw) = yg1(iw)
-         ENDDO
-
-      ELSEIF (msun .EQ. 12) THEN
-         WRITE(kout,*) 'data/DATAE1/SUN/susim_hi.flx'
-         CALL read1(nw,wl,yg1)
-         fil = 'data/DATAE1/SUN/neckel.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 11
-         n = 496
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) dum, y1(i)
-            if (dum .lt. 630.0) x1(i) = dum - 0.5
-            if (dum .gt. 630.0 .and. dum .lt. 870.0) x1(i) = dum - 1.0
-            if (dum .gt. 870.0) x1(i) = dum - 2.5
-            y1(i) = y1(i) * 1.E4 * hc / (dum * 1.E-9)
-         ENDDO
-         CLOSE (kin)
-         x1(n+1) = x1(n) + 2.5
-         do i = 1, n
-            y1(i) = y1(i) * (x1(i+1)-x1(i))
-         enddo
-         call inter3(nw,wl,yg2,n+1,x1,y1,0)
-         do iw = 1, nw-1
-            yg2(iw) = yg2(iw) / (wl(iw+1)-wl(iw))
-         enddo
-
-         DO iw = 1, nw-1
-            IF (wl(iw) .GT. 350.) THEN
-               f(iw) = yg2(iw)
-            ELSE
-               f(iw) = yg1(iw)
-            ENDIF
-         ENDDO
-
-      ELSEIF (msun .EQ. 13) THEN
 
          WRITE(kout,*) 'data/DATAE1/SUN/susim_hi.flx'
          CALL read1(nw,wl,yg1)
@@ -449,106 +98,36 @@
          CALL addpnt(x1,y1,kdata,n,          0.,0.)
          CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
          CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
+
+      write(*,*) ' '
+      write(*,*) 'Diagnostics for atlas3_1994_317_a'
+      write(*,*) 'read1: size model lambdaGrid = ',nw
+      write(*,*) 'read1: lambdaGrid'
+      write(*,'(1p10g15.7)') wl(:nw)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputGrid = ',n
+      write(*,*) 'read1: inputGrid'
+      write(*,'(1p10g15.7)') x1(:n)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputData = ',n
+      write(*,*) 'read1: inputData'
+      write(*,'(1p10g15.7)') y1(:n)
+
+      call diagout( 'atlas.inputGrid.old', x1(:n) )
+      call diagout( 'atlas.inputData.old', y1(:n) )
+
          CALL inter2(nw,wl,yg2,n,x1,y1,ierr)
          IF (ierr .NE. 0) THEN
             WRITE(*,*) ierr, fil
             STOP
          ENDIF         
 
-         fil = 'data/DATAE1/SUN/neckel.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 11
-         n = 496
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) dum, y1(i)
-            if (dum .lt. 630.0) x1(i) = dum - 0.5
-            if (dum .gt. 630.0 .and. dum .lt. 870.0) x1(i) = dum - 1.0
-            if (dum .gt. 870.0) x1(i) = dum - 2.5
-            y1(i) = y1(i) * 1.E4 * hc / (dum * 1.E-9)
-         ENDDO
-         CLOSE (kin)
+      call diagout( 'atlas.interpolated.old', yg2(:nw-1) )
 
-         x1(n+1) = x1(n) + 2.5
-         call inter4(nw,wl,yg3,n+1,x1,y1,0)
-
-         DO iw = 1, nw-1
-
-            IF (wl(iw) .LT. 150.01) THEN
-               f(iw) = yg1(iw)
-            ELSE IF ((wl(iw) .GE. 150.01) .AND. wl(iw) .LE. 400.) THEN
-               f(iw) = yg2(iw)
-            ELSE IF (wl(iw) .GT. 400.) THEN
-               f(iw) = yg3(iw)
-            ENDIF
-
-         ENDDO
-
-      ELSEIF (msun .EQ. 14) THEN
-
-         WRITE(kout,*) 'data/DATAE1/SUN/susim_hi.flx'
-         CALL read1(nw,wl,yg1)
-
-         fil = 'data/DATAE1/SUN/neckel.flx'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         nhead = 11
-         n = 496
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) dum, y1(i)
-            if (dum .lt. 630.0) x1(i) = dum - 0.5
-            if (dum .gt. 630.0 .and. dum .lt. 870.0) x1(i) = dum - 1.0
-            if (dum .gt. 870.0) x1(i) = dum - 2.5
-            y1(i) = y1(i) * 1.E4 * hc / (dum * 1.E-9)
-         ENDDO
-         CLOSE (kin)
-
-         x1(n+1) = x1(n) + 2.5
-         call inter4(nw,wl,yg3,n+1,x1,y1,0)
-
-         DO iw = 1, nw-1
-
-            IF (wl(iw) .LE. 350.) THEN
-               f(iw) = yg1(iw)
-            ELSE 
-               f(iw) = yg3(iw)
-            ENDIF
-
-         ENDDO
-
-      ELSEIF (msun .EQ. 15) THEN
-
-         WRITE(kout,*) 'data/DATAE1/SUN/susim_hi.flx'
-         CALL read1(nw,wl,yg1)
-
-         nhead = 5
-         fil = 'data/DATAE1/SUN/atlas3_1994_317_a.dat'
-         write(kout,*) fil
-         OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         n = 5160
-         DO i = 1, nhead
-            READ(kin,*)
-         ENDDO
-         DO i = 1, n
-            READ(kin,*) x1(i), y1(i)
-            y1(i) = y1(i) * 1.E-3
-         ENDDO
-         CLOSE (kin)
-         CALL addpnt(x1,y1,kdata,n,x1(1)*(1.-deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,          0.,0.)
-         CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
-         CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
-         CALL inter2(nw,wl,yg2,n,x1,y1,ierr)
-         IF (ierr .NE. 0) THEN
-            WRITE(*,*) ierr, fil
-            STOP
-         ENDIF         
+      write(*,*) ' '
+      write(*,*) 'read1: size yg2 = ',size(yg2)
+      write(*,*) 'read1: interpolated Etfl'
+      write(*,'(1p10g15.7)') yg2(:nw-1)
 
          fil = 'data/DATAE1/SUN/neckel.flx'
          write(kout,*) fil
@@ -572,13 +151,37 @@
          CLOSE (kin)
 
          x1(n+1) = x1(n) + 2.5
+         y1(n+1) = 0.0
+
+      call diagout( 'neckel.inputGrid.old', x1(:n+1) )
+      call diagout( 'neckel.inputData.old', y1(:n+1) )
+
+      write(*,*) ' '
+      write(*,*) 'Diagnostics for neckel.flx'
+      write(*,*) 'read1: size model lambdaGrid = ',nw
+      write(*,*) 'read1: lambdaGrid'
+      write(*,'(1p10g15.7)') wl(:nw)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputGrid = ',n+1
+      write(*,*) 'read1: inputGrid'
+      write(*,'(1p10g15.7)') x1(:n+1)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputData = ',n+1
+      write(*,*) 'read1: inputData'
+      write(*,'(1p10g15.7)') y1(:n+1)
          call inter4(nw,wl,yg3,n+1,x1,y1,0)
+      write(*,*) ' '
+      write(*,*) 'read1: size yg3 = ',size(yg3)
+      write(*,*) 'read1: interpolated Etfl'
+      write(*,'(1p10g15.7)') yg3(:nw-1)
+      call diagout( 'neckel.interpolated.old', yg3(:nw-1) )
 
          nhead = 8
          fil = 'data/DATAE1/SUN/sao2010.solref.converted'
          write(kout,*) fil
          OPEN(UNIT=kin,FILE=fil,STATUS='old')
-         n = 80099 - nhead
+!        n = 80099 - nhead
+         n = 80101 - nhead
          DO i = 1, nhead
             READ(kin,*)
          ENDDO
@@ -591,20 +194,25 @@
          CALL addpnt(x1,y1,kdata,n,          0.,0.)
          CALL addpnt(x1,y1,kdata,n,x1(n)*(1.+deltax),0.)
          CALL addpnt(x1,y1,kdata,n,      1.e+38,0.)
+      call diagout( 'sao2010.inputGrid.old', x1(:n) )
+      call diagout( 'sao2010.inputData.old', y1(:n) )
          CALL inter2(nw,wl,yg4,n,x1,y1,ierr)
          IF (ierr .NE. 0) THEN
             WRITE(*,*) ierr, fil
             STOP
          ENDIF         
+      call diagout( 'sao2010.interpolated.old', yg4(:nw-1) )
 
 *    for wl(iw) .lt. 150.01                                 susim_hi.flx
 *    for wl(iw) .ge. 150.01 .and. wl(iw) .lt. 200.07        atlas3.flx
 *    for wl(iw) .ge. 200.07 .and. wl(iw) .le. 1000.99       Chance and Kurucz 2010
 *    for wl(iw) .gt. 1000.99                                Neckel & Labs 
 
+         wrk = 0.0
          DO iw = 1, nw-1
             IF (wl(iw) < 150.01) THEN
                f(iw) = yg1(iw)
+               wrk(iw) = yg1(iw)
             ELSE IF ((wl(iw) >= 150.01) .AND. wl(iw) < 200.07) THEN
                f(iw) = yg2(iw)
             ELSE IF ((wl(iw) >= 200.07) .AND. wl(iw) < 1000.99)THEN
@@ -614,7 +222,8 @@
             ENDIF
          ENDDO
 
-      ENDIF
+      call diagout( 'susim.etfl.old', wrk )
+      call diagout( 'etfl.old', f(:nw-1) )
 
       END SUBROUTINE rdetfl
 
@@ -699,11 +308,36 @@
       CALL addpnt(lambda_hi,irrad_hi,10000,n,
      >            lambda_hi(n)*(1.+deltax),0.)
       CALL addpnt(lambda_hi,irrad_hi,10000,n,              1.e38,0.)
+
+      write(*,*) ' '
+      write(*,*) 'Diagnostics for susim_hi.flx'
+      write(*,*) 'read1: size model lambdaGrid = ',nw
+      write(*,*) 'read1: lambdaGrid'
+      write(*,'(1p10g15.7)') wl(:nw)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputGrid = ',n
+      write(*,*) 'read1: inputGrid'
+      write(*,'(1p10g15.7)') lambda_hi(:n)
+      write(*,*) ' '
+      write(*,*) 'read1: size inputData = ',n
+      write(*,*) 'read1: inputData'
+      write(*,'(1p10g15.7)') irrad_hi(:n)
+
+      call diagout( 'susim.inputGrid.old', lambda_hi(:n) )
+      call diagout( 'susim.inputData.old', irrad_hi(:n) )
+
       CALL inter2(nw,wl,f,n,lambda_hi,irrad_hi,ierr)
       IF (ierr /= 0) THEN
          WRITE(*,*) ierr, fil
          STOP
       ENDIF
+
+      call diagout( 'susim.interpolated.old', f(:nw-1) )
+
+      write(*,*) ' '
+      write(*,*) 'read1: size f = ',size(f)
+      write(*,*) 'read1: interpolated Etfl'
+      write(*,'(1p10g15.7)') f(:nw-1)
 
       END SUBROUTINE read1
 

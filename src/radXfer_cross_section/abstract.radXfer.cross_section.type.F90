@@ -14,7 +14,7 @@ module micm_radXfer_abs_cross_section_type
 
   public :: abs_cross_section_t, abs_cross_section_ptr
 
-  !> Photo rate cross section abstract type
+  !> cross section abstract type
   type, abstract :: abs_cross_section_t
   contains
     !> Calculate the photo rate cross section
@@ -33,16 +33,17 @@ interface
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize the cross section
-  subroutine initial( this, config, gridWareHouse, ProfileWareHouse )
+  subroutine initial( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
 
     use musica_config,    only : config_t
-    use musica_constants, only : musica_dk
+    use musica_constants, only : lk => musica_lk
     use micm_grid_warehouse,    only : grid_warehouse_t
     use micm_Profile_warehouse, only : Profile_warehouse_t
 
     import abs_cross_section_t
 
     !> Cross section calculator
+    logical(lk), optional, intent(in)          :: atMidPoint
     class(abs_cross_section_t), intent(inout)  :: this
     type(config_t), intent(inout)              :: config
     type(grid_warehouse_t), intent(inout)      :: gridWareHouse
@@ -50,9 +51,9 @@ interface
  end subroutine initial
 
   !> Calculate the cross section
-  function calculate( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
+  function calculate( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
-    use musica_constants,       only : musica_dk
+    use musica_constants,       only : dk => musica_dk, lk => musica_lk
     use micm_grid_warehouse,    only : grid_warehouse_t
     use micm_Profile_warehouse, only : Profile_warehouse_t
 
@@ -60,10 +61,11 @@ interface
 
     !> Cross section calculator
     class(abs_cross_section_t), intent(in)   :: this
+    logical(lk), optional, intent(in)        :: atMidPoint
     !> cross section on model photo grid
     type(grid_warehouse_t), intent(inout)    :: gridWareHouse
     type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
-    real(musica_dk), allocatable             :: cross_section(:,:)
+    real(dk), allocatable                    :: cross_section(:,:)
   end function calculate
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

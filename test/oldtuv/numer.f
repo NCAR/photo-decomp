@@ -130,6 +130,7 @@
          IF (x(i) <= x(i-1)) THEN
             ierr = 1
             WRITE(*,*)'data not sorted'
+            WRITE(*,'(1p10g15.7)') x(:n)
             RETURN
          ENDIF
       ENDDO
@@ -198,7 +199,8 @@
                    slope = (y(k+1) - y(k))/(x(k+1) - x(k))
                    b1 = y(k) + slope*(a1 - x(k))
                    b2 = y(k) + slope*(a2 - x(k))
-                   darea = (a2 - a1)*(b2 + b1)/2.
+*                  darea = (a2 - a1)*(b2 + b1)/2.
+                   darea = .5*(a2 - a1)*(b2 + b1)
                 ENDIF
 *  find the area under the trapezoid from a1 to a2
                 area = area + darea

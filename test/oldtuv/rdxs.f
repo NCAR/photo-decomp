@@ -953,7 +953,8 @@
 
 * output:
 
-      REAL, intent(out) :: no2xs(nz-1,nw-1)
+*     REAL, intent(out) :: no2xs(nz-1,nw-1)
+      REAL, intent(out) :: no2xs(:,:)
 
       INTEGER :: mabs
 *_______________________________________________________________________
@@ -1207,7 +1208,8 @@
 
 * output:
 
-      REAL, intent(out)   :: no2xs(nz-1,nw-1)
+*     REAL, intent(out)   :: no2xs(nz-1,nw-1)
+      REAL, intent(out)   :: no2xs(:,:)
 
 * local
 
@@ -1250,10 +1252,13 @@
       CALL addpnt(x2,y2,kdata,n2,            1.e+38,   0.)
       CALL inter2(nw,wl,yg2,n2,x2,y2,ierr)
       
+      write(*,*) 'no2xs_jpl06a: n1,n2 = ',n1,n2
+
       Tadj = max( 220.,min( 294.,t ) )
       Tfac = (Tadj - 220.)/74.
       DO iw = 1, nw-1
-         DO iz = 1, nz-1
+*        DO iz = 1, nz-1
+         DO iz = 1, size(t)
             no2xs(iz,iw) = yg1(iw) + 
 *                (yg2(iw) - yg1(iw))*(t(iz) - 220.)/74.
      $           (yg2(iw) - yg1(iw))*Tfac(iz)

@@ -5,18 +5,19 @@
 !> Tests the photo_decomp radiative transfer module
 module radiator_core
 
-  use musica_config,                   only : config_t
-  use musica_string,                   only : string_t
-  use musica_assert,                   only : assert
-  use musica_constants,                only : ik => musica_ik, dk => musica_dk
-  use micm_grid_warehouse,             only : grid_warehouse_t
-  use micm_1d_grid,                    only : abs_1d_grid_t
-  use micm_Profile_warehouse,          only : Profile_warehouse_t
-  use micm_Profile,                    only : abs_Profile_t
-  use micm_radXfer_xsect_warehouse,    only : radXfer_xsect_warehouse_t
+  use musica_config,    only : config_t
+  use musica_string,    only : string_t
+  use musica_assert,    only : assert
+  use musica_constants, only : ik => musica_ik, dk => musica_dk
+  use micm_grid_warehouse, only : grid_warehouse_t
+  use micm_1d_grid,        only : abs_1d_grid_t
+  use micm_Profile_warehouse, only : Profile_warehouse_t
+  use micm_Profile,           only : abs_Profile_t
+  use micm_radXfer_xsect_warehouse,        only : radXfer_xsect_warehouse_t
   use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
-  use micm_radiator_warehouse,         only : radiator_warehouse_t
-  use photolysis_radiator,             only : radiator_t, radiator_state_t
+  use micm_radiator_warehouse,    only : radiator_warehouse_t
+  use micm_abs_radiator_type,     only : abs_radiator_t
+  use micm_abs_radiator_type,     only : radiator_state_t
 
   implicit none
 
@@ -97,8 +98,8 @@ contains
   class(abs_1d_grid_t), pointer       :: zGrid, lambdaGrid
   class(abs_Profile_t), pointer       :: AirProfile, TemperatureProfile
   class(abs_cross_section_t), pointer :: RaylieghCrossSection
-  class(radiator_t), allocatable      :: RaylieghRadiator
-  class(radiator_t), allocatable      :: aRadiator
+  class(abs_radiator_t), allocatable  :: RaylieghRadiator
+  class(abs_radiator_t), allocatable  :: aRadiator
   type(warehouse_iterator_t), pointer :: iter
   type(string_t)                      :: Handle
   type(radiator_state_t), allocatable :: RadiatorState

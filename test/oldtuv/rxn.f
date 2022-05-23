@@ -8,7 +8,10 @@
 
       CONTAINS
 
-      SUBROUTINE r01(nw,wl,wc,nz,tlev,airden,j,sq,jlabel,tpflag)
+      SUBROUTINE r01(nw,wl,wc,nz,tlev,
+     $               airden,j,sq,jlabel,tpflag)
+
+      use debug, only : diagout
 
 *-----------------------------------------------------------------------------*
 *=  PURPOSE:                                                                 =*
@@ -80,7 +83,7 @@
 * local
 
       INTEGER mabs
-      REAL xs(kz,kw)
+      REAL xs(kz,kw), quantumYield(kz,kw)
 
       REAL yg(kw), yg1(kw), yg2(kw), yg3(kw), yg4(kw)
       REAL qy1d, qy3p
@@ -120,6 +123,7 @@
 
       mabs = 1
       CALL rdo3xs(mabs, nz,tlev,nw,wl, xs)
+      call diagout( "O3+hv->O2+O(1D).xsect.old",xs(1:nz,1:nw-1) )
 
 ******* quantum yield:
 
@@ -407,12 +411,16 @@ c      myld = kjpl00
 
 * compute product
 
+           quantumYield(i,iw) = qy1d 
            sq(j-1,i,iw) = qy1d*xs(i,iw)
            qy3p = 1.0 - qy1d
            sq(j,i,iw) = qy3p*xs(i,iw)
 
  20     CONTINUE
  10   CONTINUE
+
+      call diagout( "O3+hv->O2+O(1D).qyld.old",
+     $              quantumYield(1:nz,1:nw-1) )
 
 * declare temperature dependence
 
@@ -461,13 +469,11 @@ c      myld = kjpl00
 
 * input
 
-      INTEGER nw, iw
+      INTEGER, intent(in) :: nw, nz
       REAL wl(kw), wc(kw)
-      
-      INTEGER nz, iz
 
-      REAL tlev(kz)
-      REAL airden(kz)
+      REAL, intent(in) :: tlev(:)
+      REAL, intent(in) :: airden(:)
 
 * weighting functions
 
@@ -476,7 +482,7 @@ c      myld = kjpl00
       REAL sq(kj,kz,kw)
 
 * input/output:
-      INTEGER j
+      INTEGER, intent(inout) :: j
 
 * data arrays
 
@@ -489,6 +495,7 @@ c      myld = kjpl00
 
 * local
 
+      INTEGER :: iw, iz
       REAL yg1(kw), yg2(kw)
       REAL no2xs(kz,kw), qy(kz,kw)
       REAL dum, dum1, dum2
@@ -1615,7 +1622,8 @@ C     INTEGER n1, n2, n3, n4, n5
 * cross section from Lin et al. 1978
 
       j = j + 1
-      jlabel(j) = 'H2O2 -> 2 OH'
+C     jlabel(j) = 'H2O2 -> 2 OH'
+      jlabel(j) = 'H2O2 -> OH + OH'
 C     OPEN(UNIT=kin,FILE='data/DATAJ1/ABS/H2O2_lin.abs',STATUS='old')
 C     DO i = 1, 7
 C        READ(kin,*)
@@ -3322,7 +3330,8 @@ c         x = yg4(iw)
       jlabel(j) = 'CHOCHO -> HCO + HCO'
 
       j = j + 1
-      jlabel(j) = 'CHOCHO -> H2 + 2CO'
+*     jlabel(j) = 'CHOCHO -> H2 + 2CO'
+      jlabel(j) = 'CHOCHO -> H2 + CO + CO'
 
       j = j + 1
       jlabel(j) = 'CHOCHO -> CH2O + CO'
@@ -7410,8 +7419,8 @@ C     ENDDO
 * offeset exponent by 40 (exp(-40.) = 4.248e-18) to prevent exp. underflow errors
 * on some machines.
 
-c             sq(j,iz,iw) = qy * EXP(sum)
-             sq(j,iz,iw) = qy * 4.248e-18 * EXP(sum + 40.)
+              sq(j,iz,iw) = qy * EXP(sum)
+c            sq(j,iz,iw) = qy * 4.248e-18 * EXP(sum + 40.)
 
           ENDDO
 
@@ -9610,7 +9619,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 ************************* CH3COCO(OH) photolysis
 
       j = j+1
-      jlabel(j) = 'CH3COCO(OH) -> Products'
+*     jlabel(j) = 'CH3COCO(OH) -> Products'
+      jlabel(j) = 'CH3COCOOH -> Products'
 
       mabs = 2
 
@@ -11251,7 +11261,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 **************** hydroxy methyl hydroperoxide photodissociation
 
       j = j+1
-      jlabel(j) = 'HOCH2OOH -> HOCH2O. + OH'
+*     jlabel(j) = 'HOCH2OOH -> HOCH2O. + OH'
+      jlabel(j) = 'HOCH2OOH -> CH2(OH)O + OH'
 
 * cross section from 
 *      JPL 2006 (originally from Bauerle and Moortgat 1999)
@@ -11493,7 +11504,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 **************** peracetic acid photodissociation
 
       j = j+1
-      jlabel(j) = 'CH3CO(OOH) -> Products'
+*     jlabel(j) = 'CH3CO(OOH) -> Products'
+      jlabel(j) = 'CH3COOOH -> Products'
 
 * cross section from 
 *      JPL 2006 (originally from Orlando and Tyndall 2003)
@@ -11608,7 +11620,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 **************** dmna photodissociation
 
       j = j+1
-      jlabel(j) = '(CH3)2NNO -> Products'
+*     jlabel(j) = '(CH3)2NNO -> Products'
+      jlabel(j) = 'CH3CH3NNO -> Products'
 
 * cross section from 
 * Lindley (1978, PhD Thesis Ohio State U., Jack Calvert advisor), cited by Calvert et al. (2009).
@@ -11776,7 +11789,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 
       DO i = 1, nz
 
-         tx = tlev(i)
+*        tx = tlev(i)
+         tx = max( min(tlev(i),300.),180. )
 
 * locate temperature indices for interpolation:
          m1 = 1 + INT((tx - 190.)/10.)
@@ -12613,6 +12627,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
               sig = yg323(iw) + 
      $             (yg343(iw) - yg323(iw))*(tlev(i) - 323.)/20.
 
+           else
+              sig = yg343(iw)
            endif
 
            sq(j,i,iw) = qy * sig
@@ -12982,7 +12998,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 ******************** CH3(OONO2) photodissociation
 
       j = j + 1
-      jlabel(j) = 'CH3(OONO2) -> CH3(OO) + NO2'
+*     jlabel(j) = 'CH3(OONO2) -> CH3(OO) + NO2'
+      jlabel(j) = 'CH3(OONO2) -> CH3OO + NO2'
 
 * cross section from 
 *= I. Bridier, R. Lesclaux, and B. Veyret, "Flash photolysis kinetic study 
@@ -14157,7 +14174,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
 **************** n-C3H7ONO2 photodissociation
 
       j = j + 1
-      jlabel(j) = 'n-C3H7ONO2 -> C3H7O + NO2'
+*     jlabel(j) = 'n-C3H7ONO2 -> C3H7O + NO2'
+      jlabel(j) = 'nC3H7ONO2 -> C3H7O + NO2'
 
 * 1:  IUPAC 2006
 
@@ -14506,7 +14524,8 @@ c             sq(j,iz,iw) = qy * EXP(sum)
       REAL qy, dum
 
       j = j + 1
-      jlabel(j) = 'perfluoro 1-iodopropane -> products'
+*     jlabel(j) = 'perfluoro 1-iodopropane -> products'
+      jlabel(j) = 'perfluoro-1-iodopropane -> products'
 
 * cross section from JPL2011
 

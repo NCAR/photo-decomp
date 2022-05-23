@@ -48,7 +48,7 @@ contains
     !> Arguments
     !> Profile configuration data
     type(config_t), intent(inout) :: config
-    class(grid_warehouse_t), intent(inout) :: gridwarehouse
+    type(grid_warehouse_t), intent(inout) :: gridwarehouse
 
     !> New Profile_warehouse_obj
     class(Profile_warehouse_t), pointer :: Profile_warehouse_obj

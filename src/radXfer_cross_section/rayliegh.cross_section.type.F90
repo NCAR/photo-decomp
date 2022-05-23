@@ -8,7 +8,7 @@
 module micm_radXfer_rayliegh_cross_section_type
 
   use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
-  use musica_constants,                    only : musica_dk, musica_ik
+  use musica_constants,                    only : musica_dk, musica_ik, lk => musica_lk
 
   implicit none
 
@@ -31,7 +31,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize rayliegh_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse )
+  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
 
     use musica_config,               only : config_t
     use micm_grid_warehouse,         only : grid_warehouse_t
@@ -39,11 +39,12 @@ contains
 
     !> rayliegh cross section type
     class(rayliegh_cross_section_t), intent(inout) :: this
+    logical(lk), optional, intent(in)              :: atMidPoint
     !> cross section configuration object
-    type(config_t), intent(inout) :: config
+    type(config_t), intent(inout)                  :: config
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(grid_warehouse_t), intent(inout)          :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
 
     character(len=*), parameter :: Iam = 'rayliegh cross section initialize: '
 
@@ -56,23 +57,24 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
+  function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
     use micm_grid_warehouse,         only : grid_warehouse_t
     use micm_1d_grid,                only : abs_1d_grid_t
-    use micm_Profile_warehouse, only : Profile_warehouse_t
+    use micm_Profile_warehouse,      only : Profile_warehouse_t
     use musica_string,               only : string_t
 
     !> rayliegh cross section
     class(rayliegh_cross_section_t), intent(in)    :: this
+    logical(lk), optional, intent(in)              :: atMidPoint
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(grid_warehouse_t), intent(inout)          :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=musica_dk), allocatable          :: cross_section(:,:)
+    real(kind=musica_dk), allocatable              :: cross_section(:,:)
 
     !> Local variables
-    integer :: colndx
+    integer :: colndx, nzdim
     character(len=*), parameter :: Iam = 'radXfer rayliegh cross section calculate: '
     class(abs_1d_grid_t), pointer :: zGrid
     class(abs_1d_grid_t), pointer :: lambdaGrid
@@ -88,7 +90,14 @@ contains
     Handle = 'Photolysis, wavelength'
     lambdaGrid => gridWareHouse%get_grid( Handle )
 
-    allocate( wrkCrossSection(lambdaGrid%ncells_,zGrid%ncells_) )
+    nzdim = zGrid%ncells_ + 1
+    if( present(atMidPoint) ) then
+      if( atMidpoint ) then
+        nzdim = nzdim - 1
+      endif
+    endif
+
+    allocate( wrkCrossSection(lambdaGrid%ncells_,nzdim) )
 
 !> Rayleigh scattering cross section from WMO 1985 (originally from
 !> Nicolet, M., On the molecular scattering in the terrestrial atmosphere:
@@ -104,7 +113,7 @@ contains
 
     wrkCrossSection(:,1) = 4.02e-28_musica_dk/(wrk)**pwr
 
-    do colndx = 2,zGrid%ncells_
+    do colndx = 2,nzdim
       wrkCrossSection(:,colndx) = wrkCrossSection(:,1)
     enddo
 

@@ -30,14 +30,8 @@ add_std_test(Profile_test)
 add_executable(radXfer_test radXfer/radXfer_core.F90 radXfer/radXfer_test.F90)
 add_std_test(radXfer_test)
 
-add_executable(radiator_test unit/radiator/radiator.F90 unit/radiator/mock_profile_warehouse.F90)
+add_executable(radiator_test radiator/radiator_core.F90 radiator/radiator_test.F90)
 add_std_test(radiator_test)
-
-add_executable(aerosol_radiator_test unit/radiator/aerosol_radiator.F90 unit/radiator/mock_profile_warehouse.F90)
-add_std_test(aerosol_radiator_test)
-
-add_executable(radiator_core_test radiator/radiator_core.F90 radiator/radiator_test.F90)
-add_std_test(radiator_core_test)
 
 add_test(NAME regression_aerosols_radiator COMMAND test/regression/radiation.aerosols.sh WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 add_test(NAME regression_o2_radiator       COMMAND test/regression/radiation.o2.sh       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

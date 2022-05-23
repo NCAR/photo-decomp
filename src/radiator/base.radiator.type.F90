@@ -2,45 +2,29 @@
 ! SPDX-License-Identifier: Apache-2.0
 !
 !> \file
-!> The photolysis_radiator module
+!> The base_micm_radiator module
 
-!> The radiator_t type and related functions
+!> The base_radiator_t type and related functions
 !!
-module photolysis_radiator
+module micm_base_radiator_type
 
   use musica_constants,       only : dk => musica_dk, ik => musica_ik
   use musica_string,          only : string_t
+  use micm_abs_radiator_type, only : abs_radiator_t
 
   implicit none
+
   private
+  public :: base_radiator_t
 
-  public :: radiator_t, radiator_state_t, radiator_ptr
-
-  !> Radiator state type
-  type :: radiator_state_t
-    !> layer optical depth
-    real(kind=dk), allocatable :: layer_OD_(:,:)
-    !> layer single scattering albedo
-    real(kind=dk), allocatable :: layer_SSA_(:,:)
-    !> layer asymmetry factor
-    real(kind=dk), allocatable :: layer_G_(:,:)
-  end type radiator_state_t
-
-  !> Base radiator type
-  type :: radiator_t
-    type(string_t)         :: handle_
-    type(radiator_state_t) :: state_
+  !> base radiator type
+  type, extends(abs_radiator_t) :: base_radiator_t
   contains
     !> Initialize radiator
     procedure :: initialize
     !> Update radiator for new environmental conditions
     procedure :: upDateState
-  end type radiator_t
-
-  !> Pointer type for building sets of radiator objects
-  type :: radiator_ptr
-    class(radiator_t), pointer :: val_ => null( )
-  end type radiator_ptr
+  end type base_radiator_t
 
 contains
 
@@ -54,7 +38,7 @@ contains
     use micm_1d_grid,         only : abs_1d_grid_t
 
     !> radiator object
-    class(radiator_t), intent(inout)      :: this
+    class(base_radiator_t), intent(inout) :: this
     !> radiator configuration object
     type(config_t), intent(inout)         :: radiator_config
     !> grid warehouse
@@ -103,17 +87,18 @@ contains
     use micm_1d_grid,                  only : abs_1d_grid_t
     use micm_radXfer_xsect_warehouse,  only : radXfer_xsect_warehouse_t
     use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
+    use musica_constants,              only : lk => musica_lk
     use debug,                         only : diagout
 
     !> Arguments
     !> radiator obj
-    class(radiator_t), intent(inout)               :: this
+    class(base_radiator_t), intent(inout) :: this
     !> Grid warehouse
-    class(grid_warehouse_t), intent(inout)          :: gridWareHouse
+    type(grid_warehouse_t), intent(inout) :: gridWareHouse
     !> Profile warehouse
-    class(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
+    type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
     !> RadXfer cross section warehouse
-    class(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    type(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
 
     !> Local variables
     real(dk) , parameter  :: km2cm = 1.e5_dk
@@ -134,10 +119,8 @@ contains
 !-----------------------------------------------------------------------------
 !> get specific grids and profiles
 !-----------------------------------------------------------------------------
-    Handle = 'Vertical Z'
-    zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength'
-    lambdaGrid => gridWareHouse%get_grid( Handle )
+    Handle = 'Vertical Z' ; zGrid => gridWareHouse%get_grid( Handle )
+    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
     write(*,*) Iam // 'nlyr,nbins = ',zGrid%ncells_,lambdaGrid%ncells_
 
     !> Note: uses radiator handle for Profile handle
@@ -156,7 +139,8 @@ contains
                                   size(this%state_%layer_OD_,dim=2)
 
     !> set radiator state members
-    CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse )
+    CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk )
+    call diagout( 'o2xs.new',CrossSection )
     do wNdx = 1,lambdaGrid%ncells_
       this%state_%layer_OD_(:,wNdx) = radiatorProfile%layer_dens_ * CrossSection(:,wNdx)
     enddo
@@ -175,6 +159,4 @@ contains
 
   end subroutine upDateState
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-end module photolysis_radiator
+end module micm_base_radiator_type

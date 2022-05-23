@@ -93,6 +93,7 @@
 * Ozone absorption cross section
 
       INTEGER :: mabs
+      INTEGER :: strpos
       REAL, allocatable :: o3xs(:,:)
 
 * O2 absorption cross section
@@ -137,6 +138,7 @@
       REAL :: drdw
       REAL :: sw(ks,kw), rate(ks,kz), dose(ks)
       CHARACTER(len=50) :: slabel(ks)
+      CHARACTER(len=:), allocatable :: annotatedRate
 
 * Photolysis coefficients (j-values)
 
@@ -149,6 +151,7 @@
       REAL, allocatable :: spcwght(:,:)
       REAL, allocatable :: jval_(:,:)
       CHARACTER(len=50) :: jlabel(kj)
+      CHARACTER(len=50), allocatable :: annotatedjlabel(:)
 
 *-----------------------------------------------------------------------------*
 **** Re-scaling factors (can be read from input file)
@@ -617,12 +620,13 @@
       allocate( o3xs(nlyr,nbins) )
       allocate( so2xs(nbins) )
       allocate( no2xs(nlyr,nbins) )
+      no2xs = rZERO
 *    standard TUV cross section handling
 *     if( .not. Obj_radXfer_xsects ) then
         mabs = 1
         CALL rdo3xs(mabs,nlyr,tlay,nw,wl, o3xs)
         CALL rdo2xs(nw,wl, o2xs1)
-        CALL rdno2xs(nz,tlay,nw,wl, no2xs)
+*       CALL rdno2xs(nz,tlay,nw,wl, no2xs)
         CALL rdso2xs(nw,wl, so2xs)
         call diagout( 'o3xs.old',o3xs )
         OPEN(unit=44,file='OUTPUTS/o3xs_old',form='unformatted')
@@ -925,6 +929,14 @@ C      CALL setany(nz,z,nw,wl,aircol, dt_any,om_any, g_any)
          CALL la_srb(z,tlev,wl,vcolo2,scolo2,o2xs1,dto2,o2xs)
          CALL sjo2(o2xs,sj(1,:,:))
          call diagout( 'dto2.old',dto2 )
+* Output cross section, quantum yield product for regression testing
+         write(number,'(i2.2)') it
+         OPEN(unit=33,
+     $        file='OUTPUTS/xsqy.'//number//'.old',form='unformatted')
+         write(unit=33) 
+     $     reshape( sj(1:nj,1:nz,1:nbins),(/nz,nbins,nj/),
+     $              order=(/3,1,2/) )
+         CLOSE(unit=33)
 
          if( .not. do_rayleigh ) dtrl = rZERO
          if( .not. do_o2       ) dto2 = rZERO
@@ -1132,5 +1144,43 @@ c 444  format(1pe11.4,1x,a50)
 
       CLOSE(iout)
       CLOSE(kout)
+
+      CONTAINS
+
+      function get_photorate_index( photorateNames, match ) 
+     $                      result( index )
+
+      character(len=*), intent(in) :: match
+      character(len=*), intent(in) :: photorateNames(:)
+      integer                      :: index
+
+      integer :: n
+
+      index = -1
+      do n = 1,size(photorateNames)
+        if( trim(match) == trim(photorateNames(n)) ) then
+          index = n
+          exit
+        endif
+      enddo
+
+      end function get_photorate_index
+
+      function rmspace( inString ) result( outString  )
+
+      character(len=*), intent(in) :: inString
+      character(len=:), allocatable  :: outString
+
+      integer   :: n
+      character :: chr
+
+      do n = 1,len_trim(inString)
+        chr = inString(n:n)
+        if( chr /= ' ' ) then
+          outString = outString // chr
+        endif
+      enddo
+
+      end function rmspace
 
       END PROGRAM tuv

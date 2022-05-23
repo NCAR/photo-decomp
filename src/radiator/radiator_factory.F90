@@ -7,8 +7,7 @@
 !> Build radiator objects
 module micm_radiator_factory
 
-  use photolysis_radiator,             only : radiator_t
-  use photolysis_aerosol_radiator,     only : aerosol_radiator_t
+  use micm_abs_radiator_type,       only : abs_radiator_t
 
   implicit none
 
@@ -25,6 +24,8 @@ contains
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use micm_grid_warehouse,           only : grid_warehouse_t
+    use micm_base_radiator_type,       only : base_radiator_t
+    use micm_aerosol_radiator_type,    only : aerosol_radiator_t
 
     !> Arguments
     !> Radiator configuration data
@@ -32,7 +33,7 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> New radiator object
-    class(radiator_t), pointer :: new_radiator_t
+    class(abs_radiator_t), pointer :: new_radiator_t
 
     !> Local variables
     type(string_t) :: radiator_type
@@ -44,7 +45,7 @@ contains
 
     select case( radiator_type%to_char() )
       case( 'Base radiator' )
-        allocate( radiator_t :: new_radiator_t )
+        allocate( base_radiator_t :: new_radiator_t )
       case( 'Aerosol radiator' )
         allocate( aerosol_radiator_t :: new_radiator_t )
       case default

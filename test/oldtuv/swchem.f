@@ -83,7 +83,8 @@
       tpflag(j) = 1
 
 *A2.  O3 + hv ->  (both channels)
-      CALL r01(nw,wl,wc,nz,tlev,airden,j,sq,jlabel,tpflag)
+      CALL r01(nw,wl,wc,nz,tlev,
+     $         airden,j,sq,jlabel,tpflag)
 
 ******** HOx Photochemistry
 
@@ -385,6 +386,7 @@ c      CALL r10(nw,wl,wc,nz,tlev,airden,j,sq,jlabel,tpflag)
 ****************************************************************
 
       IF (j .GT. kj) STOP '1002'
+      write(*,'(''swchem: Set '',i3,'' photorates'')') j
 
       END SUBROUTINE swchem
 

@@ -19,8 +19,9 @@ program radiator_test
   type(string_t)     :: configFileSpec
 
   !> Get the model configuration file and options from the command line
-  if( command_argument_count( ) /= 1 ) call fail_run( )
-  call get_command_argument( command_argument_count( ), argument )
+! if( command_argument_count( ) /= 1 ) call fail_run( )
+! call get_command_argument( command_argument_count( ), argument )
+  argument = 'data/radiator.tst.config.json'
 
   configFileSpec = argument
 
