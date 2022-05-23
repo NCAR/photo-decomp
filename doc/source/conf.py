@@ -22,7 +22,7 @@ copyright = '2022, NCAR/UCAR'
 author = 'NCAR/UCAR'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1'
+release = '0.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -61,8 +61,8 @@ html_theme_options = {
     "github_url": "https://github.com/NCAR/photo-decomp",
     "navbar_end": ["version-switcher", "navbar-icon-links"],
     "switcher": {
-        "json_url": "_static/switcher.json",
-        "url_template": "https://pandas.pydata.org/{version}/",
+        "json_url": "https://ncar.github.io/photo-decomp/switcher.json",
+        "url_template": "https://ncar.github.io/photo-decomp/versions/{version}/",
         "version_match": release,
     },
 }
