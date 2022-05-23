@@ -3,7 +3,7 @@
 build/
 CMakeCache.txt
 CMakeFiles/
-doc/html/
+doc/build/
 doc/latex/
 
 # Prerequisites
