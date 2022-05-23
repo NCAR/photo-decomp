@@ -5,13 +5,8 @@
         "url": "https://ncar.github.io/photo-decomp/versions/0.1"
     },
     {
-        "name": "v1.0",
+        "name": "v1.0 (stable)",
         "version": "1.0",
-        "url": "https://ncar.github.io/photo-decomp/versions/1.0"
-    },
-    {
-        "name": "v1.1 (stable)",
-        "version": "1.1",
         "url": "https://ncar.github.io/photo-decomp/versions/stable"
     }
 ]
