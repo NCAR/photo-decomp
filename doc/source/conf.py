@@ -62,7 +62,6 @@ html_theme_options = {
     "navbar_end": ["version-switcher", "navbar-icon-links"],
     "switcher": {
         "json_url": "https://ncar.github.io/photo-decomp/switcher.json",
-        "url_template": "https://ncar.github.io/photo-decomp/versions/{version}/",
         "version_match": release,
     },
 }
