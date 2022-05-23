@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Search &#8212; Photo-decomp 1.0 documentation</title>
+    <title>Search &#8212; Photo-decomp stable documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -82,7 +82,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        1.0  <!-- this text may get changed later by javascript -->
+        stable  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -92,7 +92,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables search and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': '1.0'}.
+     variables search and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': 'stable'}.
 -->
 
 <script type="text/javascript">
@@ -146,7 +146,7 @@ function checkPageExistsAndRedirect(event) {
             // this version, rather than using sphinx's  variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "1.0") {
+            if (entry.version == "stable") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
