@@ -21,4 +21,4 @@ help:
 
 github:
 	@make html
-	@cp -a build/html/. ../docs/versions/stable
+	@cp -a build/html/. ./versions/stable
