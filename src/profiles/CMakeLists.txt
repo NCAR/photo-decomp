@@ -1,18 +1,15 @@
 ################################################################################
 # One dimensional grid source
 
-set(PROFILE_SRC profiles/abstract.Profile.type.F90
-                profiles/from_csv_file.type.F90
-                profiles/etfl.from_csv_file.type.F90
-                profiles/from_config.type.F90
-                profiles/srfAlbedo_from_config.type.F90
-                profiles/air.from_csv_file.type.F90
-                profiles/o2.from_csv_file.type.F90
-                profiles/o3.from_csv_file.type.F90
-                profiles/sza_from_time.type.F90
-                profiles/earth_sun_distance.type.F90
-                profiles/Profile_factory.F90
-                profiles/Profile_warehouse.F90
+set(PROFILE_SRC profiles/air.F90
+                profiles/earth_sun_distance.F90
+                profiles/extraterrestrial_flux.F90
+                profiles/from_config.F90
+                profiles/from_csv_file.F90
+                profiles/o2.F90
+                profiles/o3.F90
+                profiles/solar_zenith_angle.F90
+                profiles/surface_albedo.F90
                 PARENT_SCOPE)
 
 ################################################################################

@@ -14,7 +14,7 @@ add_subdirectory(oldtuv)
 
 macro(add_std_test test_name)
   target_include_directories(${test_name} PUBLIC ${CMAKE_BINARY_DIR}/src)
-  target_link_libraries(${test_name} photolib)
+  target_link_libraries(${test_name} tuvxlib)
   add_test(NAME ${test_name} COMMAND ${test_name})
 endmacro(add_std_test)
 

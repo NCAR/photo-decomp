@@ -22,8 +22,8 @@ contains
     use musica_string,    only : string_t
     use musica_assert,    only : assert, almost_equal
     use musica_constants, only : ik => musica_ik, dk => musica_dk
-    use micm_grid_warehouse, only : grid_warehouse_t
-    use micm_1d_grid,    only : abs_1d_grid_t
+    use tuvx_grid_warehouse, only : grid_warehouse_t
+    use tuvx_grid,    only : abs_1d_grid_t
 
     !> local variables
     character(len=*), parameter :: Iam = 'test_grid: '

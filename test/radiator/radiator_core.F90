@@ -9,15 +9,15 @@ module radiator_core
   use musica_string,    only : string_t
   use musica_assert,    only : assert
   use musica_constants, only : ik => musica_ik, dk => musica_dk
-  use micm_grid_warehouse, only : grid_warehouse_t
-  use micm_1d_grid,        only : abs_1d_grid_t
-  use micm_Profile_warehouse, only : Profile_warehouse_t
-  use micm_Profile,           only : abs_Profile_t
-  use micm_radXfer_xsect_warehouse,        only : radXfer_xsect_warehouse_t
-  use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
-  use micm_radiator_warehouse,    only : radiator_warehouse_t
-  use micm_abs_radiator_type,     only : abs_radiator_t
-  use micm_abs_radiator_type,     only : radiator_state_t
+  use tuvx_grid_warehouse, only : grid_warehouse_t
+  use tuvx_grid,        only : abs_1d_grid_t
+  use tuvx_profile_warehouse, only : Profile_warehouse_t
+  use tuvx_profile,           only : abs_Profile_t
+  use tuvx_cross_section_warehouse,        only : radXfer_xsect_warehouse_t
+  use tuvx_cross_section, only : abs_cross_section_t
+  use tuvx_radiator_warehouse,    only : radiator_warehouse_t
+  use tuvx_radiator,     only : abs_radiator_t
+  use tuvx_radiator,     only : radiator_state_t
 
   implicit none
 
@@ -84,7 +84,7 @@ contains
 
   subroutine run( this )
 
-  use micm_radiator_warehouse, only : warehouse_iterator_t
+  use tuvx_radiator_warehouse, only : warehouse_iterator_t
 
   !> Arguments
   class(radiator_core_t), intent(inout)  :: this

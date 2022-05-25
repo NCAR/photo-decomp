@@ -9,7 +9,7 @@ exec_oldtuv() {
   ./oldtuv DO_O2 < test/regression/tuv_scenario_2.in
 }
 exec_newtuv() {
-  ./photo test/data/radiators.o2.config.json
+  ./tuv-x test/data/radiators.o2.config.json
 }
 exec_analysis() {
   python3 tool/diagnostics/var.compare.py test/regression/radiation.o2.compare.json

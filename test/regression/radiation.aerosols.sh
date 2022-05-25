@@ -9,7 +9,7 @@ exec_oldtuv() {
   ./oldtuv DO_AEROSOLS < test/regression/tuv_scenario_2.in
 }
 exec_newtuv() {
-  ./photo test/data/radiators.aerosols.config.json
+  ./tuv-x test/data/radiators.aerosols.config.json
 }
 exec_analysis() {
   python3 tool/diagnostics/var.compare.py test/regression/radiation.aerosols.compare.json
