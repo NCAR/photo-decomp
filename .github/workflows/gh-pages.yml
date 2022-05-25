@@ -52,7 +52,9 @@ jobs:
 
       - uses: ammaraskar/sphinx-problem-matcher@master
       - name: Build Sphinx documentation
-        run: make dirhtml
+        run: |
+          cd docs/
+          make dirhtml
 
       # Clone and set up the old gh-pages branch
       - name: Clone old gh-pages
