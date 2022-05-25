@@ -27,11 +27,12 @@ contains
 
     !> local variables
     character(len=*), parameter :: Iam = 'test_grid: '
-    character(len=*), parameter :: config_flsp = 'data/grid.tst.config.json'
+    character(len=*), parameter :: config_flsp = 'test/data/grid.tst.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
     type(string_t) :: Handle
     class(abs_1d_grid_t), pointer   :: aGrid
+    integer :: csv_grid_cells = 156
 
     write(*,*) Iam // 'entering'
 
@@ -61,13 +62,14 @@ contains
 
     write(*,*) ' '
     write(*,*) Iam // 'Grid = ',aGrid%handle_
-    write(*,*) 'There are ',aGrid%ncells_,' grid cells'
+    call assert( 412238770, aGrid%ncells_ .eq. csv_grid_cells )
     write(*,*) 'Grid edges'
-    write(*,'(1p10g15.7)') aGrid%edge_
+    call assert( 412238770, all( aGrid%edge_ .ne. 0 ) )
+    call assert( 412238771, all( aGrid%edge_ .gt. 0 ) )
     write(*,*) 'Grid midpoints'
-    write(*,'(1p10g15.7)') aGrid%mid_
+    call assert( 412238772, size( aGrid%mid_ ) .eq. csv_grid_cells )
     write(*,*) 'Grid deltas'
-    write(*,'(1p10g15.7)') aGrid%delta_
+    call assert( 412238773, size( aGrid%delta_ ) .eq. csv_grid_cells )
 
     deallocate( aGrid )
 
