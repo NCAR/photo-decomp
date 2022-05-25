@@ -4,12 +4,13 @@
 module tuvx_linear_algebra_linpack
 
    use musica_constants,    only : ik => musica_ik, dk => musica_dk
+   use tuvx_linear_algebra, only : abs_linalgebra_t
 
    implicit none
 
    public :: linalgebra_t
 
-   type :: linalgebra_t
+   type, extends(abs_linalgebra_t) :: linalgebra_t
      contains
      procedure :: SGBCO
      procedure :: SGBFA
