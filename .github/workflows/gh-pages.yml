@@ -84,7 +84,7 @@ jobs:
           # primary branch deployment.  Excludes the other branches
           # _gh-pages/branch-* paths, and not including
           # _gh-pages itself.
-          find _gh-pages/ -mindepth 1 ! -path '_gh-pages/branch*' -delete
+          find _gh-pages/ -mindepth 1 ! -path '_gh-pages/branch*' ! -path '_gh-pages/versions*' -delete
           rsync -a docs/_build/html/ _gh-pages/
 
       # If a push and not on default branch, then copy the build to
