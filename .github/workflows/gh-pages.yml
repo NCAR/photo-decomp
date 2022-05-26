@@ -54,7 +54,6 @@ jobs:
       - name: Build Sphinx documentation
         run: |
           cd docs/
-          mkdir -p _static
           make dirhtml
 
       # Clone and set up the old gh-pages branch
