@@ -21,7 +21,7 @@ endmacro(add_std_test)
 ################################################################################
 # Photo-decomp tests
 
-add_executable(grid_test grids/test.F90)
+add_executable(grid_test unit/grid/test.F90)
 add_std_test(grid_test)
 
 add_executable(Profile_test Profiles/test.F90)
