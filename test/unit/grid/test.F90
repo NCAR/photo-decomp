@@ -70,7 +70,7 @@ contains
 
     !> local variables
     character(len=*), parameter :: Iam = 'test_grid: '
-    character(len=*), parameter :: config_flsp = 'test/data/grid.tst.config.json'
+    character(len=*), parameter :: config_flsp = 'data/grid.tst.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
     type(string_t) :: Handle
