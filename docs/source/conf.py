@@ -22,7 +22,7 @@ copyright = '2022, NCAR/UCAR'
 author = 'NCAR/UCAR'
 
 # The full version, including alpha/beta/rc tags
-release = 'stable'
+release = 'v0.1'
 
 
 # -- General configuration ---------------------------------------------------
