@@ -61,9 +61,9 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         run: |
           set -x
-      #          git fetch
-      #          ( git branch gh-pages remotes/origin/gh-pages && git clone . --branch=gh-pages _gh-pages/ ) || mkdir _gh-pages
-      #          rm -rf _gh-pages/.git/
+          #git fetch
+          #( git branch gh-pages remotes/origin/gh-pages && git clone . --branch=gh-pages _gh-pages/ ) || mkdir _gh-pages
+          #rm -rf _gh-pages/.git/
           mkdir -p _gh_pages
           mkdir -p _gh-pages/branch/
 
