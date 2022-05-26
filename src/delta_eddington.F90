@@ -1,9 +1,11 @@
+! Copyright (C) 2020 National Center for Atmospheric Research
+! SPDX-License-Identifier: Apache-2.0
+!
+module tuvx_delta_eddington
 
-   module delta_eddington_type
-
-   use abstract_radXfer_type, only : abstract_radXfer_t, radField_t
+   use tuvx_radiative_transfer_solver, only : abstract_radXfer_t, radField_t
    use musica_constants,      only : ik => musica_ik, dk => musica_dk
-   use tuv_params,            only : pi
+   use tuvx_constants,            only : pi
 
    implicit none
 
@@ -27,17 +29,17 @@
                            result( radField )
 
    use musica_string,                   only : string_t
-   use micm_abs_radiator_type,          only : radiator_state_t
-   use micm_grid_warehouse,             only : grid_warehouse_t
-   use micm_Profile_warehouse,          only : Profile_warehouse_t
-   use micm_radiator_warehouse,         only : radiator_warehouse_t
-   use micm_radiator_warehouse,         only : warehouse_iterator_t
-   use spherical_geom_type,             only : spherical_geom_t
-   use micm_1d_grid,                    only : abs_1d_grid_t
-   use micm_Profile,                    only : abs_Profile_t
-   use micm_abs_radiator_type,          only : abs_radiator_t
-   use linalgebra_type,                 only : linalgebra_t
-   use debug,                           only : diagout
+   use tuvx_radiator,          only : radiator_state_t
+   use tuvx_grid_warehouse,             only : grid_warehouse_t
+   use tuvx_profile_warehouse,          only : Profile_warehouse_t
+   use tuvx_radiator_warehouse,         only : radiator_warehouse_t
+   use tuvx_radiator_warehouse,         only : warehouse_iterator_t
+   use tuvx_spherical_geometry,             only : spherical_geom_t
+   use tuvx_grid,                    only : abs_1d_grid_t
+   use tuvx_profile,                    only : abs_Profile_t
+   use tuvx_radiator,          only : abs_radiator_t
+   use tuvx_linear_algebra_linpack,                 only : linalgebra_t
+   use tuvx_diagnostic_util,                           only : diagout
 
    !> Arguments
    class(delta_eddington_t), intent(inout) :: this
@@ -432,4 +434,4 @@ wavelength_loop: &
 
    end function upDateRadField
 
-   end module delta_eddington_type
+end module tuvx_delta_eddington

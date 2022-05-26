@@ -1,4 +1,7 @@
-   module netcdf_util
+! Copyright (C) 2020 National Center for Atmospheric Research
+! SPDX-License-Identifier: Apache-2.0
+!
+module tuvx_netcdf_util
 
    use nc4fortran, only : netcdf_file
    use musica_constants, only : musica_ik, musica_dk
@@ -104,4 +107,4 @@
    
    end subroutine finalize
 
-   end module netcdf_util
+end module tuvx_netcdf_util

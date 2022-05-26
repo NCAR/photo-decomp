@@ -9,12 +9,12 @@ module radXfer_core
   use musica_string,    only : string_t
   use musica_assert,    only : assert
   use musica_constants, only : ik => musica_ik, dk => musica_dk
-  use micm_grid_warehouse, only : grid_warehouse_t
-  use micm_1d_grid,    only : abs_1d_grid_t
-  use micm_Profile_warehouse, only : Profile_warehouse_t
-  use micm_Profile,           only : abs_Profile_t
-  use micm_radXfer_xsect_warehouse, only : radXfer_xsect_warehouse_t
-  use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
+  use tuvx_grid_warehouse, only : grid_warehouse_t
+  use tuvx_grid,    only : abs_1d_grid_t
+  use tuvx_profile_warehouse, only : Profile_warehouse_t
+  use tuvx_profile,           only : abs_Profile_t
+  use tuvx_cross_section_warehouse, only : radXfer_xsect_warehouse_t
+  use tuvx_cross_section, only : abs_cross_section_t
 
   implicit none
 
@@ -77,7 +77,7 @@ contains
 
   subroutine run( this )
 
-  use micm_air_from_csv_file_Profile, only : airfromCsvFile_t
+  use tuvx_profile_air, only : airfromCsvFile_t
 
   !> Arguments
   class(radXfer_core_t), intent(inout)  :: this

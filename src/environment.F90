@@ -1,8 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!> \todo rewrite micm_environment module to follow musica style conventions
-module micm_environment
+module tuvx_environment
 
   use musica_constants,                only : musica_dk
 
@@ -23,4 +22,4 @@ module micm_environment
     real(musica_dk) :: o2_number_density
   end type environment_t
 
-end module micm_environment
+end module tuvx_environment

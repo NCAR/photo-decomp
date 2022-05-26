@@ -1,3 +1,6 @@
+! Copyright (C) 2020 National Center for Atmospheric Research
+! SPDX-License-Identifier: Apache-2.0
+!
 ! This file contains the following derived types,
 ! related to interpolation of input data
 !     inter1
@@ -5,8 +8,7 @@
 !     inter3
 !     inter4
 !=============================================================================*
-
-   module interpolation
+module tuvx_interpolate
 
    use musica_constants, only : ik => musica_ik, dk => musica_dk, lk => musica_lk
 
@@ -500,4 +502,4 @@
 
       END function inter4
 
-   end module interpolation
+end module tuvx_interpolate
