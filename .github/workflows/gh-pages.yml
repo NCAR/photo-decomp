@@ -73,7 +73,7 @@ jobs:
           cd docs/
           mkdir -p versions
           make github
-          version=$(sed -nr "s/^release = '(.+)'.*$/\1/p" source/conf.py)
+          version=$(sed -nr "s/^release = '(v.+)'.*$/\1/p" source/conf.py)
           mkdir -p _build/html/versions
           mv versions/stable _build/html/versions/${version}
           sed -ir "s/^release = .*$/release = 'stable'/" source/conf.py
