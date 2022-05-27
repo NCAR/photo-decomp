@@ -37,7 +37,6 @@ module tuvx_la_sr_bands
         real(dk)    :: AC(nPoly,nsrb)
         real(dk)    :: BC(nPoly,nsrb) ! Chebyshev polynomial coeffs
       contains
-        procedure :: initialize  
         procedure :: calculate_OD => la_srb_OD
         procedure :: calculate_xs => la_srb_xs
         procedure, private :: lymana_OD, lymana_xs
@@ -46,11 +45,17 @@ module tuvx_la_sr_bands
         procedure, private :: effxs
         procedure, private :: calc_params
         procedure, private :: chebev
+        final :: finalize
       end type la_srb_t
+
+      !> Constructor
+      interface la_srb_t
+        module procedure constructor
+      end interface la_srb_t
 
       contains
 
-      subroutine initialize( this, gridWareHouse )
+      function constructor( gridWareHouse ) result(la_srb_component)
 !----------------------------------------------------------------------
 ! check that the user wavelength grid, WL(IW), is compatible 
 ! with the wavelengths for the parameterizations of the Lyman-alpha and SRB.
@@ -61,8 +66,9 @@ module tuvx_la_sr_bands
       use musica_assert,        only : die_msg
       use musica_string,        only : string_t
 
+      type(la_srb_t), pointer :: la_srb_component
+
       !> Arguments
-      class(la_srb_t), intent(inout)        :: this
       type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
       !> Local variables
@@ -75,67 +81,70 @@ module tuvx_la_sr_bands
       write(*,*) ' '
       write(*,*) Iam // 'entering'
 
+      allocate( la_srb_component )
+
       Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
 
       !> Are la and srb grids fully "inside" the model grid?
-      this%has_la  = lambdaGrid%edge_(iONE) <= wlla(iONE) .and. lambdaGrid%edge_(lambdaGrid%ncells_+iONE) >= wlla(kla)
-      this%has_srb = lambdaGrid%edge_(iONE) <= wlsrb(iONE) .and. lambdaGrid%edge_(lambdaGrid%ncells_+iONE) >= wlsrb(ksrb)
-      this%has_la_srb = this%has_la .or. this%has_srb
+      la_srb_component%has_la  = lambdaGrid%edge_(iONE) <= wlla(iONE) .and. lambdaGrid%edge_(lambdaGrid%ncells_+iONE) >= wlla(kla)
+      la_srb_component%has_srb = &
+        lambdaGrid%edge_(iONE) <= wlsrb(iONE) .and. lambdaGrid%edge_(lambdaGrid%ncells_+iONE) >= wlsrb(ksrb)
+      la_srb_component%has_la_srb = la_srb_component%has_la .or. la_srb_component%has_srb
 has_la_srb: &
-      if( this%has_la_srb ) then
+      if( la_srb_component%has_la_srb ) then
         nw = lambdaGrid%ncells_ + iONE
-        if( this%has_la ) then
+        if( la_srb_component%has_la ) then
 ! locate Lyman-alpha wavelengths on grid
-          this%ila = 0
+          la_srb_component%ila = 0
           do iw = iONE, nw
             if(ABS(lambdaGrid%edge_(iw) - wlla(iONE)) < rTEN*precis) then
-              this%ila = iw
+              la_srb_component%ila = iw
               EXIT
             endif
           enddo
 ! check Lyman-alpha wavelength grid
-          if(this%ila == 0) then
+          if(la_srb_component%ila == 0) then
             write(*,*) 'For wavelengths below 205.8 nm, only the'
             write(*,*) 'pre-specified wavelength grid is permitted'
             write(*,*) 'Use nwint=-156, or edit subroutine gridw.f'
             call die_msg( 20001,' Lyman alpha grid mis-match - 1' )
           endif
           do iw = 2_ik, nla + iONE
-            if(ABS(lambdaGrid%edge_(this%ila + iw - iONE) - wlla(iw)) > rTEN*precis) then
+            if(ABS(lambdaGrid%edge_(la_srb_component%ila + iw - iONE) - wlla(iw)) > rTEN*precis) then
               call die_msg( 20002,' Lyman alpha grid mis-match - 2' )
             endif
           enddo
         endif
-        if( this%has_srb ) then
+        if( la_srb_component%has_srb ) then
 ! locate Schumann-Runge wavelengths on grid
-          this%isrb = 0
+          la_srb_component%isrb = 0
           do iw = iONE, nw
             if(ABS(lambdaGrid%edge_(iw) - wlsrb(iONE)) < rTEN*precis) then
-              this%isrb = iw
+              la_srb_component%isrb = iw
               EXIT
             endif
           enddo
 ! check Schumann-Runge wavelength grid
-          if(this%isrb == 0) then
+          if(la_srb_component%isrb == 0) then
             write(*,*) 'For wavelengths below 205.8 nm, only the'
             write(*,*) 'pre-specified wavelength grid is permitted'
             write(*,*) 'Use nwint=-156, or edit subroutine gridw.f'
             call die_msg( 20003,' SRB grid mis-match - 1' )
           endif
           do iw = 2_ik, nsrb + iONE
-            if(ABS(lambdaGrid%edge_(this%isrb + iw - iONE) - wlsrb(iw)) > rTEN* precis) then
+            if(ABS(lambdaGrid%edge_(la_srb_component%isrb + iw - iONE) - wlsrb(iw)) > rTEN* precis) then
               call die_msg( 20002,' SRB grid mismatch - w' )
             endif
           enddo
 !> Loads Chebyshev polynomial Coeff.
-          call this%init_srb_xs
+          call la_srb_component%init_srb_xs
         endif
       endif has_la_srb
 
       write(*,*) ' '
       write(*,*) Iam // 'exiting'
 
-      end subroutine initialize
+      end function constructor
 
       subroutine la_srb_OD( this,gridWareHouse,ProfileWareHouse,Airvcol,Airscol,dto2 )
 !-----------------------------------------------------------------------------*
@@ -890,5 +899,13 @@ has_la_srb: &
       endif
       
       end function chebev
+
+      subroutine finalize( this )
+
+        type(la_srb_t), intent(inout) :: this
+
+        ! nothing to do for now
+
+      end subroutine finalize
 
 end module tuvx_la_sr_bands

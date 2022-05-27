@@ -140,8 +140,7 @@ contains
     allocate( photolysis_core_obj%sphericalGeom_ )
     call photolysis_core_obj%sphericalGeom_%initialize( photolysis_core_obj%GridWareHouse_ )
     !> instantiate and initialize lyman alpha, srb type
-    allocate( photolysis_core_obj%la_srb_ )
-    call photolysis_core_obj%la_srb_%initialize( photolysis_core_obj%GridWareHouse_ )
+    photolysis_core_obj%la_srb_ => la_srb_t( photolysis_core_obj%GridWareHouse_ )
 
     write(*,*) Iam // 'exiting'
 
@@ -238,10 +237,6 @@ sza_loop: &
 
     if( associated( this%sphericalGeom_ ) ) then
       deallocate( this%sphericalGeom_ )
-    end if
-
-    if( associated( this%la_srb_ ) ) then
-      deallocate( this%la_srb_ )
     end if
 
   end subroutine finalize
