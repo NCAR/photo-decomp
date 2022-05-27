@@ -15,12 +15,11 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine test_grid_t(Iam, aGrid, num_cells, edges, midpoints, deltas)
+  subroutine test_grid_t(aGrid, num_cells, edges, midpoints, deltas)
     use musica_assert,    only : assert, almost_equal
     use musica_constants, only : dk => musica_dk
     use tuvx_grid,    only : abs_1d_grid_t
 
-    character(len=*) :: Iam
     integer :: i
 
     class(abs_1d_grid_t), pointer   :: aGrid
@@ -29,11 +28,8 @@ contains
 
     call assert( 412238776, all( aGrid%delta_ > 0._dk ) )
 
-    write(*,*) ' '
-    write(*,*) Iam // 'Grid = ',aGrid%handle_
     call assert( 412238777, aGrid%ncells_ .eq. num_cells )
 
-    write(*,*) 'Grid edges'
     ! plus 1 here because there are always 2 more edges than cells
     call assert( 412238778, size( aGrid%edge_ ) .eq. num_cells + 1 )
 
@@ -42,14 +38,12 @@ contains
         almost_equal( edges(i), aGrid%edge_(i), 0.1d-5 ) )
     end do
 
-    write(*,*) 'Grid midpoints'
     call assert( 412238780, size( aGrid%mid_ ) .eq. num_cells )
     do i = 1, size(aGrid%mid_)
       call assert( 412238781, &
         almost_equal( midpoints( i ), aGrid%mid_(i), 0.1d-5 ) )
     end do
 
-    write(*,*) 'Grid deltas'
     call assert( 412238782, size( aGrid%delta_ ) .eq. num_cells )
 
     do i = 1, size(aGrid%delta_)
@@ -69,7 +63,6 @@ contains
     use tuvx_grid,    only : abs_1d_grid_t
 
     !> local variables
-    character(len=*), parameter :: Iam = 'test_grid: '
     character(len=*), parameter :: config_flsp = 'data/grid.tst.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
@@ -172,28 +165,25 @@ contains
     config_midpoints = [13.00000,15.00000,17.00000,19.00000]
     config_deltas = [2.0, 2.0, 2.0, 2.0]
 
-    write(*,*) Iam // 'entering'
-
     call grid_tst_config%from_file( config_flsp )
     thewarehouse => grid_warehouse_t( grid_tst_config )
 
     Handle = 'Vertical Z'
     aGrid => thewarehouse%get_grid( Handle )
-    call test_grid_t(Iam, aGrid, eq_area_grid_cells, eq_area_edges, eq_area_midpoints, eq_area_deltas)
+    call test_grid_t(aGrid, eq_area_grid_cells, eq_area_edges, eq_area_midpoints, eq_area_deltas)
     deallocate( aGrid )
 
     Handle = 'Photolysis, wavelength'
     aGrid => thewarehouse%get_grid( Handle )
-    call test_grid_t(Iam, aGrid, csv_grid_cells, csv_edges, csv_midpoints, csv_deltas)
+    call test_grid_t(aGrid, csv_grid_cells, csv_edges, csv_midpoints, csv_deltas)
     deallocate( aGrid )
 
     Handle = 'Time, hrs'
     aGrid => thewarehouse%get_grid( Handle )
 
-    call test_grid_t(Iam, aGrid, config_grid_cells, config_edges, config_midpoints, config_deltas)
+    call test_grid_t(aGrid, config_grid_cells, config_edges, config_midpoints, config_deltas)
     deallocate( aGrid )
 
-    write(*,*) Iam // 'leaving'
 
   end subroutine test_grids
 
