@@ -79,6 +79,7 @@ jobs:
           sed -ir "s/^release = .*$/release = 'stable'/" source/conf.py
           make github
           mv versions/stable _build/html/versions/stable
+          mv switcher.json _build/html
           cd ..
           # Delete everything under _gh-pages/ that is from the
           # primary branch deployment.  Excludes the other branches
