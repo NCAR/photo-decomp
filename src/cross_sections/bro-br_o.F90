@@ -17,16 +17,19 @@ module tuvx_cross_section_bro_br_o
   !> Calculator for base_cross_section
   type, extends(base_cross_section_t) :: bro_br_o_cross_section_t
   contains
-    !> Initialize the cross section
-    procedure :: initialize
+    final     :: finalize
   end type bro_br_o_cross_section_t
+
+  interface bro_br_o_cross_section_t
+    module procedure constructor
+  end interface bro_br_o_cross_section_t
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize bro_br_o_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result( bro_br_o_cross_section_obj )
 
     use musica_constants,                only : dk => musica_dk, ik => musica_ik, lk => musica_lk
     use musica_config,                   only : config_t
@@ -38,8 +41,9 @@ contains
     use tuvx_grid,                    only : abs_1d_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
 
+    class(bro_br_o_cross_section_t), pointer :: bro_br_o_cross_section_obj
+
     !> Arguments
-    class(bro_br_o_cross_section_t), intent(inout) :: this
     logical(lk), optional, intent(in)              :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout)                  :: config
@@ -75,9 +79,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( bro_br_o_cross_section_obj%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = iONE,size(this%cross_section_parms)
+      do fileNdx = iONE,size(bro_br_o_cross_section_obj%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -89,22 +93,22 @@ file_loop: &
 
     !> interpolate from data to model wavelength grid
         if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
-            allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
+          if( .not. allocated(bro_br_o_cross_section_obj%cross_section_parms(fileNdx)%array) ) then
+            allocate(bro_br_o_cross_section_obj%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
           endif
           do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
             call inter4(xto=lambdaGrid%edge_, &
-                        yto=this%cross_section_parms(fileNdx)%array(:,parmNdx), &
+                        yto=bro_br_o_cross_section_obj%cross_section_parms(fileNdx)%array(:,parmNdx), &
                         xfrom=data_lambda, &
                         yfrom=data_parameter,Foldin=1)
           enddo
         else
-          this%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
+          bro_br_o_cross_section_obj%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
         endif
         if( allocated(netcdf_obj%temperature) ) then
-          this%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
+          bro_br_o_cross_section_obj%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
@@ -112,6 +116,13 @@ file_loop: &
 
     write(*,*) Iam,'exiting'
 
-  end subroutine initialize
+  end function constructor
+
+  subroutine finalize( this )
+    type(bro_br_o_cross_section_t), intent(inout) :: this
+
+    ! nothing to do, no one to be
+
+  end subroutine finalize
 
 end module tuvx_cross_section_bro_br_o
