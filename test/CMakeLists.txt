@@ -24,8 +24,6 @@ endmacro(add_std_test)
 add_executable(grid_test grids/test.F90)
 add_std_test(grid_test)
 
-add_test(NAME photolysis_rates COMMAND test/regression/photolysis_rate/photolysis_rates.sh WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
 add_executable(profile_test Profiles/test.F90)
 add_std_test(profile_test)
 
@@ -34,6 +32,8 @@ add_std_test(radXfer_test)
 
 add_executable(radiator_test radiator/radiator_core.F90 radiator/radiator_test.F90)
 add_std_test(radiator_test)
+
+add_test(NAME regression_photolysis_rates COMMAND test/regression/photolysis_rate/photolysis_rates.sh WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_test(NAME regression_aerosols_radiator COMMAND test/regression/radiation.aerosols.sh WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 add_test(NAME regression_o2_radiator       COMMAND test/regression/radiation.o2.sh       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

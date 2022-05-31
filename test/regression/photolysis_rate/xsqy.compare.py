@@ -21,10 +21,7 @@ def compare_var(var_name,tolerance,var_old,var_new):
 
     # compare array sizes
     if var_old.size != var_new.size :
-        print(f"size of {var_name}.old and {var_name}.new are not the same")
-        print(f"size {var_name}.old = {var_old.size}")
-        print(f"size {var_name}.new = {var_new.size}")
-        sys.exit(-1)
+        raise RuntimeError('Mismatched arrays: {var_name}.old size = {var_old.size}; {var_name}.new size = {var_new.size}')
 
     # get percent difference
     diff = np.zeros( var_old.size )
@@ -64,12 +61,10 @@ def get_paths():
 
 # Returns labels for new and old photolysis reactions
 def get_labels(script_path):
-    flabel_old = open(os.path.join(script_path, "annotatedjlabels.old"), 'r')
-    flabel_new = open(os.path.join(script_path, "annotatedjlabels.new"), 'r')
-    label_old = flabel_old.readlines()
-    label_new = flabel_new.readlines()
-    flabel_old.close()
-    flabel_new.close()
+    with open(os.path.join(script_path, "annotatedjlabels.old"), 'r') as f :
+        label_old = f.readlines()
+    with open(os.path.join(script_path, "annotatedjlabels.new"), 'r') as f :
+        label_new = f.readlines()
     return label_new, label_old
 
 
@@ -180,11 +175,10 @@ labels_new, labels_old = get_labels(script_path)
 
 print("\njlabels.new\n-----------")
 for label in labels_new:
-   print(label.strip())
+    print(label.strip())
 
-config_file=open(os.path.join(script_path, f"xsqy.compare.json"),"r")
-config=json.load(config_file)
-config_file.close()
+with open(os.path.join(script_path, f"xsqy.compare.json"),"r") as f :
+    config=json.load(f)
 
 file_indices = [ '01', '02', '03', '04', '05' ]
 for file_index in file_indices:
@@ -194,6 +188,4 @@ for file_index in file_indices:
                                          labels_new, labels_old, config)
 
 if( not success ):
-    print("Test failed")
-    sys.exit(1)
-
+    raise RuntimeError('Test failed')
