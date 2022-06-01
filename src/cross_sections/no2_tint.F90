@@ -31,20 +31,23 @@ module tuvx_cross_section_no2_tint
     !> The cross section array
     type(cross_section_parms_t), allocatable :: cross_section_parms(:)
   contains
-    !> Initialize the cross section
-    procedure :: initialize
     !> Calculate the cross section
     procedure :: calculate => run
     !> clean up
     final     :: finalize
   end type no2_tint_cross_section_t
 
+  !> Constructor
+  interface no2_tint_cross_section_t
+    module procedure constructor
+  end interface no2_tint_cross_section_t
+
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize no2_tint_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( no2_tint_cross_section_component )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -55,8 +58,9 @@ contains
     use tuvx_grid,                    only : abs_1d_grid_t
     use tuvx_profile_warehouse,     only : Profile_warehouse_t
 
+    type(no2_tint_cross_section_t), pointer :: no2_tint_cross_section_component
+
     !> base cross section type
-    class(no2_tint_cross_section_t), intent(inout) :: this
     logical(lk), optional, intent(in)              :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout) :: config
@@ -82,6 +86,8 @@ contains
     type(string_t)     :: Handle
 
     write(*,*) Iam,'entering'
+    allocate(no2_tint_cross_section_component)
+
     !> Get model wavelength grids
     Handle = 'Photolysis, wavelength'
     lambdaGrid => gridWareHouse%get_grid( Handle )
@@ -94,9 +100,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( no2_tint_cross_section_component%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = iONE,size(this%cross_section_parms)
+      do fileNdx = iONE,size(no2_tint_cross_section_component%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -106,7 +112,7 @@ file_loop: &
           write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  array must have 2 or more parameters'
           call die_msg( 400000002, msg )
         endif
-        associate( Xsection => this%cross_section_parms(fileNdx) )
+        associate( Xsection => no2_tint_cross_section_component%cross_section_parms(fileNdx) )
     !> interpolation temperatures must be in netcdf file
         if( allocated(netcdf_obj%temperature) ) then
           Xsection%temperature = netcdf_obj%temperature
@@ -150,7 +156,7 @@ file_loop: &
           do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
-            call this%addpnts( config, data_lambda, data_parameter )
+            call no2_tint_cross_section_component%addpnts( config, data_lambda, data_parameter )
             call inter2(xto=lambdaGrid%edge_, &
                         yto=Xsection%array(:,parmNdx), &
                         xfrom=data_lambda, &
@@ -169,7 +175,7 @@ file_loop: &
 
     write(*,*) Iam,'exiting'
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

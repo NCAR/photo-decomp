@@ -18,7 +18,6 @@ module tuvx_cross_section
   type, abstract :: abs_cross_section_t
   contains
     !> Calculate the photo rate cross section
-    procedure(constructor), deferred :: constructor
     procedure(calculate), deferred :: calculate
     procedure                      :: addpnts
   end type abs_cross_section_t
@@ -31,24 +30,6 @@ module tuvx_cross_section
 interface
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !> Initialize the cross section
-  function constructor( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
-
-    use musica_config,    only : config_t
-    use musica_constants, only : lk => musica_lk
-    use tuvx_grid_warehouse,    only : grid_warehouse_t
-    use tuvx_profile_warehouse, only : Profile_warehouse_t
-
-    import abs_cross_section_t
-
-    !> Cross section calculator
-    logical(lk), optional, intent(in)          :: atMidPoint
-    class(abs_cross_section_t), intent(inout)  :: this
-    type(config_t), intent(inout)              :: config
-    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
-  end function constructor
 
   !> Calculate the cross section
   function calculate( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )

@@ -16,8 +16,6 @@ RUN dnf -y update \
 
 RUN pip3 install numpy scipy
 
-COPY . /photo-decomp/
-
 # install json-fortran
 RUN curl -LO https://github.com/jacobwilliams/json-fortran/archive/8.2.0.tar.gz \
     && tar -zxvf 8.2.0.tar.gz \
@@ -38,6 +36,7 @@ RUN curl -LO https://github.com/geospace-code/nc4fortran/archive/refs/tags/v1.4.
       && make install
 
 # build the photo-decomp tool
+COPY . /photo-decomp/
 RUN mkdir /build \
       && cd /build \
       && export JSON_FORTRAN_HOME="/usr/local/jsonfortran-gnu-8.2.0" \

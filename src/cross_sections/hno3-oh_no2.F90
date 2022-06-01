@@ -26,18 +26,21 @@ module tuvx_cross_section_hno3_oh_no2
   !> Calculator for hno3-oh_no2 cross section
   type, extends(base_cross_section_t) :: hno3_oh_no2_cross_section_t
   contains
-    !> Initialize the cross section
-    procedure :: initialize
     !> Calculate the cross section
     procedure :: calculate => run
   end type hno3_oh_no2_cross_section_t
+
+  !> Constructor
+  interface hno3_oh_no2_cross_section_t
+    module procedure constructor
+  end interface hno3_oh_no2_cross_section_t
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize base_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result( hno3_oh_no2_cross_section_component )
 
     use musica_config,                   only : config_t
     use tuvx_netcdf_util,                     only : netcdf_t
@@ -45,7 +48,7 @@ contains
     use musica_assert,                   only : die_msg
 
     !> base cross section type
-    class(hno3_oh_no2_cross_section_t), intent(inout) :: this
+    type(hno3_oh_no2_cross_section_t), pointer :: hno3_oh_no2_cross_section_component
     !> cross section configuration object
     type(config_t), intent(inout)            :: config
     type(grid_warehouse_t), intent(inout)    :: gridWareHouse
@@ -79,9 +82,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( hno3_oh_no2_cross_section_component%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = 1,size(this%cross_section_parms)
+      do fileNdx = 1,size(hno3_oh_no2_cross_section_component%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -93,14 +96,14 @@ file_loop: &
 
     !> interpolate from data to model wavelength grid
         if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
-            allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
+          if( .not. allocated(hno3_oh_no2_cross_section_component%cross_section_parms(fileNdx)%array) ) then
+            allocate(hno3_oh_no2_cross_section_component%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
           endif
           do parmNdx = 1,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
             if( parmNdx == 1 ) then
-              call this%addpnts( config, data_lambda, data_parameter )
+              call hno3_oh_no2_cross_section_component%addpnts( config, data_lambda, data_parameter )
             elseif( parmNdx == 2 ) then
               tmp_config = config
               addpntKey = 'lower extrapolation'
@@ -109,18 +112,18 @@ file_loop: &
               addpntKey = 'upper extrapolation'
               addpntVal = 'boundary'
               call tmp_config%add( addpntKey, addpntVal, Iam )
-              call this%addpnts( tmp_config, data_lambda, data_parameter )
+              call hno3_oh_no2_cross_section_component%addpnts( tmp_config, data_lambda, data_parameter )
             endif
             call inter2(xto=lambdaGrid%edge_, &
-                        yto=this%cross_section_parms(fileNdx)%array(:,parmNdx), &
+                        yto=hno3_oh_no2_cross_section_component%cross_section_parms(fileNdx)%array(:,parmNdx), &
                         xfrom=data_lambda, &
                         yfrom=data_parameter,ierr=retcode)
           enddo
         else
-          this%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
+          hno3_oh_no2_cross_section_component%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
         endif
         if( allocated(netcdf_obj%temperature) ) then
-          this%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
+          hno3_oh_no2_cross_section_component%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
@@ -128,7 +131,7 @@ file_loop: &
 
     write(*,*) Iam,'exiting'
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

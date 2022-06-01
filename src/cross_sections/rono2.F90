@@ -22,8 +22,6 @@ module tuvx_cross_section_rono2
   !> Calculator for rono2 cross section
   type, extends(base_cross_section_t) :: rono2_cross_section_t
   contains
-    !> Initialize the cross section
-    procedure :: initialize
     !> Calculate the cross section
     procedure :: calculate => run
   end type rono2_cross_section_t

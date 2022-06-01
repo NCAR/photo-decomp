@@ -18,27 +18,30 @@ module tuvx_cross_section_rayliegh
   !> Calculator for rayliegh_cross_section
   type, extends(abs_cross_section_t) :: rayliegh_cross_section_t
   contains
-    !> Initialize the cross section
-    procedure :: initialize
     !> Calculate the cross section
     procedure :: calculate => run
     !> clean up
     final     :: finalize
   end type rayliegh_cross_section_t
 
+  !> Constructor
+  interface rayliegh_cross_section_t
+    module procedure constructor
+  end interface rayliegh_cross_section_t
+
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize rayliegh_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( rayliegh_cross_section_component )
 
     use musica_config,               only : config_t
     use tuvx_grid_warehouse,         only : grid_warehouse_t
     use tuvx_profile_warehouse, only : Profile_warehouse_t
 
     !> rayliegh cross section type
-    class(rayliegh_cross_section_t), intent(inout) :: this
+    type(rayliegh_cross_section_t), pointer :: rayliegh_cross_section_component
     logical(lk), optional, intent(in)              :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout)                  :: config
@@ -50,9 +53,11 @@ contains
 
     write(*,*) Iam,'entering'
 
+    allocate ( rayliegh_cross_section_component )
+
     write(*,*) Iam,'exiting'
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

@@ -24,20 +24,23 @@ module tuvx_cross_section_o3_tint
   type, extends(tint_cross_section_t) :: o3_tint_cross_section_t
     real(dk) :: v185(1), v195(1), v345(1)
   contains
-    !> Initialize the cross section
-    procedure :: initialize
     !> Calculate the cross section
     procedure :: calculate => run
     !> refraction
     procedure :: refraction
   end type o3_tint_cross_section_t
 
+  !> Constructor
+  interface o3_tint_cross_section_t
+    module procedure constructor
+  end interface o3_tint_cross_section_t
+
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize o3_tint_cross_section_t object
-  subroutine initialize( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( o3_tint_cross_section_component )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -49,7 +52,7 @@ contains
     use tuvx_profile_warehouse,     only : Profile_warehouse_t
 
     !> o3 tint cross section type
-    class(o3_tint_cross_section_t), intent(inout) :: this
+    type(o3_tint_cross_section_t), pointer :: o3_tint_cross_section_component
     logical(lk), optional, intent(in)             :: atMidPoint
     !> cross section configuration object
     type(config_t), intent(inout)                 :: config
@@ -82,6 +85,8 @@ contains
 
     write(*,*) Iam,'entering'
 
+    allocate( o3_tint_cross_section_component )
+
     !> Get model wavelength grids
     Handle = 'Photolysis, wavelength'
     lambdaGrid => gridWareHouse%get_grid( Handle )
@@ -91,9 +96,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( o3_tint_cross_section_component%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = iONE,size(this%cross_section_parms)
+      do fileNdx = iONE,size(o3_tint_cross_section_component%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -104,10 +109,10 @@ file_loop: &
           call die_msg( 400000002, msg )
         endif
     !> refraction index
-        refracNdx = this%refraction( netcdf_obj%wavelength, refracDensity )
+        refracNdx = o3_tint_cross_section_component%refraction( netcdf_obj%wavelength, refracDensity )
         netcdf_obj%wavelength = refracNdx * netcdf_obj%wavelength
 
-        associate( Xsection => this%cross_section_parms(fileNdx) )
+        associate( Xsection => o3_tint_cross_section_component%cross_section_parms(fileNdx) )
     !> interpolation temperatures must be in netcdf file
         if( allocated(netcdf_obj%temperature) ) then
           Xsection%temperature = netcdf_obj%temperature
@@ -145,7 +150,7 @@ file_loop: &
           do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
-            call this%addpnts( config, data_lambda, data_parameter )
+            call o3_tint_cross_section_component%addpnts( config, data_lambda, data_parameter )
             call inter2(xto=lambdaGrid%edge_, &
                         yto=Xsection%array(:,parmNdx), &
                         xfrom=data_lambda, &
@@ -157,10 +162,14 @@ file_loop: &
         end associate
         deallocate( netcdf_obj )
       enddo file_loop
-      this%v185 = this%refraction( (/ w185 /), refracDensity ) * w185
-      this%v195 = this%refraction( (/ w195 /), refracDensity ) * w195
-      this%v345 = this%refraction( (/ w345 /), refracDensity ) * w345
-      this%cross_section_parms(2)%array(:,4) = this%cross_section_parms(1)%array(:,1)
+      o3_tint_cross_section_component%v185 = &
+        o3_tint_cross_section_component%refraction( (/ w185 /), refracDensity ) * w185
+      o3_tint_cross_section_component%v195 = &
+        o3_tint_cross_section_component%refraction( (/ w195 /), refracDensity ) * w195
+      o3_tint_cross_section_component%v345 = & 
+        o3_tint_cross_section_component%refraction( (/ w345 /), refracDensity ) * w345
+      o3_tint_cross_section_component%cross_section_parms(2)%array(:,4) =  &
+        o3_tint_cross_section_component%cross_section_parms(1)%array(:,1)
     else has_netcdf_file
       write(msg,*) Iam//'must have at least one netcdf input file'
       call die_msg( 400000008, msg )
@@ -168,7 +177,7 @@ file_loop: &
 
     write(*,*) Iam,'exiting'
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
