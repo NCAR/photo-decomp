@@ -7,7 +7,7 @@
 !> The photorates_component_core_t type and related functions
 module tuvx_photolysis_rate
 
-  use tuvx_cross_section, only : abs_cross_section_ptr
+  use tuvx_cross_section, only : base_cross_section_ptr
   use tuvx_quantum_yield,     only : abs_quantum_yield_ptr
   use tuvx_grid_warehouse,             only : grid_warehouse_t
   use tuvx_profile_warehouse,          only : profile_warehouse_t
@@ -27,7 +27,7 @@ module tuvx_photolysis_rate
   !> photorates component
   type :: photorates_component_core_t
     !> Photo rate constant calculators
-    type(abs_cross_section_ptr), allocatable :: cross_section_objs_(:)
+    type(base_cross_section_ptr), allocatable :: cross_section_objs_(:)
     type(abs_quantum_yield_ptr), allocatable :: quantum_yield_objs_(:)
     real(dk),               allocatable :: rate_constant_alias_factor_(:)
     type(string_t), allocatable              :: handle_(:)
@@ -73,7 +73,7 @@ contains
     type(config_t) :: reaction_config
     type(config_t) :: cross_section_config, quantum_yield_config
     class(iterator_t), pointer :: iter
-    type(abs_cross_section_ptr) :: cross_section_ptr
+    type(base_cross_section_ptr) :: cross_section_ptr
     type(abs_quantum_yield_ptr) :: quantum_yield_ptr
     character(len=64)           :: keychar
     type(string_t)              :: netcdfFile, Object

@@ -3,7 +3,6 @@
 
 set(TUVX_SRC constants.F90
              core.F90
-             cross_section.F90
              cross_section_factory.F90
              cross_section_warehouse.F90
              delta_eddington.F90

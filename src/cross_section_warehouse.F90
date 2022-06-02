@@ -8,9 +8,9 @@
 !!
 module tuvx_cross_section_warehouse
 
-  use tuvx_cross_section,     only : abs_cross_section_ptr
-  use musica_constants,                only : musica_dk, musica_ik
-  use musica_string,                   only : string_t
+  use tuvx_cross_section, only : base_cross_section_ptr
+  use musica_constants,        only : musica_dk, musica_ik
+  use musica_string,           only : string_t
 
   implicit none
 
@@ -21,7 +21,7 @@ module tuvx_cross_section_warehouse
   type :: radXfer_xsect_warehouse_t
     private
     !> cross section calculators
-    type(abs_cross_section_ptr), allocatable :: cross_section_objs_(:)
+    type(base_cross_section_ptr), allocatable :: cross_section_objs_(:)
     !> cross section "handle"
     type(string_t), allocatable              :: handles_(:)
   contains
@@ -67,7 +67,7 @@ contains
     type(config_t) :: reaction_set, reaction_config
     type(config_t) :: cross_section_config
     class(iterator_t), pointer :: iter
-    type(abs_cross_section_ptr) :: cross_section_ptr
+    type(base_cross_section_ptr) :: cross_section_ptr
     character(:), allocatable   :: jsonkey
     character(len=32)           :: keychar
     type(string_t)              :: areaction_key
@@ -127,7 +127,7 @@ has_radXfer_xsects: &
   !> Get copy of a specific radXfer cross section object
   function get_radXfer_cross_section( this, radXfer_cross_section_handle ) result( radXfer_cross_section_ptr )
 
-    use tuvx_cross_section, only : abs_cross_section_t
+    use tuvx_cross_section, only : base_cross_section_t
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
@@ -136,7 +136,7 @@ has_radXfer_xsects: &
     class(radXfer_xsect_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)             :: radXfer_cross_section_handle
 
-    class(abs_cross_section_t), pointer    :: radXfer_cross_section_ptr
+    class(base_cross_section_t), pointer :: radXfer_cross_section_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radXfer cross section warehouse get_radXfer_cross_section: '

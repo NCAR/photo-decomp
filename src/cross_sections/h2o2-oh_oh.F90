@@ -7,8 +7,8 @@
 !> The h2o2+hv->oh_oh cross_section type and related functions
 module tuvx_cross_section_h2o2_oh_oh
 
-  use tuvx_cross_section_base, only : base_cross_section_t
-  use musica_constants,                     only : dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use tuvx_cross_section, only : base_cross_section_t, base_constructor
+  use musica_constants,   only : dk => musica_dk, ik => musica_ik, lk => musica_lk
 
   implicit none
 
@@ -22,7 +22,32 @@ module tuvx_cross_section_h2o2_oh_oh
     procedure :: calculate => run
   end type h2o2_oh_oh_cross_section_t
 
+  !> Constructor
+  interface h2o2_oh_oh_cross_section_t
+    module procedure constructor
+  end interface h2o2_oh_oh_cross_section_t
+
 contains
+
+  !> Initialize the cross section
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
+ 
+    use musica_config,    only : config_t
+    use musica_constants, only : lk => musica_lk
+    use tuvx_grid_warehouse,    only : grid_warehouse_t
+    use tuvx_profile_warehouse, only : Profile_warehouse_t
+ 
+ 
+    !> Cross section calculator
+    logical(lk), optional, intent(in)          :: atMidPoint
+    class(base_cross_section_t), pointer  :: this
+    type(config_t), intent(inout)              :: config
+    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
+
+    allocate ( h2o2_oh_oh_cross_section_t :: this )
+    call base_constructor( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  end function
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

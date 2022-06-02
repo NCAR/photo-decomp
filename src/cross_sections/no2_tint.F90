@@ -7,8 +7,8 @@
 !> The temperature interpolation cross_section type and related functions
 module tuvx_cross_section_no2_tint
 
-  use tuvx_cross_section,     only : abs_cross_section_t
-  use musica_constants,                        only : dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use tuvx_cross_section, only : base_cross_section_t, cross_section_parms_t
 
   implicit none
 
@@ -20,16 +20,8 @@ module tuvx_cross_section_no2_tint
   real(dk), parameter    :: rZERO = 0.0_dk
   real(dk), parameter    :: rONE  = 1.0_dk
 
-  type cross_section_parms_t
-    real(dk), allocatable :: temperature(:)
-    real(dk), allocatable :: deltaT(:)
-    real(dk), allocatable :: array(:,:)
-  end type cross_section_parms_t
-
   !> Calculator for tint_cross_section
-  type, extends(abs_cross_section_t) :: no2_tint_cross_section_t
-    !> The cross section array
-    type(cross_section_parms_t), allocatable :: cross_section_parms(:)
+  type, extends(base_cross_section_t) :: no2_tint_cross_section_t
   contains
     !> Calculate the cross section
     procedure :: calculate => run
@@ -47,7 +39,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize no2_tint_cross_section_t object
-  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( no2_tint_cross_section_component )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -58,7 +50,7 @@ contains
     use tuvx_grid,                    only : abs_1d_grid_t
     use tuvx_profile_warehouse,     only : Profile_warehouse_t
 
-    type(no2_tint_cross_section_t), pointer :: no2_tint_cross_section_component
+    type(no2_tint_cross_section_t), pointer :: this
 
     !> base cross section type
     logical(lk), optional, intent(in)              :: atMidPoint
@@ -86,7 +78,7 @@ contains
     type(string_t)     :: Handle
 
     write(*,*) Iam,'entering'
-    allocate(no2_tint_cross_section_component)
+    allocate(this)
 
     !> Get model wavelength grids
     Handle = 'Photolysis, wavelength'
@@ -100,9 +92,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( no2_tint_cross_section_component%cross_section_parms(size(netcdfFiles)) )
+      allocate( this%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = iONE,size(no2_tint_cross_section_component%cross_section_parms)
+      do fileNdx = iONE,size(this%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -112,7 +104,7 @@ file_loop: &
           write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  array must have 2 or more parameters'
           call die_msg( 400000002, msg )
         endif
-        associate( Xsection => no2_tint_cross_section_component%cross_section_parms(fileNdx) )
+        associate( Xsection => this%cross_section_parms(fileNdx) )
     !> interpolation temperatures must be in netcdf file
         if( allocated(netcdf_obj%temperature) ) then
           Xsection%temperature = netcdf_obj%temperature
@@ -156,7 +148,7 @@ file_loop: &
           do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
-            call no2_tint_cross_section_component%addpnts( config, data_lambda, data_parameter )
+            call this%addpnts( config, data_lambda, data_parameter )
             call inter2(xto=lambdaGrid%edge_, &
                         yto=Xsection%array(:,parmNdx), &
                         xfrom=data_lambda, &

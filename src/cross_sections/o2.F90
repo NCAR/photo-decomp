@@ -7,24 +7,17 @@
 !> The o2_cross_section type and related functions
 module tuvx_cross_section_o2
 
-  use tuvx_cross_section, only : abs_cross_section_t
-  use musica_constants,                    only : musica_dk, musica_ik
-  use la_srb_type,                         only : la_srb_t
+  use musica_constants, only : musica_dk, musica_ik
+  use tuvx_cross_section, only : base_cross_section_t, cross_section_parms_t
+  use la_srb_type,      only : la_srb_t
 
   implicit none
 
   private
   public :: o2_cross_section_t
 
-  type cross_section_parms_t
-    real(musica_dk), allocatable :: temperature(:)
-    real(musica_dk), allocatable :: array(:,:)
-  end type cross_section_parms_t
-
   !> Calculator for o2_cross_section
-  type, extends(abs_cross_section_t) :: o2_cross_section_t
-    !> The cross section array
-    type(cross_section_parms_t), allocatable :: cross_section_parms(:)
+  type, extends(base_cross_section_t) :: o2_cross_section_t
     type(la_srb_t), allocatable              :: la_srb_obj_
   contains
     !> Calculate the cross section
@@ -43,7 +36,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize o2_cross_section_t object
-  function constructor( config, gridWareHouse, ProfileWareHouse ) result( o2_cross_section_component )
+  function constructor( config, gridWareHouse, ProfileWareHouse ) result( this )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -56,7 +49,7 @@ contains
     use tuvx_profile,                    only : abs_Profile_t
 
     !> o2 cross section type
-    type(o2_cross_section_t), pointer :: o2_cross_section_component
+    type(o2_cross_section_t), pointer :: this
     !> cross section configuration object
     type(config_t), intent(inout) :: config
     !> The warehouses
@@ -84,26 +77,26 @@ contains
 
     write(*,*) Iam,'entering'
 
-    allocate( o2_cross_section_component )
+    allocate( this )
 
     !> Get model wavelength grids
     Handle = 'Photolysis, wavelength'
     lambdaGrid => gridWareHouse%get_grid( Handle )
 
     !> allocate la_srb object
-    if( allocated(o2_cross_section_component%la_srb_obj_) ) then
-      deallocate(o2_cross_section_component%la_srb_obj_)
+    if( allocated(this%la_srb_obj_) ) then
+      deallocate(this%la_srb_obj_)
     endif
-    allocate( o2_cross_section_component%la_srb_obj_ )
+    allocate( this%la_srb_obj_ )
 
     !> get cross section netcdf filespec
     call config%get( 'netcdf files', netcdfFiles, Iam, found=found )
 
 has_netcdf_file: &
     if( found ) then
-      allocate( o2_cross_section_component%cross_section_parms(size(netcdfFiles)) )
+      allocate( this%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = 1,size(o2_cross_section_component%cross_section_parms)
+      do fileNdx = 1,size(this%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -115,29 +108,29 @@ file_loop: &
 
     !> interpolate from data to model wavelength grid
         if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(o2_cross_section_component%cross_section_parms(fileNdx)%array) ) then
-            allocate(o2_cross_section_component%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
+          if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
+            allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
           endif
           do parmNdx = 1,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
-            call o2_cross_section_component%addpnts( config, data_lambda, data_parameter )
+            call this%addpnts( config, data_lambda, data_parameter )
             call inter2(xto=lambdaGrid%edge_, &
-                        yto=o2_cross_section_component%cross_section_parms(fileNdx)%array(:,parmNdx), &
+                        yto=this%cross_section_parms(fileNdx)%array(:,parmNdx), &
                         xfrom=data_lambda, &
                         yfrom=data_parameter,ierr=retcode)
           enddo
         else
-          o2_cross_section_component%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
+          this%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
         endif
         if( allocated(netcdf_obj%temperature) ) then
-          o2_cross_section_component%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
+          this%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
     endif has_netcdf_file
 
-    call o2_cross_section_component%la_srb_obj_%initialize( lambdaGrid )
+    call this%la_srb_obj_%initialize( lambdaGrid )
 
     write(*,*) Iam,'exiting'
 

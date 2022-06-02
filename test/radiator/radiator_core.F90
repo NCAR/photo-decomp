@@ -14,7 +14,7 @@ module radiator_core
   use tuvx_profile_warehouse, only : Profile_warehouse_t
   use tuvx_profile,           only : abs_Profile_t
   use tuvx_cross_section_warehouse,        only : radXfer_xsect_warehouse_t
-  use tuvx_cross_section, only : abs_cross_section_t
+  use tuvx_cross_section, only : base_cross_section_t
   use tuvx_radiator_warehouse,    only : radiator_warehouse_t
   use tuvx_radiator,     only : abs_radiator_t
   use tuvx_radiator,     only : radiator_state_t
@@ -97,7 +97,7 @@ contains
 
   class(abs_1d_grid_t), pointer       :: zGrid, lambdaGrid
   class(abs_Profile_t), pointer       :: AirProfile, TemperatureProfile
-  class(abs_cross_section_t), pointer :: RaylieghCrossSection
+  class(base_cross_section_t), pointer :: RaylieghCrossSection
   class(abs_radiator_t), allocatable  :: RaylieghRadiator
   class(abs_radiator_t), allocatable  :: aRadiator
   type(warehouse_iterator_t), pointer :: iter

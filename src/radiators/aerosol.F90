@@ -209,7 +209,6 @@ contains
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_grid,                  only : abs_1d_grid_t
     use tuvx_cross_section_warehouse,  only : radXfer_xsect_warehouse_t
-    use tuvx_cross_section, only : abs_cross_section_t
 
     !> Arguments
     !> radiator obj

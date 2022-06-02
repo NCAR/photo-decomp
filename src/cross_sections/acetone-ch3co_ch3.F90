@@ -7,7 +7,7 @@
 !> The ch3coch3+hv->ch3co+ch3_cross_section type and related functions
 module tuvx_cross_section_ch3coch3_ch3co_ch3
 
-  use tuvx_cross_section_base,    only : base_cross_section_t
+  use tuvx_cross_section, only : base_cross_section_t, base_constructor
 
   implicit none
 
@@ -21,7 +21,32 @@ module tuvx_cross_section_ch3coch3_ch3co_ch3
     procedure :: calculate => run
   end type ch3coch3_ch3co_ch3_cross_section_t
 
+  !> Constructor
+  interface ch3coch3_ch3co_ch3_cross_section_t
+    module procedure constructor
+  end interface ch3coch3_ch3co_ch3_cross_section_t
+
 contains
+
+  !> Initialize the cross section
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
+ 
+    use musica_config,    only : config_t
+    use musica_constants, only : lk => musica_lk
+    use tuvx_grid_warehouse,    only : grid_warehouse_t
+    use tuvx_profile_warehouse, only : Profile_warehouse_t
+ 
+ 
+    !> Cross section calculator
+    logical(lk), optional, intent(in)          :: atMidPoint
+    class(base_cross_section_t), pointer  :: this
+    type(config_t), intent(inout)              :: config
+    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
+    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
+
+    allocate ( ch3coch3_ch3co_ch3_cross_section_t :: this )
+    call base_constructor( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

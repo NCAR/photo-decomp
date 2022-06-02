@@ -7,8 +7,7 @@
 !> Builder of cross section calculators
 module tuvx_cross_section_factory
 
-  use tuvx_cross_section,  only : abs_cross_section_t
-  use tuvx_cross_section_base, only : base_cross_section_t
+  use tuvx_cross_section, only : base_cross_section_t, base_constructor
   use tuvx_cross_section_bro_br_o, only : bro_br_o_cross_section_t
   use tuvx_cross_section_tint, only : tint_cross_section_t
   use tuvx_cross_section_ccl4, only : ccl4_cross_section_t
@@ -54,7 +53,7 @@ contains
     use tuvx_Profile_warehouse,        only : Profile_warehouse_t
 
     !> New rate constant calculator
-    class(abs_cross_section_t), pointer :: new_cross_section_t
+    class(base_cross_section_t), pointer :: new_cross_section_t
     !> cross section configuration data
     type(config_t), intent(inout) :: config
     !> The warehouses
@@ -68,13 +67,14 @@ contains
     new_cross_section_t => null( )
     call config%get( 'cross section type', cross_section_type, Iam )
 
-    select case( cross_section_type%to_char() )
+    select case( cross_section_type%to_char() )  
       case( 'base cross section' )
-        new_cross_section_t => base_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
+        allocate( new_cross_section_t )
+        call base_constructor( new_cross_section_t, config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk )
       case( 'BrO+hv->Br+O cross section' )
         new_cross_section_t => bro_br_o_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
       case( 't_butyl_nitrate+hv->Products cross section' )
-        new_cross_section_t = allocate ( t_butyl_nitrate_cross_section_t )
+        new_cross_section_t => t_butyl_nitrate_cross_section_t ( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk )
       case( 'tint cross section' )
         new_cross_section_t => tint_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
       case( 'O3 cross section' )
@@ -108,7 +108,8 @@ contains
       case( 'HOBr+hv->OH+Br cross section' )
         new_cross_section_t => hobr_oh_br_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
       case( 'SO2 cross section' )
-        new_cross_section_t => base_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
+        allocate ( new_cross_section_t )
+        call base_constructor( new_cross_section_t, config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk )
       case( 'N2O+hv->N2+O(1D) cross section' )
         new_cross_section_t => n2o_n2_o1d_cross_section_t( config, gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk)
       case( 'N2O5+hv->NO2+NO3 cross section' )

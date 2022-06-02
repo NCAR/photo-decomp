@@ -7,8 +7,8 @@
 !> The rono2_cross_section type and related functions
 module tuvx_cross_section_rono2
 
-  use tuvx_cross_section_base,    only : base_cross_section_t
-  use musica_constants,                only : dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use tuvx_cross_section, only : base_cross_section_t
+  use musica_constants,   only : dk => musica_dk, ik => musica_ik, lk => musica_lk
 
   implicit none
 
@@ -36,7 +36,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize base_cross_section_t object
-  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( rono2_component )
+  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
 
     use musica_config,                   only : config_t
     use musica_string,                   only : string_t
@@ -47,7 +47,7 @@ contains
     use tuvx_grid,                    only : abs_1d_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
 
-    type(rono2_cross_section_t), pointer :: rono2_component
+    type(rono2_cross_section_t), pointer :: this
     !> Arguments
     !> cross section configuration object
     type(config_t), intent(inout)               :: config
@@ -76,7 +76,7 @@ contains
 
     write(*,*) Iam,'entering'
 
-    allocate( rono2_component )
+    allocate( this )
 
     !> Get model wavelength grids
     Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
@@ -86,9 +86,9 @@ contains
 
 has_netcdf_file: &
     if( found ) then
-      allocate( rono2_component%cross_section_parms(size(netcdfFiles)) )
+      allocate( this%cross_section_parms(size(netcdfFiles)) )
 file_loop: &
-      do fileNdx = iONE,size(rono2_component%cross_section_parms)
+      do fileNdx = iONE,size(this%cross_section_parms)
         allocate( netcdf_obj )
     !> read netcdf cross section parameters
         call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
@@ -100,14 +100,14 @@ file_loop: &
 
     !> interpolate from data to model wavelength grid
         if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(rono2_component%cross_section_parms(fileNdx)%array) ) then
-            allocate(rono2_component%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
+          if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
+            allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
           endif
           do parmNdx = iONE,nParms
             data_lambda    = netcdf_obj%wavelength
             data_parameter = netcdf_obj%parameters(:,parmNdx)
             if( parmNdx == 1 ) then
-              call rono2_component%addpnts( config, data_lambda, data_parameter )
+              call this%addpnts( config, data_lambda, data_parameter )
             elseif( parmNdx == 2 ) then
               tmp_config = config
               addpntKey = 'lower extrapolation'
@@ -116,18 +116,18 @@ file_loop: &
               addpntKey = 'upper extrapolation'
               addpntVal = 'boundary'
               call tmp_config%add( addpntKey, addpntVal, Iam )
-              call rono2_component%addpnts( tmp_config, data_lambda, data_parameter )
+              call this%addpnts( tmp_config, data_lambda, data_parameter )
             endif
             call inter2(xto=lambdaGrid%edge_, &
-                        yto=rono2_component%cross_section_parms(fileNdx)%array(:,parmNdx), &
+                        yto=this%cross_section_parms(fileNdx)%array(:,parmNdx), &
                         xfrom=data_lambda, &
                         yfrom=data_parameter,ierr=retcode)
           enddo
         else
-          rono2_component%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
+          this%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
         endif
         if( allocated(netcdf_obj%temperature) ) then
-          rono2_component%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
+          this%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
