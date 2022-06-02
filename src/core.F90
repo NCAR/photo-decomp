@@ -15,7 +15,7 @@ module tuvx_core
   use tuvx_spherical_geometry,      only : spherical_geom_t
   use tuvx_la_sr_bands,              only : la_srb_t
   use tuvx_radiative_transfer,   only : radXfer_component_core_t
-  use tuvx_photolysis_rate, only : photorates_component_core_t
+  use tuvx_photolysis_rates,           only : photolysis_rates_t
 
   implicit none
 
@@ -29,7 +29,7 @@ module tuvx_core
     type(la_srb_t), pointer             :: la_srb_ => null()
     type(string_t), allocatable         :: diagnostics_(:)
     type(radXfer_component_core_t), pointer    :: radXfer_component_ => null()
-    type(photorates_component_core_t), pointer :: photorates_component_ => null()
+    type(photolysis_rates_t), pointer :: photorates_component_ => null()
   contains
     procedure :: run
     final     :: finalize
@@ -130,7 +130,7 @@ contains
         write(*,*) Iam,'key = ',trim(keyChar)
         call components_config%get( iter, component_config, Iam )
         photolysis_core_obj%photorates_component_ => &
-               photorates_component_core_t( component_config, photolysis_core_obj%GridWareHouse_, &
+               photolysis_rates_t( component_config, photolysis_core_obj%GridWareHouse_, &
                                             photolysis_core_obj%ProfileWareHouse_ )
       endif
     enddo
@@ -192,7 +192,7 @@ sza_loop: &
       if( allocated(photoRates) ) then
         deallocate(photoRates)
       endif
-      call this%photorates_component_%upDate( this%la_srb_, this%sphericalGeom_, &
+      call this%photorates_component_%get( this%la_srb_, this%sphericalGeom_, &
                                               this%GridWareHouse_, this%ProfileWareHouse_, &
                                               radiationFld, photoRates, number )
     endif

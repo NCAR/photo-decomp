@@ -17,7 +17,7 @@ set(TUVX_SRC constants.F90
              linear_algebra.F90
              linear_algebra_linpack.F90
              netcdf_util.F90
-             photolysis_rate.F90
+             photolysis_rates.F90
              profile.F90
              profile_factory.F90
              profile_warehouse.F90
