@@ -2,7 +2,6 @@
 # Quantum yield source
 
 set(QUANTUM_YIELD_SRC quantum_yields/acetone-ch3co_ch3.F90
-                      quantum_yields/base.F90
                       quantum_yields/c2h5cho.F90
                       quantum_yields/ch2chcho.F90
                       quantum_yields/ch2o.F90

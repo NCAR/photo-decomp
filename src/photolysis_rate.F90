@@ -8,7 +8,7 @@
 module tuvx_photolysis_rate
 
   use tuvx_cross_section, only : base_cross_section_ptr
-  use tuvx_quantum_yield,     only : abs_quantum_yield_ptr
+  use tuvx_quantum_yield,     only : quantum_yield_ptr
   use tuvx_grid_warehouse,             only : grid_warehouse_t
   use tuvx_profile_warehouse,          only : profile_warehouse_t
   use musica_constants,                only : dk => musica_dk, ik => musica_ik
@@ -28,7 +28,7 @@ module tuvx_photolysis_rate
   type :: photorates_component_core_t
     !> Photo rate constant calculators
     type(base_cross_section_ptr), allocatable :: cross_section_objs_(:)
-    type(abs_quantum_yield_ptr), allocatable :: quantum_yield_objs_(:)
+    type(quantum_yield_ptr), allocatable :: quantum_yield_objs_(:)
     real(dk),               allocatable :: rate_constant_alias_factor_(:)
     type(string_t), allocatable              :: handle_(:)
   contains
@@ -74,7 +74,7 @@ contains
     type(config_t) :: cross_section_config, quantum_yield_config
     class(iterator_t), pointer :: iter
     type(base_cross_section_ptr) :: cross_section_ptr
-    type(abs_quantum_yield_ptr) :: quantum_yield_ptr
+    type(quantum_yield_ptr) :: quantum_yield_ptr
     character(len=64)           :: keychar
     type(string_t)              :: netcdfFile, Object
     type(string_t)              :: reaction_key

@@ -2,128 +2,264 @@
 ! SPDX-License-Identifier: Apache-2.0
 !
 !> \file
-!> The abstract photolysis quantum yield module
+!> This base quantum yield module
 
-!> The abstract quantum yield type and related functions
+!> The base quantum yield type and related functions
 module tuvx_quantum_yield
 
-  use musica_constants,                only : musica_dk, musica_ik
+  use musica_constants,              only : dk => musica_dk
 
   implicit none
+
   private
+  public :: quantum_yield_t, quantum_yield_ptr
 
-  public :: abs_quantum_yield_t, abs_quantum_yield_ptr
+  type quantum_yield_parms_t
+    real(dk), allocatable :: temperature(:)
+    real(dk), allocatable :: array(:,:)
+  end type quantum_yield_parms_t
 
-  !> Photo rate quantum yield abstract type
-  type, abstract :: abs_quantum_yield_t
+  !> Calculator for base quantum yield
+  type :: quantum_yield_t
+    type(quantum_yield_parms_t), allocatable :: quantum_yield_parms(:)
   contains
-    procedure(initial),   deferred :: initialize
-    !> Calculate the photo rate quantum yield
-    procedure(calculate), deferred :: calculate
-    procedure                      :: addpnts
-  end type abs_quantum_yield_t
+    procedure :: initialize
+    procedure :: calculate => run
+    procedure :: add_points
+    final     :: finalize
+  end type quantum_yield_t
 
   !> Pointer type for building sets of quantum yields
-  type :: abs_quantum_yield_ptr
-    class(abs_quantum_yield_t), pointer :: val_ => null( )
-  end type abs_quantum_yield_ptr
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-interface
-
-  !> Initialize the quantum yield object
-  subroutine initial( this, config, gridWareHouse, ProfileWareHouse )
-    use musica_config,    only : config_t
-    use musica_constants, only : musica_dk
-    use tuvx_grid_warehouse,    only : grid_warehouse_t
-    use tuvx_profile_warehouse, only : Profile_warehouse_t
-
-    import abs_quantum_yield_t
-
-    !> Quantum yield calculator
-    class(abs_quantum_yield_t), intent(inout) :: this
-    type(config_t),             intent(inout) :: config
-    type(grid_warehouse_t),     intent(inout) :: gridWareHouse
-    type(Profile_warehouse_t),  intent(inout) :: ProfileWareHouse
-  end subroutine initial
-
-  !> Calculate the quantum yield
-  function calculate( this, gridWareHouse, ProfileWareHouse ) result( quantum_yield )
-
-    use musica_constants,       only : musica_dk
-    use tuvx_grid_warehouse,    only : grid_warehouse_t
-    use tuvx_profile_warehouse, only : Profile_warehouse_t
-
-    import abs_quantum_yield_t
-
-    !> Quantum yield calculator
-    class(abs_quantum_yield_t), intent(in)   :: this
-    !> quantum yield on model photo grid
-    real(kind=musica_dk), allocatable        :: quantum_yield(:,:)
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
-  end function calculate
-
-end interface
+  type :: quantum_yield_ptr
+    class(quantum_yield_t), pointer :: val_ => null( )
+  end type quantum_yield_ptr
 
 contains
 
-  subroutine addpnts( this, config, data_lambda, data_parameter )
-    use musica_config, only : config_t
-    use musica_string, only : string_t
-    use tuvx_util,   only : addpnt
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    class(abs_quantum_yield_t)    :: this
-    type(config_t), intent(inout) :: config
-    real(musica_dk), allocatable, intent(inout) :: data_lambda(:)
-    real(musica_dk), allocatable, intent(inout) :: data_parameter(:)
+  !> Initialize base quantum yield_t object
+  subroutine initialize( this, config, grid_warehouse, profile_warehouse )
 
-    real(musica_dk), parameter :: rZERO = 0.0_musica_dk
-    real(musica_dk), parameter :: rONE  = 1.0_musica_dk
-    real(musica_dk), parameter :: deltax = 1.e-5_musica_dk
+    use musica_assert,                 only : die_msg
+    use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : abs_1d_grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_netcdf_util,              only : netcdf_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
+    use tuvx_util,                     only : inter2
+
+    class(quantum_yield_t),    intent(inout) :: this
+    !> quantum yield configuration data
+    type(config_t),            intent(inout) :: config
+    type(grid_warehouse_t),    intent(inout) :: grid_warehouse
+    type(profile_warehouse_t), intent(inout) :: profile_warehouse
+
+    ! Local variables
+    character(len=*), parameter :: Iam = 'base quantum yield constructor'
+    character(len=*), parameter :: Hdr = 'quantum_yield_'
+    real(dk), parameter    :: rZERO = 0.0_dk
+    real(dk), parameter    :: rONE  = 1.0_dk
+
+    integer :: retcode
+    integer :: parmNdx, fileNdx
+    integer :: nParms
+    real(dk)    :: quantum_yield_constant
+    real(dk), allocatable :: data_lambda(:)
+    real(dk), allocatable :: data_parameter(:)
+    logical :: found
+    character(len=:), allocatable :: msg
+    type(netcdf_t), allocatable   :: netcdf_obj
+    type(string_t)                :: Handle
+    type(string_t), allocatable   :: netcdfFiles(:)
+    class(abs_1d_grid_t), pointer :: lambdaGrid
+
+    ! Get model wavelength grid
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid => grid_warehouse%get_grid( Handle )
+
+    ! get quantum yield netcdf filespec
+    call config%get( 'netcdf files', netcdfFiles, Iam, found = found )
+has_netcdf_file: &
+    if( found ) then
+      allocate( this%quantum_yield_parms( size( netcdfFiles ) ) )
+file_loop: &
+      do fileNdx = 1, size( netcdfFiles )
+        allocate( netcdf_obj )
+        ! read netcdf file quantum yield data
+        call netcdf_obj%read_netcdf_file(                                     &
+                     filespec = netcdfFiles( fileNdx )%to_char( ), Hdr = Hdr )
+        nParms = size( netcdf_obj%parameters, dim = 2 )
+        if( nParms < 1 ) then
+          write(msg,*) Iam//'File: ',                                         &
+              trim( netcdfFiles( fileNdx )%to_char( ) ),                      &
+              ' parameters array has < 1 parameter'
+          call die_msg( 493253966, msg )
+        endif
+        ! interpolate from data to model wavelength grid
+        if( allocated( netcdf_obj%wavelength ) ) then
+          if( .not. allocated( this%quantum_yield_parms( fileNdx )%array ) )  &
+              then
+            allocate( this%quantum_yield_parms( fileNdx )%array(              &
+                                                lambdaGrid%ncells_, nParms ) )
+          endif
+          do parmNdx = 1, nParms
+            data_lambda    = netcdf_obj%wavelength
+            data_parameter = netcdf_obj%parameters(:,parmNdx)
+            call this%add_points( config, data_lambda, data_parameter )
+            call inter2( xto = lambdaGrid%edge_,                              &
+               yto = this%quantum_yield_parms( fileNdx )%array( :, parmNdx ), &
+               xfrom = data_lambda,                                           &
+               yfrom = data_parameter, ierr = retcode )
+          enddo
+        else
+          this%quantum_yield_parms( fileNdx )%array = netcdf_obj%parameters
+        endif
+        if( allocated( netcdf_obj%temperature ) ) then
+          this%quantum_yield_parms( fileNdx )%temperature = netcdf_obj%temperature
+        endif
+        deallocate( netcdf_obj )
+      enddo file_loop
+    else has_netcdf_file
+      ! check for quantum yield constant
+      call config%get( 'quantum yield constant', quantum_yield_constant, Iam, &
+                       found = found )
+      if( found ) then
+        allocate( this%quantum_yield_parms(1) )
+        allocate( this%quantum_yield_parms(1)%array( lambdaGrid%ncells_, 1 ) )
+        this%quantum_yield_parms(1)%array(:,1) = quantum_yield_constant
+      endif
+    endif has_netcdf_file
+
+  end subroutine initialize
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !> Calculate the quantum yield
+  function run( this, grid_warehouse, profile_warehouse )                     &
+      result( quantum_yield )
+
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : abs_1d_grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
+
+    class(quantum_yield_t),    intent(in)    :: this
+    type(grid_warehouse_t),    intent(inout) :: grid_warehouse
+    type(profile_warehouse_t), intent(inout) :: profile_warehouse
+    !> Calculated quantum yield
+    real(dk), allocatable                    :: quantum_yield(:,:)
+
+    ! Local variables
+    character(len=*), parameter :: Iam = 'base quantum yield calculate'
+    integer                 :: vertNdx
+    class(abs_1d_grid_t), pointer :: zGrid
+    type(string_t)              :: Handle
+    real(dk), allocatable       :: wrkQuantumYield(:,:)
+
+    Handle = 'Vertical Z'
+    zGrid => grid_warehouse%get_grid( Handle )
+
+    allocate( wrkQuantumYield(                                                &
+      size( this%quantum_yield_parms(1)%array, dim = 1 ), zGrid%ncells_ + 1 ) )
+
+    ! Just copy the lambda interpolated array
+    do vertNdx = 1, zGrid%ncells_ + 1
+      wrkQuantumYield( :, vertNdx ) =                                         &
+          this%quantum_yield_parms(1)%array( :, 1 )
+    enddo
+
+    quantum_yield = transpose( wrkQuantumYield )
+
+  end function run
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !> Add points to the cross-section gridded data based on configuration
+  !! options
+  subroutine add_points( this, config, data_lambda, data_parameter )
+
+    use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
+    use tuvx_util,                     only : addpnt
+
+    class(quantum_yield_t), intent(in)    :: this
+    type(config_t),         intent(inout) :: config
+    real(dk), allocatable,  intent(inout) :: data_lambda(:)
+    real(dk), allocatable,  intent(inout) :: data_parameter(:)
+
+    real(dk), parameter :: rZERO = 0.0_dk
+    real(dk), parameter :: rONE  = 1.0_dk
+    real(dk), parameter :: deltax = 1.e-5_dk
     character(len=*), parameter :: Iam = 'cross_section; addpnts: '
 
-    integer(musica_ik) :: nRows
-    real(musica_dk) :: lowerLambda, upperLambda
-    real(musica_dk) :: addpnt_val_
-    type(string_t)  :: addpnt_type_
+    integer :: nRows
+    real(dk) :: lowerLambda, upperLambda
+    real(dk) :: addpnt_val
+    type(string_t)  :: addpnt_type
     logical         :: found
     character(len=:), allocatable :: number
 
-    write(*,*) Iam,'entering'
-
-    !> add endpoints to data arrays; first the lower bound
-    nRows = size(data_lambda)
-    lowerLambda = data_lambda(1) ; upperLambda = data_lambda(nRows)
-    call config%get( 'lower extrapolation', addpnt_type_, Iam, found=found )
+    ! add endpoints to data arrays; first the lower bound
+    nRows = size( data_lambda )
+    lowerLambda = data_lambda(1) ; upperLambda = data_lambda( nRows )
+    call config%get( 'lower extrapolation', addpnt_type, Iam, found = found )
     if( .not. found ) then
-      addpnt_val_ = rZERO
-    elseif( addpnt_type_ == 'boundary' ) then
-      addpnt_val_ = data_parameter(1)
+      addpnt_val = rZERO
+    elseif( addpnt_type == 'boundary' ) then
+      addpnt_val = data_parameter(1)
     else
-      number = addpnt_type_%to_char()
-      read( number, '(g30.20)' ) addpnt_val_
+      number = addpnt_type%to_char()
+      read( number, '(g30.20)' ) addpnt_val
     endif
 
-    call addpnt(x=data_lambda,y=data_parameter,xnew=rZERO,ynew=addpnt_val_) 
-    call addpnt(x=data_lambda,y=data_parameter,xnew=(rONE-deltax)*lowerLambda,ynew=addpnt_val_) 
-    !> add endpoints to data arrays; now the upper bound
-    call config%get( 'upper extrapolation', addpnt_type_, Iam, found=found )
+    call addpnt( x = data_lambda, y = data_parameter, xnew = rZERO,           &
+                 ynew = addpnt_val )
+    call addpnt( x = data_lambda, y = data_parameter,                         &
+                 xnew = ( rONE - deltax ) * lowerLambda, ynew = addpnt_val )
+    ! add endpoints to data arrays; now the upper bound
+    call config%get( 'upper extrapolation', addpnt_type, Iam, found = found )
     if( .not. found ) then
-      addpnt_val_ = rZERO
-    elseif( addpnt_type_ == 'boundary' ) then
-      addpnt_val_ = data_parameter(nRows)
+      addpnt_val = rZERO
+    elseif( addpnt_type == 'boundary' ) then
+      addpnt_val = data_parameter( nRows )
     else
-      number = addpnt_type_%to_char()
-      read( number, '(g30.20)' ) addpnt_val_
+      number = addpnt_type%to_char()
+      read( number, '(g30.20)' ) addpnt_val
     endif
 
-    call addpnt(x=data_lambda,y=data_parameter,xnew=(rONE+deltax)*upperLambda,ynew=addpnt_val_) 
-    call addpnt(x=data_lambda,y=data_parameter,xnew=1.e38_musica_dk,ynew=addpnt_val_) 
+    call addpnt( x = data_lambda, y = data_parameter,                         &
+                 xnew = ( rONE + deltax ) * upperLambda, ynew = addpnt_val )
+    call addpnt( x = data_lambda, y = data_parameter, xnew = 1.e38_dk, &
+                 ynew = addpnt_val )
 
-    write(*,*) Iam,'exiting'
+  end subroutine add_points
 
-  end subroutine addpnts
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !> finalize the quantum yield object
+  subroutine finalize( this )
+
+  type(quantum_yield_t), intent(inout) :: this
+
+  integer :: ndx
+
+  if( allocated( this%quantum_yield_parms ) ) then
+    do ndx = 1, size( this%quantum_yield_parms )
+      if( allocated( this%quantum_yield_parms( ndx )%array ) ) then
+        deallocate( this%quantum_yield_parms( ndx )%array )
+      endif
+      if( allocated( this%quantum_yield_parms( ndx )%temperature ) ) then
+        deallocate( this%quantum_yield_parms( ndx )%temperature )
+      endif
+    enddo
+    deallocate( this%quantum_yield_parms )
+  endif
+
+
+  end subroutine finalize
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_quantum_yield
