@@ -7,75 +7,73 @@
 !> The ho2+hv->oh+h quantum yield type and related functions
 module tuvx_quantum_yield_ho2_oh_o
 
-  use tuvx_quantum_yield_base,    only : base_quantum_yield_t
-  use musica_constants,                only : dk => musica_dk, ik => musica_ik
-  use musica_string,                   only : string_t
-  use tuvx_grid_warehouse,             only : grid_warehouse_t
-  use tuvx_grid,                    only : abs_1d_grid_t
-  use tuvx_profile_warehouse,          only : Profile_warehouse_t
+  use tuvx_quantum_yield,              only : quantum_yield_t
 
   implicit none
 
   private
-  public :: ho2_oh_o_quantum_yield_t
-
-  integer(ik), parameter :: iONE  = 1_ik
-  real(dk), parameter    :: rZERO = 0.0_dk
-  real(dk), parameter    :: rONE  = 1.0_dk
+  public :: quantum_yield_ho2_oh_o_t
 
   !> Calculator for ho2+hv->oh+h quantum yield
-  type, extends(base_quantum_yield_t) :: ho2_oh_o_quantum_yield_t
+  type, extends(quantum_yield_t) :: quantum_yield_ho2_oh_o_t
   contains
     !> Calculate the quantum yield
     procedure :: calculate => run
-  end type ho2_oh_o_quantum_yield_t
+  end type quantum_yield_ho2_oh_o_t
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculate the quantum yield
-  function run( this, gridWareHouse, ProfileWareHouse ) result( quantum_yield )
+  function run( this, grid_warehouse, profile_warehouse )                     &
+      result( quantum_yield )
 
-    !> called quantum yield object
-    class(ho2_oh_o_quantum_yield_t), intent(in)  :: this
-    !> The warehouses
-    type(grid_warehouse_t),    intent(inout) :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    use musica_constants,              only : dk => musica_dk
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : abs_1d_grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
+
+    class(quantum_yield_ho2_oh_o_t), intent(in) :: this
+    type(grid_warehouse_t),    intent(inout)    :: grid_warehouse
+    type(profile_warehouse_t), intent(inout)    :: profile_warehouse
     !> Calculated quantum yield
-    real(dk), allocatable                    :: quantum_yield(:,:)
+    real(dk), allocatable                       :: quantum_yield(:,:)
 
-    !> Local variables
+    ! Local variables
     real(dk), parameter         :: lambda0 = 193._dk
-    character(len=*), parameter :: Iam = 'ho2+hv->oh+o quantum yield calculate: '
+    character(len=*), parameter :: Iam = 'ho2+hv->oh+o quantum yield calculate'
+    real(dk), parameter    :: rZERO = 0.0_dk
+    real(dk), parameter    :: rONE  = 1.0_dk
 
-    integer(ik)                   :: vertNdx
+    integer                       :: vertNdx
     class(abs_1d_grid_t), pointer :: lambdaGrid, zGrid
     type(string_t)                :: Handle
     real(dk), allocatable         :: wrkQuantumYield(:)
 
-    write(*,*) Iam,'entering'
+    Handle = 'Vertical Z' ; zGrid => grid_warehouse%get_grid( Handle )
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid => grid_warehouse%get_grid( Handle )
 
-    Handle = 'Vertical Z' ; zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
-
-    allocate( wrkQuantumYield(lambdaGrid%ncells_) )
-    allocate( quantum_yield(lambdaGrid%ncells_,zGrid%ncells_+1) )
+    allocate( wrkQuantumYield( lambdaGrid%ncells_ ) )
+    allocate( quantum_yield( lambdaGrid%ncells_, zGrid%ncells_ + 1 ) )
 
     where( lambdaGrid%mid_ >= 248._dk )
       wrkQuantumYield = rONE
     elsewhere
-      wrkQuantumYield = (rONE + 14._dk*(lambdaGrid%mid_ - lambda0)/55._dk)/15._dk
+      wrkQuantumYield =                                                       &
+          ( rONE + 14._dk * ( lambdaGrid%mid_ - lambda0 ) / 55._dk ) / 15._dk
     endwhere
-    wrkQuantumYield = max( rZERO,wrkQuantumYield )
-    do vertNdx = iONE,zGrid%ncells_+iONE
-      quantum_yield(:,vertNdx) = wrkQuantumYield
+    wrkQuantumYield = max( rZERO, wrkQuantumYield )
+    do vertNdx = 1, zGrid%ncells_ + 1
+      quantum_yield( :, vertNdx ) = wrkQuantumYield
     enddo
 
     quantum_yield = transpose( quantum_yield )
 
-    write(*,*) Iam,'exiting'
-
   end function run
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_quantum_yield_ho2_oh_o

@@ -7,26 +7,30 @@
 !> Builder of quantum yield calculators
 module tuvx_quantum_yield_factory
 
-  use tuvx_quantum_yield,              only : abs_quantum_yield_t
-  use tuvx_quantum_yield_base,             only : base_quantum_yield_t
-  use tuvx_quantum_yield_tint,             only : tint_quantum_yield_t
-  use tuvx_quantum_yield_no2_tint,         only : no2_tint_quantum_yield_t
-  use tuvx_quantum_yield_o3_o2_o1d,        only : o3_o2_o1d_quantum_yield_t
-  use tuvx_quantum_yield_o3_o2_o3p,        only : o3_o2_o3p_quantum_yield_t
-  use tuvx_quantum_yield_ho2_oh_o,         only : ho2_oh_o_quantum_yield_t
-  use tuvx_quantum_yield_no3m_aq,          only : no3m_aq_quantum_yield_t
-  use tuvx_quantum_yield_ch2o_h2_co,       only : ch2o_h2_co_quantum_yield_t
-  use tuvx_quantum_yield_ch3cho_ch3_hco,   only : ch3cho_ch3_hco_quantum_yield_t
-  use tuvx_quantum_yield_c2h5cho_c2h5_hco, only : c2h5cho_c2h5_hco_quantum_yield_t
-  use tuvx_quantum_yield_ch2chcho,         only : ch2chcho_quantum_yield_t
-  use tuvx_quantum_yield_mvk,              only : mvk_quantum_yield_t
-  use tuvx_quantum_yield_ch3coch3_ch3co_ch3, only : ch3coch3_ch3co_ch3_quantum_yield_t
-  use tuvx_quantum_yield_ch3coch2ch3,      only : ch3coch2ch3_quantum_yield_t
-  use tuvx_quantum_yield_ch3cocho_ch3co_hco, only : ch3cocho_ch3co_hco_quantum_yield_t
-  use tuvx_quantum_yield_clo_cl_o1d,       only : clo_cl_o1d_quantum_yield_t
-  use tuvx_quantum_yield_clo_cl_o3p,       only : clo_cl_o3p_quantum_yield_t
-  use tuvx_quantum_yield_clono2_cl_no3,    only : clono2_cl_no3_quantum_yield_t
-  use tuvx_quantum_yield_clono2_clo_no2,   only : clono2_clo_no2_quantum_yield_t
+  use tuvx_quantum_yield,              only : quantum_yield_t
+  use tuvx_quantum_yield_tint,         only : quantum_yield_tint_t
+  use tuvx_quantum_yield_no2_tint,     only : quantum_yield_no2_tint_t
+  use tuvx_quantum_yield_o3_o2_o1d,    only : quantum_yield_o3_o2_o1d_t
+  use tuvx_quantum_yield_o3_o2_o3p,    only : quantum_yield_o3_o2_o3p_t
+  use tuvx_quantum_yield_ho2_oh_o,     only : quantum_yield_ho2_oh_o_t
+  use tuvx_quantum_yield_no3m_aq,      only : quantum_yield_no3m_aq_t
+  use tuvx_quantum_yield_ch2o_h2_co,   only : quantum_yield_ch2o_h2_co_t
+  use tuvx_quantum_yield_ch3cho_ch3_hco,                                      &
+    only : quantum_yield_ch3cho_ch3_hco_t
+  use tuvx_quantum_yield_c2h5cho_c2h5_hco,                                    &
+    only : quantum_yield_c2h5cho_c2h5_hco_t
+  use tuvx_quantum_yield_ch2chcho,     only : quantum_yield_ch2chcho_t
+  use tuvx_quantum_yield_mvk,          only : quantum_yield_mvk_t
+  use tuvx_quantum_yield_ch3coch3_ch3co_ch3,                                  &
+    only : quantum_yield_ch3coch3_ch3co_ch3_t
+  use tuvx_quantum_yield_ch3coch2ch3,  only : quantum_yield_ch3coch2ch3_t
+  use tuvx_quantum_yield_ch3cocho_ch3co_hco,                                  &
+    only : quantum_yield_ch3cocho_ch3co_hco_t
+  use tuvx_quantum_yield_clo_cl_o1d,   only : quantum_yield_clo_cl_o1d_t
+  use tuvx_quantum_yield_clo_cl_o3p,   only : quantum_yield_clo_cl_o3p_t
+  use tuvx_quantum_yield_clono2_cl_no3,only : quantum_yield_clono2_cl_no3_t
+  use tuvx_quantum_yield_clono2_clo_no2,                                      &
+    only : quantum_yield_clono2_clo_no2_t
 
   implicit none
 
@@ -38,74 +42,73 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Builds quantum yield calculators
-  function quantum_yield_builder( config, gridWareHouse, ProfileWareHouse ) result( new_quantum_yield_t )
+  function quantum_yield_builder( config, grid_warehouse, profile_warehouse ) &
+      result( quantum_yield )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile_warehouse,        only : Profile_warehouse_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
 
     !> New quantum yield calculator
-    class(abs_quantum_yield_t), pointer :: new_quantum_yield_t
+    class(quantum_yield_t), pointer :: quantum_yield
     !> quantum yield configuration data
     type(config_t), intent(inout) :: config
     !> The warehouses
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
+    type(grid_warehouse_t), intent(inout)    :: grid_warehouse
+    type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
     type(string_t) :: quantum_yield_type
     character(len=*), parameter :: Iam = 'quantum yield builder: '
 
-    write(*,*) Iam,'entering'
-    new_quantum_yield_t => null()
+    quantum_yield => null()
     call config%get( 'quantum yield type', quantum_yield_type, Iam )
 
     select case( quantum_yield_type%to_char() )
       case( 'base quantum yield' )
-        allocate( base_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_t :: quantum_yield )
       case( 'tint quantum yield' )
-        allocate( tint_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_tint_t :: quantum_yield )
       case( 'NO2 tint quantum yield' )
-        allocate( no2_tint_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_no2_tint_t :: quantum_yield )
       case( 'O3+hv->O2+O(1D) quantum yield' )
-        allocate( o3_o2_o1d_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_o3_o2_o1d_t :: quantum_yield )
       case( 'O3+hv->O2+O(3P) quantum yield' )
-        allocate( o3_o2_o3p_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_o3_o2_o3p_t :: quantum_yield )
       case( 'HO2 quantum yield' )
-        allocate( ho2_oh_o_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ho2_oh_o_t :: quantum_yield )
       case( 'NO3-_(aq)+hv->NO2(aq)+O- quantum yield' )
-        allocate( no3m_aq_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_no3m_aq_t :: quantum_yield )
       case( 'CH2O quantum yield' )
-        allocate( ch2o_h2_co_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch2o_h2_co_t :: quantum_yield )
       case( 'CH3CHO+hv->CH3+HCO quantum yield' )
-        allocate( ch3cho_ch3_hco_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch3cho_ch3_hco_t :: quantum_yield )
       case( 'C2H5CHO quantum yield' )
-        allocate( c2h5cho_c2h5_hco_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_c2h5cho_c2h5_hco_t :: quantum_yield )
       case( 'CH2CHCHO+hv->Products quantum yield' )
-        allocate( ch2chcho_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch2chcho_t :: quantum_yield )
       case( 'MVK+hv->Products quantum yield' )
-        allocate( mvk_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_mvk_t :: quantum_yield )
       case( 'CH3COCH3+hv->CH3CO+CH3 quantum yield' )
-        allocate( ch3coch3_ch3co_ch3_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch3coch3_ch3co_ch3_t :: quantum_yield )
       case( 'CH3COCH2CH3+hv->CH3CO+CH2CH3 quantum yield' )
-        allocate( ch3coch2ch3_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch3coch2ch3_t :: quantum_yield )
       case( 'CH3COCHO+hv->CH3CO+HCO quantum yield' )
-        allocate( ch3cocho_ch3co_hco_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_ch3cocho_ch3co_hco_t :: quantum_yield )
       case( 'ClO+hv->Cl+O(1D) quantum yield' )
-        allocate( clo_cl_o1d_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_clo_cl_o1d_t :: quantum_yield )
       case( 'ClO+hv->Cl+O(3P) quantum yield' )
-        allocate( clo_cl_o3p_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_clo_cl_o3p_t :: quantum_yield )
       case( 'ClONO2+hv->Cl+NO3 quantum yield' )
-        allocate( clono2_cl_no3_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_clono2_cl_no3_t :: quantum_yield )
       case( 'ClONO2+hv->ClO+NO2 quantum yield' )
-        allocate( clono2_clo_no2_quantum_yield_t :: new_quantum_yield_t )
+        allocate(quantum_yield_clono2_clo_no2_t :: quantum_yield )
       case default
         call die_msg( 450768214, "Invalid quantum yield type: '"//              &
                                  quantum_yield_type%to_char( )//"'" )
     end select
-    call new_quantum_yield_t%initialize( config, gridWareHouse, ProfileWareHouse )
-    write(*,*) Iam,'exiting'
+    call quantum_yield%initialize( config, grid_warehouse, profile_warehouse )
 
   end function quantum_yield_builder
 

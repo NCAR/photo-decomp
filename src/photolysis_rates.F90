@@ -15,7 +15,7 @@ module tuvx_photolysis_rates
   use tuvx_grid_warehouse,             only : grid_warehouse_t
   use tuvx_profile,                    only : abs_profile_t
   use tuvx_profile_warehouse,          only : profile_warehouse_t
-  use tuvx_quantum_yield,              only : abs_quantum_yield_ptr
+  use tuvx_quantum_yield,              only : quantum_yield_ptr
 
   implicit none
 
@@ -27,7 +27,7 @@ module tuvx_photolysis_rates
     !> Absorption cross-sections
     type(abs_cross_section_ptr), allocatable :: cross_sections_(:)
     !> Quantum yields
-    type(abs_quantum_yield_ptr), allocatable :: quantum_yields_(:)
+    type(quantum_yield_ptr), allocatable :: quantum_yields_(:)
     !> Scaling factor for final rate constant
     real(dk),                    allocatable :: scaling_factors_(:)
     !> User-provided label for the photolysis rate constant
@@ -76,7 +76,7 @@ contains
     type(config_t) :: cross_section_config, quantum_yield_config
     class(iterator_t), pointer :: iter
     type(abs_cross_section_ptr) :: cross_section_ptr
-    type(abs_quantum_yield_ptr) :: quantum_yield_ptr
+    type(quantum_yield_ptr) :: quantum_yield_ptr
     character(len=64)           :: keychar
     type(string_t)              :: netcdfFile, Object
     type(string_t)              :: reaction_key
