@@ -5,14 +5,14 @@
 module micm_sza_from_time
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_Profile,     only : abs_Profile_t
+  use micm_Profile,     only : base_profile_t
   use musica_assert,    only : die_msg
 
   implicit none
 
   public :: sza_from_time_t
 
-  type, extends(abs_Profile_t) :: sza_from_time_t
+  type, extends(base_profile_t) :: sza_from_time_t
   contains
     !> Initialize grid
     procedure :: initialize

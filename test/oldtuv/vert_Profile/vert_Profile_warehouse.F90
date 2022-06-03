@@ -108,13 +108,13 @@ contains
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
-    use micm_Profile, only : abs_Profile_t
+    use micm_Profile, only : base_profile_t
 
     !> Arguments
     class(Profile_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)                     :: Profile_handle
 
-    class(abs_Profile_t), pointer          :: Profile_ptr
+    class(base_profile_t), pointer          :: Profile_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'Profile warehouse get_Profile: '

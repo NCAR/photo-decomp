@@ -7,7 +7,7 @@
 !> The profile warehouse type and related functions
 module tuvx_profile_warehouse
 
-  use tuvx_profile, only : abs_profile_ptr
+  use tuvx_profile, only : base_grid_ptr
 
   implicit none
 
@@ -18,7 +18,7 @@ module tuvx_profile_warehouse
   type :: profile_warehouse_t
     private
     !> profile objects
-    type(abs_profile_ptr), allocatable :: profile_objs_(:)
+    type(base_grid_ptr), allocatable :: profile_objs_(:)
   contains
     !> get a copy of a profile object
     procedure :: get_profile
@@ -57,7 +57,7 @@ contains
     type(config_t)              :: profile_set, profile_config
     class(iterator_t), pointer  :: iter
     class(profile_warehouse_t), pointer :: profile_warehouse_ptr
-    type(abs_profile_ptr)            :: profile_obj
+    type(base_grid_ptr)            :: profile_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
 
@@ -107,13 +107,13 @@ contains
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
-    use tuvx_profile, only : abs_profile_t
+    use tuvx_profile, only : base_profile_t
 
     !> Arguments
     class(profile_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)                     :: profile_handle
 
-    class(abs_profile_t), pointer          :: profile_ptr
+    class(base_profile_t), pointer          :: profile_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'profile warehouse get_profile: '

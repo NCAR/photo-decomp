@@ -28,7 +28,7 @@ contains
     use micm_o3_from_csv_file_Profile,   only : o3fromCsvFile_t
     use micm_sza_from_time,              only : sza_from_time_t
     use micm_earth_sun_distance,         only : earth_sun_distance_t
-    use micm_Profile,                    only : abs_Profile_t
+    use micm_Profile,                    only : base_profile_t
     use micm_grid_warehouse,             only : grid_warehouse_t
     use micm_Profile_from_config,        only : fromConfig_t
     use micm_srfAlbedo_Profile_from_config, only : srfAlbedofromConfig_t
@@ -39,7 +39,7 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> New Profile object
-    class(abs_Profile_t), pointer :: new_Profile_t
+    class(base_profile_t), pointer :: new_Profile_t
 
     !> Local variables
     character(len=*), parameter :: Iam = 'Profile builder: '

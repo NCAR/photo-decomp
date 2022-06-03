@@ -5,22 +5,25 @@
 module tuvx_profile_from_csv_file
 
   use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile, only : abs_profile_t
+  use tuvx_profile, only : base_profile_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(abs_profile_t) :: fromCsvFile_t
+  type, extends(base_profile_t) :: fromCsvFile_t
   contains
-    !> Initialize grid
-    procedure :: initialize
     final     :: finalize
   end type fromCsvFile_t
 
+  !> Constructor
+  interface fromCsvFile_t
+    module procedure constructor
+  end interface fromCsvFile_t
+
 contains
   !> Initialize grid
-  subroutine initialize( this, profile_config, gridWareHouse )
+  function constructor(  profile_config, gridWareHouse ) result( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
@@ -30,7 +33,7 @@ contains
     use tuvx_interpolate
 
     !> arguments
-    class(fromCsvFile_t), intent(inout) :: this
+    type(fromCsvFile_t), pointer :: this
     type(config_t), intent(inout)       :: profile_config
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
@@ -53,6 +56,8 @@ contains
     class(abs_interpolator_t), pointer :: theInterpolator
 
     write(*,*) Iam // 'entering'
+
+    allocate( this )
 
     !> Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
@@ -140,7 +145,7 @@ contains
 
     write(*,*) Iam // 'exiting'
 
-  end subroutine initialize
+  end function constructor
 
   subroutine finalize( this )
 

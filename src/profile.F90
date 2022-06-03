@@ -10,9 +10,9 @@ module tuvx_profile
   implicit none
 
   private
-  public :: abs_profile_t, abs_profile_ptr
+  public :: base_profile_t, base_grid_ptr
 
-  type, abstract ::  abs_profile_t
+  type, abstract ::  base_profile_t
     !> grid handle
     type(string_t) :: handle_
     !> number of wavelength grid cells
@@ -32,29 +32,27 @@ module tuvx_profile
     !> overhead column burden
     real(musica_dk), allocatable :: burden_dens_(:)
   contains
-    !> Initialize grid
-    procedure(initial), deferred :: initialize
-  end type abs_profile_t
+  end type base_profile_t
 
   !> Pointer type for building sets of spectral wght objects
-  type :: abs_profile_ptr
-    class(abs_profile_t), pointer :: ptr_ => null( )
-  end type abs_profile_ptr
+  type :: base_grid_ptr
+    class(base_profile_t), pointer :: ptr_ => null( )
+  end type base_grid_ptr
 
 interface
 
     !> Initialize grid
-    subroutine initial( this, profile_config, gridWareHouse )
+    subroutine base_constructor( this, profile_config, gridWareHouse )
       
       use musica_config, only : config_t
       use musica_constants, only : musica_dk
       use tuvx_grid_warehouse,  only : grid_warehouse_t
 
-      import abs_profile_t
-      class(abs_profile_t), intent(inout)      :: this
+      import base_profile_t
+      class(base_profile_t), intent(inout)      :: this
       type(config_t), intent(inout)            :: profile_config
       type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    end subroutine initial
+    end subroutine base_constructor
 
 end interface
 

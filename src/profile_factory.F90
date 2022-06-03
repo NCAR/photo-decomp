@@ -29,7 +29,7 @@ contains
     use tuvx_profile_o3,                 only : o3fromCsvFile_t
     use tuvx_profile_solar_zenith_angle, only : sza_from_time_t
     use tuvx_profile_earth_sun_distance, only : earth_sun_distance_t
-    use tuvx_profile,                    only : abs_profile_t
+    use tuvx_profile,                    only : base_profile_t
     use tuvx_grid_warehouse,             only : grid_warehouse_t
     use tuvx_profile_from_config,        only : fromConfig_t
     use tuvx_profile_surface_albedo,     only : srfAlbedofromConfig_t
@@ -40,7 +40,7 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> New profile object
-    class(abs_profile_t), pointer :: new_profile_t
+    class(base_profile_t), pointer :: new_profile_t
 
     !> Local variables
     character(len=*), parameter :: Iam = 'profile builder: '
@@ -53,28 +53,26 @@ contains
 
     select case( profile_type%to_char() )
       case( 'From csv file' )
-        allocate( fromCsvFile_t :: new_profile_t )
+        new_profile_t => fromCsvFile_t( config, gridWareHouse )
       case( 'Etfl from csv file' )
-        allocate( etflfromCsvFile_t :: new_profile_t )
+        new_profile_t => etflfromCsvFile_t( config, gridWareHouse )
       case( 'From config file' )
-        allocate( fromConfig_t :: new_profile_t )
+        new_profile_t => fromConfig_t( config, gridWareHouse )
       case( 'SrfAlbedo from config file' )
-        allocate( srfAlbedofromConfig_t :: new_profile_t )
+        new_profile_t => srfAlbedofromConfig_t( config, gridWareHouse )
       case( 'Air from csv file' )
-        allocate( airfromCsvFile_t :: new_profile_t )
+        new_profile_t => airfromCsvFile_t( config, gridWareHouse )
       case( 'O2 from csv file' )
-        allocate( o2fromCsvFile_t :: new_profile_t )
+        new_profile_t => o2fromCsvFile_t( config, gridWareHouse )
       case( 'O3 from csv file' )
-        allocate( o3fromCsvFile_t :: new_profile_t )
+        new_profile_t => o3fromCsvFile_t( config, gridWareHouse )
       case( 'Sza from time' )
-        allocate( sza_from_time_t :: new_profile_t )
+        new_profile_t => sza_from_time_t( config, gridWareHouse )
       case( 'Earth sun distance' )
-        allocate( earth_sun_distance_t :: new_profile_t )
+        new_profile_t => earth_sun_distance_t( config, gridWareHouse )
       case default
         call die_msg( 460768215, "Invalid profile type: '" // profile_type%to_char()//"'" )
     end select
-
-    call new_profile_t%initialize( config, gridWareHouse )
 
     write(*,*) Iam,'exiting'
 

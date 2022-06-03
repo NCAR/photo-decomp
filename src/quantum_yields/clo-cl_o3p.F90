@@ -34,7 +34,7 @@ contains
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : base_grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile,                  only : abs_profile_t
+    use tuvx_profile,                  only : base_profile_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
     class(quantum_yield_clo_cl_o3p_t), intent(in) :: this

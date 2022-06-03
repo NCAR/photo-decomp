@@ -5,23 +5,26 @@
 module tuvx_profile_solar_zenith_angle
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile,     only : abs_profile_t
+  use tuvx_profile,     only : base_profile_t
   use musica_assert,    only : die_msg
 
   implicit none
 
   public :: sza_from_time_t
 
-  type, extends(abs_profile_t) :: sza_from_time_t
+  type, extends(base_profile_t) :: sza_from_time_t
   contains
-    !> Initialize grid
-    procedure :: initialize
     final     :: finalize
   end type sza_from_time_t
 
+  !> Constructor
+  interface sza_from_time_t
+    module procedure constructor
+  end interface sza_from_time_t
+
 contains
   !> Initialize solar zenith angle profile from time
-  subroutine initialize( this, profile_config, gridWareHouse )
+  function constructor( profile_config, gridWareHouse ) result( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
@@ -29,7 +32,7 @@ contains
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
-    class(sza_from_time_t), intent(inout) :: this
+    type(sza_from_time_t), pointer :: this
     type(config_t), intent(inout)         :: profile_config
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
@@ -43,6 +46,8 @@ contains
     character(len=*), parameter :: Iam = 'sza from time initialize: '
     type(string_t) :: Handle
     class(base_grid_t), pointer :: timeGrid
+
+    allocate( this )
 
     Handle = 'Time, hrs'
     timeGrid => gridWareHouse%get_grid( Handle )
@@ -69,7 +74,7 @@ contains
                   *(this%edge_val_(1_ik:this%ncells_) + this%edge_val_(2_ik:this%ncells_+1_ik))
     this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - this%edge_val_(1_ik:this%ncells_))
 
-  end subroutine initialize
+   end function constructor
 
   function JulianDayofYear( year, month, day ) result( julianday )
 

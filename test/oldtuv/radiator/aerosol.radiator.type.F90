@@ -205,7 +205,7 @@ contains
 
     use musica_assert,                 only : die_msg
     use micm_Profile_warehouse,        only : Profile_warehouse_t
-    use micm_Profile,                  only : abs_Profile_t
+    use micm_Profile,                  only : base_profile_t
     use micm_grid_warehouse,           only : grid_warehouse_t
     use micm_1d_grid,                  only : base_grid_t
     use micm_radXfer_xsect_warehouse,  only : radXfer_xsect_warehouse_t

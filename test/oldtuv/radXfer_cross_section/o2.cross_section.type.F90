@@ -50,7 +50,7 @@ contains
     use micm_grid_warehouse,             only : grid_warehouse_t
     use micm_1d_grid,                    only : base_grid_t
     use micm_Profile_warehouse,          only : Profile_warehouse_t
-    use micm_Profile,                    only : abs_Profile_t
+    use micm_Profile,                    only : base_profile_t
 
     !> o2 cross section type
     class(o2_cross_section_t), intent(inout) :: this

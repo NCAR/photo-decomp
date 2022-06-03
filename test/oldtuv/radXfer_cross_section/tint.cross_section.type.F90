@@ -173,7 +173,7 @@ file_loop: &
     use micm_grid_warehouse,             only : grid_warehouse_t
     use micm_1d_grid,                    only : base_grid_t
     use micm_Profile_warehouse,     only : Profile_warehouse_t
-    use micm_Profile,               only : abs_Profile_t
+    use micm_Profile,               only : base_profile_t
     use musica_string,                   only : string_t
 
     !> Arguments
@@ -193,7 +193,7 @@ file_loop: &
     real(musica_dk), allocatable  :: wrkCrossSection(:,:)
     class(base_grid_t), pointer :: zGrid
     class(base_grid_t), pointer :: lambdaGrid
-    class(abs_Profile_t), pointer :: mdlTemperature
+    class(base_profile_t), pointer :: mdlTemperature
     type(string_t)     :: Handle
 
     write(*,*) Iam,'entering'

@@ -182,7 +182,7 @@ file_loop: &
     use tuvx_grid,                     only : base_grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
-    use tuvx_profile,                  only : abs_profile_t
+    use tuvx_profile,                  only : base_profile_t
 
     class(quantum_yield_tint_t),    intent(in) :: this
     type(grid_warehouse_t),      intent(inout) :: grid_warehouse
@@ -198,7 +198,7 @@ file_loop: &
     type(string_t) :: Handle
     class(base_grid_t), pointer :: lambdaGrid
     class(base_grid_t), pointer :: zGrid
-    class(abs_profile_t), pointer :: Temperature
+    class(base_profile_t), pointer :: Temperature
     real(dk), parameter :: rZERO   = 0.0_dk
     real(dk), parameter :: rONE    = 1.0_dk
 

@@ -33,7 +33,7 @@ contains
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : base_grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile,                  only : abs_profile_t
+    use tuvx_profile,                  only : base_profile_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
     class(quantum_yield_no3m_aq_t), intent(in) :: this
@@ -51,7 +51,7 @@ contains
     real(dk), allocatable :: modelTemp(:)
     class(base_grid_t), pointer :: zGrid
     class(base_grid_t), pointer :: lambdaGrid
-    class(abs_profile_t), pointer :: mdlTemperature
+    class(base_profile_t), pointer :: mdlTemperature
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'

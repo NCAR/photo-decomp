@@ -34,7 +34,7 @@ contains
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_grid,                     only : base_grid_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
-    use tuvx_profile,                  only : abs_profile_t
+    use tuvx_profile,                  only : base_profile_t
     use musica_string,                 only : string_t
 
     !> Arguments
@@ -59,7 +59,7 @@ contains
     real(dk), allocatable :: modelDens(:)
     class(base_grid_t), pointer :: zGrid
     class(base_grid_t), pointer :: lambdaGrid
-    class(abs_profile_t), pointer :: mdlDensity
+    class(base_profile_t), pointer :: mdlDensity
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'

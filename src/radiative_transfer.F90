@@ -137,7 +137,7 @@ contains
     use tuvx_radiator_warehouse,       only : warehouse_iterator_t
     use tuvx_radiator,        only : abs_radiator_t
     use tuvx_radiator,        only : radiator_state_t
-    use tuvx_profile,                  only : abs_Profile_t
+    use tuvx_profile,                  only : base_profile_t
     use tuvx_spherical_geometry,           only : spherical_geom_t
     use tuvx_la_sr_bands,                   only : la_srb_t
     use tuvx_radiative_transfer_solver,         only : radField_t
@@ -166,7 +166,7 @@ contains
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter
     class(abs_radiator_t), pointer       :: aRadiator => null()
-    class(abs_Profile_t), pointer        :: airProfile => null()
+    class(base_profile_t), pointer        :: airProfile => null()
 
     write(*,*) ' '
     write(*,*) Iam // 'entering'

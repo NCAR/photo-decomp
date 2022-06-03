@@ -57,7 +57,7 @@ contains
     use tuvx_grid_warehouse,        only : grid_warehouse_t
     use tuvx_grid,               only : base_grid_t
     use tuvx_profile_warehouse,     only : Profile_warehouse_t
-    use tuvx_profile,               only : abs_Profile_t
+    use tuvx_profile,               only : base_profile_t
     use musica_string,              only : string_t
 
     !> Arguments
@@ -78,7 +78,7 @@ contains
     real(dk), allocatable   :: modelTemp(:)
     class(base_grid_t), pointer :: lambdaGrid
     class(base_grid_t), pointer :: zGrid
-    class(abs_Profile_t), pointer :: Temperature
+    class(base_profile_t), pointer :: Temperature
     type(string_t) :: Handle
 
     write(*,*) Iam,'entering'

@@ -82,7 +82,7 @@ contains
 
     use musica_assert,                 only : die_msg
     use micm_Profile_warehouse,        only : Profile_warehouse_t
-    use micm_Profile,                  only : abs_Profile_t
+    use micm_Profile,                  only : base_profile_t
     use micm_grid_warehouse,           only : grid_warehouse_t
     use micm_1d_grid,                  only : base_grid_t
     use micm_radXfer_xsect_warehouse,  only : radXfer_xsect_warehouse_t
@@ -108,7 +108,7 @@ contains
     type(string_t)      :: Handle
     class(base_grid_t), pointer :: zGrid
     class(base_grid_t), pointer :: lambdaGrid
-    class(abs_Profile_t), pointer  :: radiatorProfile
+    class(base_profile_t), pointer  :: radiatorProfile
     class(abs_cross_section_t), pointer :: radiatorCrossSection
 
     write(*,*) ' '

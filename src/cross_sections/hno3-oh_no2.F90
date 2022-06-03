@@ -140,7 +140,7 @@ file_loop: &
   !> Calculate the photorate cross section for a given set of environmental conditions
   function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
-    use tuvx_profile, only : abs_Profile_t
+    use tuvx_profile, only : base_profile_t
     !> arguments
     class(hno3_oh_no2_cross_section_t), intent(in) :: this
     !> cross section configuration object
@@ -158,7 +158,7 @@ file_loop: &
     type(string_t)                :: Handle
     class(base_grid_t), pointer :: lambdaGrid
     class(base_grid_t), pointer :: zGrid
-    class(abs_Profile_t), pointer :: temperature
+    class(base_profile_t), pointer :: temperature
 
     write(*,*) Iam,'entering'
 

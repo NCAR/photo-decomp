@@ -4,22 +4,25 @@
 module tuvx_profile_extraterrestrial_flux
 
   use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_Profile,      only : abs_Profile_t
+  use tuvx_Profile,      only : base_profile_t
 
   implicit none
 
   public :: etflfromCsvFile_t
 
-  type, extends(abs_Profile_t) :: etflfromCsvFile_t
+  type, extends(base_profile_t) :: etflfromCsvFile_t
   contains
-    !> Initialize grid
-    procedure :: initialize
     final     :: finalize
   end type etflfromCsvFile_t
 
+  !> Constructor
+  interface etflfromCsvFile_t
+    module procedure constructor
+  end interface etflfromCsvFile_t
+
 contains
   !> Initialize grid
-  subroutine initialize( this, profile_config, gridWareHouse )
+  function constructor( profile_config, gridWareHouse ) result ( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
@@ -32,7 +35,7 @@ contains
     use tuvx_interpolate
 
     !> arguments
-    class(etflfromCsvFile_t), intent(inout) :: this
+    type(etflfromCsvFile_t), pointer :: this
     type(config_t),           intent(inout) :: profile_config
     type(grid_warehouse_t),   intent(inout) :: gridWareHouse
 
@@ -61,6 +64,8 @@ contains
     class(abs_interpolator_t), pointer :: theInterpolator
 
     write(*,*) Iam // 'entering'
+
+    allocate( this )
 
     defaultInterpolator = 'interp2'
 
@@ -235,7 +240,7 @@ file_loop: &
 
     write(*,*) Iam // 'exiting'
 
-  end subroutine initialize
+  end function constructor
 
   subroutine finalize( this )
 

@@ -5,7 +5,7 @@
 module micm_earth_sun_distance
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_Profile,     only : abs_Profile_t
+  use micm_Profile,     only : base_profile_t
   use musica_assert,    only : die_msg
 
   implicit none
@@ -13,7 +13,7 @@ module micm_earth_sun_distance
   private
   public :: earth_sun_distance_t
 
-  type, extends(abs_Profile_t) :: earth_sun_distance_t
+  type, extends(base_profile_t) :: earth_sun_distance_t
   contains
     !> Initialize grid
     procedure :: initialize

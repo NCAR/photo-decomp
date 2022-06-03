@@ -10,9 +10,9 @@ module micm_Profile
   implicit none
 
   private
-  public :: abs_Profile_t, abs_Profile_ptr
+  public :: base_profile_t, abs_Profile_ptr
 
-  type, abstract ::  abs_Profile_t
+  type, abstract ::  base_profile_t
     !> grid handle
     type(string_t) :: handle_
     !> number of wavelength grid cells
@@ -34,11 +34,11 @@ module micm_Profile
   contains
     !> Initialize grid
     procedure(initial), deferred :: initialize
-  end type abs_Profile_t
+  end type base_profile_t
 
   !> Pointer type for building sets of spectral wght objects
   type :: abs_Profile_ptr
-    class(abs_Profile_t), pointer :: ptr_ => null( )
+    class(base_profile_t), pointer :: ptr_ => null( )
   end type abs_Profile_ptr
 
 interface
@@ -50,8 +50,8 @@ interface
       use musica_constants, only : musica_dk
       use micm_grid_warehouse,  only : grid_warehouse_t
 
-      import abs_Profile_t
-      class(abs_Profile_t), intent(inout)      :: this
+      import base_profile_t
+      class(base_profile_t), intent(inout)      :: this
       type(config_t), intent(inout)            :: profile_config
       type(grid_warehouse_t), intent(inout)    :: gridWareHouse
     end subroutine initial

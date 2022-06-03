@@ -46,7 +46,7 @@ contains
     use tuvx_grid_warehouse,             only : grid_warehouse_t
     use tuvx_grid,                    only : base_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
-    use tuvx_profile,                    only : abs_Profile_t
+    use tuvx_profile,                    only : base_profile_t
 
     !> o2 cross section type
     type(o2_cross_section_t), pointer :: this

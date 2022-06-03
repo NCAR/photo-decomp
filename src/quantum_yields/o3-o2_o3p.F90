@@ -40,7 +40,7 @@ contains
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : base_grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile,                  only : abs_profile_t
+    use tuvx_profile,                  only : base_profile_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
     class(quantum_yield_o3_o2_o3p_t), intent(in) :: this
@@ -63,7 +63,7 @@ contains
     real(dk)    :: qfac1, qfac2
     type(string_t)                :: Handle
     class(base_grid_t), pointer :: lambdaGrid, zGrid
-    class(abs_profile_t), pointer :: Temperature
+    class(base_profile_t), pointer :: Temperature
 
     Handle = 'Photolysis, wavelength'
     lambdaGrid => grid_warehouse%get_grid( Handle )

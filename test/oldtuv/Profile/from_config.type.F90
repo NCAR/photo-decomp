@@ -5,14 +5,14 @@
 module micm_Profile_from_config
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_Profile,     only : abs_Profile_t
+  use micm_Profile,     only : base_profile_t
 
   implicit none
 
   private
   public :: fromConfig_t
 
-  type, extends(abs_Profile_t) :: fromConfig_t
+  type, extends(base_profile_t) :: fromConfig_t
   contains
     !> Initialize grid
     procedure :: initialize

@@ -40,7 +40,7 @@ contains
     use tuvx_grid_warehouse, only : grid_warehouse_t
     use tuvx_grid,    only : base_grid_t
     use tuvx_profile_warehouse, only : Profile_warehouse_t
-    use tuvx_profile,           only : abs_Profile_t
+    use tuvx_profile,           only : base_profile_t
 
     !> Arguments
     type(string_t), intent(in) :: config_flsp
@@ -50,9 +50,9 @@ contains
     type(grid_warehouse_t), pointer :: theGridWarehouse
     class(base_grid_t), pointer   :: zGrid, lambdaGrid
     type(Profile_warehouse_t), pointer :: theProfileWarehouse
-    class(abs_Profile_t), pointer      :: aProfile
-    class(abs_Profile_t), pointer      :: AirProfile, TemperatureProfile
-    class(abs_Profile_t), pointer      :: O3Profile
+    class(base_profile_t), pointer      :: aProfile
+    class(base_profile_t), pointer      :: AirProfile, TemperatureProfile
+    class(base_profile_t), pointer      :: O3Profile
     type(string_t)                  :: Handle
 
     write(*,*) Iam // 'entering'

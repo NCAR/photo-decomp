@@ -26,7 +26,7 @@ contains
     use micm_air_from_csv_file_Profile, only : airfromCsvFile_t
     use micm_o2_from_csv_file_Profile, only  : o2fromCsvFile_t
     use micm_o3_from_csv_file_Profile, only  : o3fromCsvFile_t
-    use micm_Profile,                   only : abs_Profile_t
+    use micm_Profile,                   only : base_profile_t
     use micm_1d_grid,                    only : base_grid_t
     use micm_grid_warehouse,             only : grid_warehouse_t
 
@@ -36,7 +36,7 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> New Profile object
-    class(abs_Profile_t), pointer :: new_Profile_t
+    class(base_profile_t), pointer :: new_Profile_t
 
     !> Local variables
     character(len=*), parameter :: Iam = 'Vert Profile builder: '

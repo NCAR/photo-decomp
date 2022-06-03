@@ -145,7 +145,7 @@ file_loop: &
     use tuvx_grid_warehouse,         only : grid_warehouse_t
     use tuvx_grid,                only : base_grid_t
     use tuvx_profile_warehouse,      only : Profile_warehouse_t
-    use tuvx_profile,                only : abs_Profile_t
+    use tuvx_profile,                only : base_profile_t
     use musica_string,               only : string_t
 
     !> Arguments
@@ -165,7 +165,7 @@ file_loop: &
     real(dk) :: Temp
     real(dk), allocatable :: modelTemp(:)
     class(base_grid_t), pointer :: zGrid, lambdaGrid
-    class(abs_Profile_t), pointer :: mdlTemperature
+    class(base_profile_t), pointer :: mdlTemperature
     type(string_t)                :: Handle
 
     write(*,*) Iam,'entering'

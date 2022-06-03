@@ -5,13 +5,13 @@
 module micm_from_csv_file_Profile
 
   use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_Profile, only : abs_Profile_t
+  use micm_Profile, only : base_profile_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(abs_Profile_t) :: fromCsvFile_t
+  type, extends(base_profile_t) :: fromCsvFile_t
   contains
     !> Initialize grid
     procedure :: initialize
