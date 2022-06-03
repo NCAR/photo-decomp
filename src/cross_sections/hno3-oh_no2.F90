@@ -80,6 +80,8 @@ contains
     !> get cross section netcdf filespec
     call config%get( 'netcdf files', netcdfFiles, Iam, found=found )
 
+    allocate( this )
+
 has_netcdf_file: &
     if( found ) then
       allocate( this%cross_section_parms(size(netcdfFiles)) )
