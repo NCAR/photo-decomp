@@ -8,7 +8,7 @@
 module tuvx_quantum_yield_no2_tint
 
   use musica_constants,                only : dk => musica_dk
-  use tuvx_quantum_yield,              only : quantum_yield_t
+  use tuvx_quantum_yield,              only : quantum_yield_t, base_constructor
 
   implicit none
 
@@ -25,20 +25,20 @@ module tuvx_quantum_yield_no2_tint
   type, extends(quantum_yield_t) :: quantum_yield_no2_tint_t
     type(quantum_yield_data_t), allocatable :: quantum_yield(:)
   contains
-    !> Initialize the quantum yield
-    procedure :: initialize
     !> Calculate the quantum yield
     procedure :: calculate => run
     !> clean up
     final     :: finalize
   end type quantum_yield_no2_tint_t
 
+  !> Constructor
+  interface quantum_yield_no2_tint_t
+    module procedure constructor
+  end interface quantum_yield_no2_tint_t
+
 contains
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !> Initialize no2 tint quantum yield_t object
-  subroutine initialize( this, config, grid_warehouse, profile_warehouse )
+function constructor( config, grid_warehouse, profile_warehouse ) result( this )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
@@ -51,7 +51,7 @@ contains
 
     !> quantum yield configuration data
     type(config_t),                  intent(inout) :: config
-    class(quantum_yield_no2_tint_t), intent(inout) :: this
+    type(quantum_yield_no2_tint_t),  pointer :: this
     type(grid_warehouse_t),          intent(inout) :: grid_warehouse
     type(profile_warehouse_t),       intent(inout) :: profile_warehouse
 
@@ -74,6 +74,8 @@ contains
     type(netcdf_t), allocatable   :: netcdf_obj
     type(string_t), allocatable   :: netcdfFiles(:)
     class(base_grid_t), pointer :: lambdaGrid
+
+    allocate( this )
 
     !> Get model wavelength grid
     Handle = 'Photolysis, wavelength'
@@ -169,7 +171,7 @@ file_loop: &
       call die_msg( 553399160, msg )
     endif has_netcdf_file
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

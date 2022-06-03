@@ -8,7 +8,7 @@
 module tuvx_quantum_yield_tint
 
   use musica_constants,                only : dk => musica_dk
-  use tuvx_quantum_yield,              only : quantum_yield_t
+  use tuvx_quantum_yield,              only : quantum_yield_t, base_constructor
 
   implicit none
 
@@ -25,20 +25,20 @@ module tuvx_quantum_yield_tint
   type, extends(quantum_yield_t) :: quantum_yield_tint_t
     type(quantum_yield_data_t), allocatable :: quantum_yield_data(:)
   contains
-    !> Initialize the quantum yield
-    procedure :: initialize
     !> Calculate the quantum yield
     procedure :: calculate => run
     !> clean up
     final     :: finalize
   end type quantum_yield_tint_t
 
+  !> Constructor
+  interface quantum_yield_tint_t
+    module procedure constructor
+  end interface quantum_yield_tint_t
+
 contains
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !> Initialize tint quantum yield_t object
-  subroutine initialize( this, config, grid_warehouse, profile_warehouse )
+function constructor( config, grid_warehouse, profile_warehouse ) result( this )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
@@ -49,7 +49,7 @@ contains
     use tuvx_profile_warehouse,        only : profile_warehouse_t
     use tuvx_util,                     only : inter2
 
-    class(quantum_yield_tint_t), intent(inout) :: this
+    class(quantum_yield_tint_t), pointer :: this
     type(config_t),              intent(inout) :: config
     type(grid_warehouse_t),      intent(inout) :: grid_warehouse
     type(profile_warehouse_t),   intent(inout) :: profile_warehouse
@@ -74,6 +74,8 @@ contains
     type(string_t)                :: Handle
     type(string_t),   allocatable :: netcdfFiles(:)
     class(base_grid_t), pointer :: lambdaGrid
+
+    allocate( this )
 
     ! Get model wavelength grid
     Handle = 'Photolysis, wavelength'
@@ -170,7 +172,7 @@ file_loop: &
       call die_msg( 158918286, msg )
     endif has_netcdf_file
 
-  end subroutine initialize
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
