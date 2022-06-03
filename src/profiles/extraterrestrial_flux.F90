@@ -26,7 +26,7 @@ contains
     use musica_assert, only : die_msg
     use tuvx_util,   only : addpnt
     use tuvx_constants,    only : hc, deltax
-    use tuvx_grid,  only : abs_1d_grid_t
+    use tuvx_grid,  only : base_grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_diagnostic_util,         only : diagout
     use tuvx_interpolate
@@ -45,7 +45,7 @@ contains
     integer(dk), parameter :: rONE  = 1.0_dk
     real(dk),    parameter :: bin_edge(0:4) = (/ rZERO,150.01_dk,200.07_dk,1000.99_dk,real(huge(rZERO),dk) /)
     character(len=*), parameter :: comment = '#!$%*'
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
  
     integer(ik) :: istat
     integer(ik) :: fileNdx, nFiles, ndx, nBins, nLines, Line

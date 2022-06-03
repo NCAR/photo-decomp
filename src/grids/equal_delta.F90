@@ -5,33 +5,38 @@
 module tuvx_grid_equal_delta
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : abs_1d_grid_t
+  use tuvx_grid,     only : base_grid_t
 
   implicit none
 
   public :: equalDelta_t
 
-  type, extends(abs_1d_grid_t) :: equalDelta_t
+  type, extends(base_grid_t) :: equalDelta_t
   contains
-    !> Initialize grid
-    procedure :: initialize
   end type equalDelta_t
+
+  !> Constructor
+  interface equalDelta_t
+    module procedure constructor
+  end interface equalDelta_t
 
 contains
   !> Initialize grid
-  subroutine initialize( this, grid_config )
+  function constructor( grid_config ) result ( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
 
     !> arguments
-    class(equalDelta_t), intent(inout) :: this
+    type(equalDelta_t), pointer :: this
     type(config_t), intent(inout)      :: grid_config
     !> local variables
     integer(ik) :: n
     real(dk)    :: Lower_val, Upper_val, Delta_val
     character(len=*), parameter :: Iam = 'EqualDelta grid initialize: '
     logical(lk) :: found
+
+    allocate ( this )
 
     call grid_config%get( 'Grid begins at', Lower_val, Iam )
     call grid_config%get( 'Grid ends at', Upper_val, Iam )
@@ -55,6 +60,6 @@ contains
                    *(this%edge_(1_ik:this%ncells_) + this%edge_(2_ik:this%ncells_+1_ik))
     this%delta_(:) = (this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_))
 
-  end subroutine initialize
+  end function constructor
 
 end module tuvx_grid_equal_delta

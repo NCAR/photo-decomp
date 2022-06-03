@@ -7,7 +7,7 @@
 !> The grid warehouse type and related functions
 module tuvx_grid_warehouse
 
-  use tuvx_grid, only : abs_1d_grid_ptr
+  use tuvx_grid, only : base_grid_ptr
 
   implicit none
 
@@ -18,8 +18,8 @@ module tuvx_grid_warehouse
   type :: grid_warehouse_t
     private
     !> grid objects
-!   class(abs_1d_grid_ptr), allocatable :: grid_objs_(:)
-    type(abs_1d_grid_ptr), allocatable :: grid_objs_(:)
+!   class(base_grid_ptr), allocatable :: grid_objs_(:)
+    type(base_grid_ptr), allocatable :: grid_objs_(:)
   contains
     !> get a copy of a grid object
     procedure :: get_grid
@@ -56,7 +56,7 @@ contains
     type(config_t)              :: grid_set, grid_config
     class(iterator_t), pointer  :: iter
     class(grid_warehouse_t), pointer :: grid_warehouse_ptr
-    type(abs_1d_grid_ptr)            :: grid_obj
+    type(base_grid_ptr)            :: grid_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
 
@@ -103,7 +103,7 @@ contains
   !> Get copy of a grid object
   function get_grid( this, grid_handle ) result( grid_ptr )
 
-    use tuvx_grid,      only : abs_1d_grid_t
+    use tuvx_grid,      only : base_grid_t
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
@@ -112,7 +112,7 @@ contains
     class(grid_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)             :: grid_handle
 
-    class(abs_1d_grid_t), pointer          :: grid_ptr
+    class(base_grid_t), pointer          :: grid_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'grid warehouse get_grid: '

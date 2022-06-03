@@ -25,7 +25,7 @@ contains
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use tuvx_grid,  only : abs_1d_grid_t
+    use tuvx_grid,  only : base_grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -39,7 +39,7 @@ contains
     real(dk)                    :: uniformValue
     logical(lk)                 :: found
     type(string_t)              :: gridHandle
-    class(abs_1d_grid_t), pointer :: theGrid
+    class(base_grid_t), pointer :: theGrid
  
     !> Get the handle
     call profile_config%get( 'Handle', this%handle_, Iam, default = 'None' )

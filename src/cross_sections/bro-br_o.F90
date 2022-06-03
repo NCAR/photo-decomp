@@ -38,7 +38,7 @@ contains
     use tuvx_util,                     only : inter4
     use musica_assert,                   only : die_msg
     use tuvx_grid_warehouse,             only : grid_warehouse_t
-    use tuvx_grid,                    only : abs_1d_grid_t
+    use tuvx_grid,                    only : base_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
 
     type(bro_br_o_cross_section_t), pointer :: this
@@ -65,8 +65,8 @@ contains
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
-    class(abs_1d_grid_t), pointer :: lambdaGrid
-    class(abs_1d_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
 
     write(*,*) Iam,'entering'
     allocate( this )

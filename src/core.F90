@@ -10,7 +10,7 @@ module tuvx_core
   use musica_assert,            only : assert
   use musica_constants,         only : ik => musica_ik, dk => musica_dk, lk => musica_lk
   use tuvx_grid_warehouse,      only : grid_warehouse_t
-  use tuvx_grid,             only : abs_1d_grid_t
+  use tuvx_grid,             only : base_grid_t
   use tuvx_profile_warehouse,   only : Profile_warehouse_t
   use tuvx_spherical_geometry,      only : spherical_geom_t
   use tuvx_la_sr_bands,              only : la_srb_t

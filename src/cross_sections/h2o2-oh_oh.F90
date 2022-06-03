@@ -56,7 +56,7 @@ contains
 
     use tuvx_grid_warehouse,    only : grid_warehouse_t
     use tuvx_profile_warehouse, only : Profile_warehouse_t
-    use tuvx_grid,           only : abs_1d_grid_t
+    use tuvx_grid,           only : base_grid_t
     use tuvx_profile,           only : abs_Profile_t
     use musica_string,          only : string_t
 
@@ -91,7 +91,7 @@ contains
     integer(ik)    :: vertNdx, wNdx
     real(dk)       :: lambda, sumA, sumB, t, chi, xs
     type(string_t) :: Handle
-    class(abs_1d_grid_t), pointer  :: zGrid, lambdaGrid
+    class(base_grid_t), pointer  :: zGrid, lambdaGrid
     class(abs_Profile_t), pointer  :: temperature
 
     write(*,*) Iam,'entering'

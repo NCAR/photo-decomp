@@ -26,7 +26,7 @@ contains
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use micm_1d_grid,  only : abs_1d_grid_t
+    use micm_1d_grid,  only : base_grid_t
     use micm_grid_warehouse,  only : grid_warehouse_t
     use interpolation
 
@@ -55,7 +55,7 @@ contains
     type(string_t)     :: Filespec, Interpolator
     type(string_t)     :: Handle
     class(abs_interpolator_t), pointer :: theInterpolator
-    class(abs_1d_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: zGrid
 
     write(*,*) Iam // 'entering'
 

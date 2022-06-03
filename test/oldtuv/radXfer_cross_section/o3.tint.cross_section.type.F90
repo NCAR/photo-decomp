@@ -45,7 +45,7 @@ contains
     use photo_utils,                     only : inter2
     use musica_assert,                   only : die_msg
     use micm_grid_warehouse,             only : grid_warehouse_t
-    use micm_1d_grid,                    only : abs_1d_grid_t
+    use micm_1d_grid,                    only : base_grid_t
     use micm_Profile_warehouse,     only : Profile_warehouse_t
 
     !> o3 tint cross section type
@@ -76,7 +76,7 @@ contains
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable   :: netcdf_obj
     type(string_t), allocatable   :: netcdfFiles(:)
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
     type(string_t)     :: Handle
 
     write(*,*) Iam,'entering'
@@ -175,7 +175,7 @@ file_loop: &
   function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
 
     use micm_grid_warehouse,             only : grid_warehouse_t
-    use micm_1d_grid,                    only : abs_1d_grid_t
+    use micm_1d_grid,                    only : base_grid_t
     use micm_Profile_warehouse,     only : Profile_warehouse_t
     use micm_Profile,               only : abs_Profile_t
     use musica_string,                   only : string_t
@@ -197,8 +197,8 @@ file_loop: &
     integer(musica_ik) :: fileNdx, tNdx, wNdx
     real(musica_dk)    :: Tadj, Tstar
     real(musica_dk), allocatable  :: wrkCrossSection(:,:)
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
     class(abs_Profile_t), pointer :: mdlTemperature
     type(string_t)     :: Handle
 

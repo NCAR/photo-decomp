@@ -7,7 +7,7 @@
 !> Build grid objects
 module tuvx_grid_factory
 
-  use tuvx_grid,                       only : abs_1d_grid_t
+  use tuvx_grid,                       only : base_grid_t
   use tuvx_grid_equal_delta,           only : equalDelta_t
   use tuvx_grid_from_csv_file,         only : fromCsvFile_t
   use tuvx_grid_from_config,           only : fromConfig_t
@@ -32,7 +32,7 @@ contains
     type(config_t), intent(inout) :: config
 
     !> New grid object
-    class(abs_1d_grid_t), pointer :: new_grid_t
+    class(base_grid_t), pointer :: new_grid_t
 
     !> Local variables
     type(string_t) :: grid_type
@@ -44,16 +44,15 @@ contains
 
     select case( grid_type%to_char() )
       case( 'Equal interval' )
-        allocate( equalDelta_t :: new_grid_t )
+        new_grid_t => equalDelta_t( config )
       case( 'From csv file' )
-        allocate( fromCsvFile_t :: new_grid_t )
+        new_grid_t => fromCsvFile_t( config )
       case( 'From config file' )
-        allocate( fromConfig_t :: new_grid_t )
+        new_grid_t => fromConfig_t( config )
       case default
         call die_msg( 460768215, "Invalid grid type: '" // grid_type%to_char()//"'" )
     end select
 
-    call new_grid_t%initialize( config )
     write(*,*) Iam,'exiting'
 
   end function grid_builder

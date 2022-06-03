@@ -25,7 +25,7 @@ contains
       
     use musica_config, only : config_t
     use musica_string, only : string_t
-    use micm_1d_grid,  only : abs_1d_grid_t
+    use micm_1d_grid,  only : base_grid_t
     use micm_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -42,7 +42,7 @@ contains
     real(dk)    :: Lon, Lat
     character(len=*), parameter :: Iam = 'sza from time initialize: '
     type(string_t) :: Handle
-    class(abs_1d_grid_t), pointer :: timeGrid
+    class(base_grid_t), pointer :: timeGrid
 
     Handle = 'Time, hrs'
     timeGrid => gridWareHouse%get_grid( Handle )

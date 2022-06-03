@@ -54,7 +54,7 @@ contains
     use tuvx_util,                     only : inter2
     use musica_assert,                   only : die_msg
     use tuvx_grid_warehouse,             only : grid_warehouse_t
-    use tuvx_grid,                    only : abs_1d_grid_t
+    use tuvx_grid,                    only : base_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
     use tuvx_profile,                    only : abs_Profile_t
 
@@ -81,7 +81,7 @@ contains
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
 
     write(*,*) Iam,'entering'
 
@@ -140,7 +140,7 @@ file_loop: &
   function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
     use tuvx_grid_warehouse,         only : grid_warehouse_t
-    use tuvx_grid,                only : abs_1d_grid_t
+    use tuvx_grid,                only : base_grid_t
     use tuvx_profile_warehouse,      only : Profile_warehouse_t
     use musica_string,               only : string_t
 
@@ -157,7 +157,7 @@ file_loop: &
     integer(ik) :: colndx
     integer(ik) :: nzdim
     character(len=*), parameter :: Iam = 'radXfer base cross section calculate: '
-    class(abs_1d_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: zGrid
     type(string_t)                :: Handle
     real(dk), allocatable         :: wrkCrossSection(:,:)
 

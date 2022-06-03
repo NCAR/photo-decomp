@@ -39,7 +39,7 @@ contains
 
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,         only : abs_1d_grid_t
+    use tuvx_grid,         only : base_grid_t
 
     !> radiator object
     class(base_radiator_t), intent(inout) :: this
@@ -51,7 +51,7 @@ contains
     !> local variables
     character(len=*), parameter   :: Iam = "Radiator initialize: "
     type(string_t)                :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid, lambdaGrid
+    class(base_grid_t), pointer :: zGrid, lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'
@@ -92,7 +92,7 @@ contains
     use tuvx_profile_warehouse,        only : Profile_warehouse_t
     use tuvx_profile,                  only : abs_Profile_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_grid,                  only : abs_1d_grid_t
+    use tuvx_grid,                  only : base_grid_t
     use tuvx_cross_section_warehouse,  only : radXfer_xsect_warehouse_t
     use tuvx_cross_section, only : base_cross_section_t
     use musica_constants,              only : lk => musica_lk
@@ -115,8 +115,8 @@ contains
     real(dk), allocatable :: CrossSection(:,:)
     character(len=*), parameter :: Iam = 'base radiator upDateState: '
     type(string_t)      :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
     class(abs_Profile_t), pointer  :: radiatorProfile
     class(base_cross_section_t), pointer :: radiatorCrossSection
 

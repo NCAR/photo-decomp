@@ -59,7 +59,7 @@ contains
   function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
 
     use micm_grid_warehouse,         only : grid_warehouse_t
-    use micm_1d_grid,                only : abs_1d_grid_t
+    use micm_1d_grid,                only : base_grid_t
     use micm_Profile_warehouse, only : Profile_warehouse_t
     use musica_string,               only : string_t
 
@@ -74,8 +74,8 @@ contains
     !> Local variables
     integer :: colndx
     character(len=*), parameter :: Iam = 'radXfer rayliegh cross section calculate: '
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
     type(string_t)                :: Handle
     real(musica_dk)               :: wmicrn
     real(musica_dk), allocatable  :: pwr(:), wrk(:)

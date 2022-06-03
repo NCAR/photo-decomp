@@ -36,7 +36,7 @@ contains
     use musica_assert,        only : die_msg
     use musica_config,        only : config_t
     use micm_grid_warehouse,  only : grid_warehouse_t
-    use micm_1d_grid,         only : abs_1d_grid_t
+    use micm_1d_grid,         only : base_grid_t
     use interpolation
     use tuv_params,           only : nzero, pzero
     use debug,                only : diagout
@@ -63,7 +63,7 @@ contains
     real(dk), allocatable         :: winput_SSA(:), winput_G(:)
     type(string_t)                :: Handle
     type(config_t)                :: Aerosol_config
-    class(abs_1d_grid_t), pointer :: zGrid, lambdaGrid
+    class(base_grid_t), pointer :: zGrid, lambdaGrid
     class(abs_interpolator_t), pointer :: theInterpolator
 
     write(*,*) ' '
@@ -207,7 +207,7 @@ contains
     use micm_Profile_warehouse,        only : Profile_warehouse_t
     use micm_Profile,                  only : abs_Profile_t
     use micm_grid_warehouse,           only : grid_warehouse_t
-    use micm_1d_grid,                  only : abs_1d_grid_t
+    use micm_1d_grid,                  only : base_grid_t
     use micm_radXfer_xsect_warehouse,  only : radXfer_xsect_warehouse_t
     use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
 
@@ -225,8 +225,8 @@ contains
     integer(ik) :: wNdx
     character(len=*), parameter :: Iam = 'Aerosol radiator upDateState: '
     type(string_t)                :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'

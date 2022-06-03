@@ -11,7 +11,7 @@ module tuvx_photolysis_rates
   use musica_constants,                only : dk => musica_dk
   use musica_string,                   only : string_t
   use tuvx_cross_section,              only : base_cross_section_ptr
-  use tuvx_grid,                       only : abs_1d_grid_t
+  use tuvx_grid,                       only : base_grid_t
   use tuvx_grid_warehouse,             only : grid_warehouse_t
   use tuvx_profile,                    only : abs_profile_t
   use tuvx_profile_warehouse,          only : profile_warehouse_t
@@ -170,8 +170,8 @@ contains
     type(string_t)        :: Handle, annotatedRate
     character(len=64)     :: jlabel
     character(len=64), allocatable :: annotatedjlabel(:)
-    class(abs_1d_grid_t), pointer :: zGrid => null()
-    class(abs_1d_grid_t), pointer :: lambdaGrid => null()
+    class(base_grid_t), pointer :: zGrid => null()
+    class(base_grid_t), pointer :: lambdaGrid => null()
     class(abs_profile_t), pointer :: airProfile => null()
     class(abs_profile_t), pointer :: etfl => null()
 

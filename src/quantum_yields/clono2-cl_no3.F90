@@ -32,7 +32,7 @@ contains
 
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
-    use tuvx_grid,                     only : abs_1d_grid_t
+    use tuvx_grid,                     only : base_grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
@@ -50,8 +50,8 @@ contains
     integer     :: vertNdx, lambdaNdx
     real(dk)    :: lambda, qyield
     real(dk), allocatable :: wrkQuantumYield(:)
-    class(abs_1d_grid_t), pointer :: lambdaGrid
-    class(abs_1d_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
     type(string_t) :: Handle
 
     ! Get model wavelength grid

@@ -38,7 +38,7 @@ contains
     use musica_assert,    only : assert, almost_equal
     use musica_constants, only : ik => musica_ik, dk => musica_dk
     use tuvx_grid_warehouse, only : grid_warehouse_t
-    use tuvx_grid,    only : abs_1d_grid_t
+    use tuvx_grid,    only : base_grid_t
     use tuvx_profile_warehouse, only : Profile_warehouse_t
     use tuvx_profile,           only : abs_Profile_t
 
@@ -48,7 +48,7 @@ contains
     character(len=*), parameter :: Iam = 'test_Profile: '
     type(config_t)              :: tst_config
     type(grid_warehouse_t), pointer :: theGridWarehouse
-    class(abs_1d_grid_t), pointer   :: zGrid, lambdaGrid
+    class(base_grid_t), pointer   :: zGrid, lambdaGrid
     type(Profile_warehouse_t), pointer :: theProfileWarehouse
     class(abs_Profile_t), pointer      :: aProfile
     class(abs_Profile_t), pointer      :: AirProfile, TemperatureProfile

@@ -36,7 +36,7 @@ contains
     use musica_assert,        only : die_msg
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,         only : abs_1d_grid_t
+    use tuvx_grid,         only : base_grid_t
     use tuvx_interpolate
     use tuvx_constants,           only : nzero, pzero
     use tuvx_diagnostic_util,                only : diagout
@@ -63,7 +63,7 @@ contains
     real(dk), allocatable         :: winput_SSA(:), winput_G(:)
     type(string_t)                :: Handle
     type(config_t)                :: Aerosol_config
-    class(abs_1d_grid_t), pointer :: zGrid, lambdaGrid
+    class(base_grid_t), pointer :: zGrid, lambdaGrid
     class(abs_interpolator_t), pointer :: theInterpolator
 
     write(*,*) ' '
@@ -192,7 +192,7 @@ contains
     use tuvx_profile_warehouse,        only : Profile_warehouse_t
     use tuvx_profile,                  only : abs_Profile_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_grid,                  only : abs_1d_grid_t
+    use tuvx_grid,                  only : base_grid_t
     use tuvx_cross_section_warehouse,  only : radXfer_xsect_warehouse_t
 
     !> Arguments
@@ -209,8 +209,8 @@ contains
     integer(ik) :: wNdx
     character(len=*), parameter :: Iam = 'Aerosol radiator upDateState: '
     type(string_t)                :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'

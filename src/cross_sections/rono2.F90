@@ -44,7 +44,7 @@ contains
     use tuvx_util,                     only : inter2
     use musica_assert,                   only : die_msg
     use tuvx_grid_warehouse,             only : grid_warehouse_t
-    use tuvx_grid,                    only : abs_1d_grid_t
+    use tuvx_grid,                    only : base_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
 
     type(rono2_cross_section_t), pointer :: this
@@ -72,7 +72,7 @@ contains
     type(config_t)              :: tmp_config
     type(string_t)              :: addpntVal
     type(string_t)              :: Handle
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
 
     write(*,*) Iam,'entering'
 
@@ -143,7 +143,7 @@ file_loop: &
   function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
 
     use tuvx_grid_warehouse,         only : grid_warehouse_t
-    use tuvx_grid,                only : abs_1d_grid_t
+    use tuvx_grid,                only : base_grid_t
     use tuvx_profile_warehouse,      only : Profile_warehouse_t
     use tuvx_profile,                only : abs_Profile_t
     use musica_string,               only : string_t
@@ -164,7 +164,7 @@ file_loop: &
     real(dk), parameter         :: T0 = 298._dk
     real(dk) :: Temp
     real(dk), allocatable :: modelTemp(:)
-    class(abs_1d_grid_t), pointer :: zGrid, lambdaGrid
+    class(base_grid_t), pointer :: zGrid, lambdaGrid
     class(abs_Profile_t), pointer :: mdlTemperature
     type(string_t)                :: Handle
 

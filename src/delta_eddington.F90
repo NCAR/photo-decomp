@@ -35,7 +35,7 @@ module tuvx_delta_eddington
    use tuvx_radiator_warehouse,         only : radiator_warehouse_t
    use tuvx_radiator_warehouse,         only : warehouse_iterator_t
    use tuvx_spherical_geometry,             only : spherical_geom_t
-   use tuvx_grid,                    only : abs_1d_grid_t
+   use tuvx_grid,                    only : base_grid_t
    use tuvx_profile,                    only : abs_Profile_t
    use tuvx_radiator,          only : abs_radiator_t
    use tuvx_linear_algebra_linpack,                 only : linalgebra_t
@@ -99,8 +99,8 @@ module tuvx_delta_eddington
     type(warehouse_iterator_t), pointer  :: iter
     class(abs_radiator_t), allocatable   :: aRadiator
     type(radiator_state_t)               :: atmRadiatorState
-    class(abs_1d_grid_t), pointer        :: zGrid
-    class(abs_1d_grid_t), pointer        :: lambdaGrid
+    class(base_grid_t), pointer        :: zGrid
+    class(base_grid_t), pointer        :: lambdaGrid
     class(abs_Profile_t), pointer        :: surfaceAlbedo
 
     write(*,*) ' '

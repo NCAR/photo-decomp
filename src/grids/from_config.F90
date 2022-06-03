@@ -5,32 +5,37 @@
 module tuvx_grid_from_config
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : abs_1d_grid_t
+  use tuvx_grid,     only : base_grid_t
 
   implicit none
 
   public :: fromConfig_t
 
-  type, extends(abs_1d_grid_t) :: fromConfig_t
+  type, extends(base_grid_t) :: fromConfig_t
   contains
-    !> Initialize grid
-    procedure :: initialize
   end type fromConfig_t
+
+  !> Constructor
+  interface fromConfig_t
+    module procedure constructor
+  end interface fromConfig_t
 
 contains
   !> Initialize grid
-  subroutine initialize( this, grid_config )
+  function constructor( grid_config ) result ( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
 
     !> Arguments
-    class(fromConfig_t), intent(inout) :: this
+    type(fromConfig_t), pointer :: this
     type(config_t), intent(inout)      :: grid_config
 
     !> Local variables
     character(len=*), parameter :: Iam = 'From config grid initialize: '
+
+    allocate( this )
  
     !> Get the handle
     call grid_config%get( 'Handle', this%handle_, Iam, default = 'None' )
@@ -43,6 +48,6 @@ contains
                    *(this%edge_(1_ik:this%ncells_) + this%edge_(2_ik:this%ncells_+1_ik))
     this%delta_ = (this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_))
 
-  end subroutine initialize
+  end function constructor
 
 end module tuvx_grid_from_config

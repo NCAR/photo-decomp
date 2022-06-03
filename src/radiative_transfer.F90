@@ -133,7 +133,7 @@ contains
 
     use musica_assert,                 only : die_msg
     use musica_string,                 only : to_char
-    use tuvx_grid,                  only : abs_1d_grid_t
+    use tuvx_grid,                  only : base_grid_t
     use tuvx_radiator_warehouse,       only : warehouse_iterator_t
     use tuvx_radiator,        only : abs_radiator_t
     use tuvx_radiator,        only : radiator_state_t

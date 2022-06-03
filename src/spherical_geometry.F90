@@ -33,7 +33,7 @@ module tuvx_spherical_geometry
       subroutine initialize(this, gridWareHouse )
 
       use tuvx_grid_warehouse, only : grid_warehouse_t
-      use tuvx_grid, only        : abs_1d_grid_t
+      use tuvx_grid, only        : base_grid_t
 
       !> Arguments
       class(spherical_geom_t), intent(inout) :: this
@@ -43,7 +43,7 @@ module tuvx_spherical_geometry
       character(len=*), parameter            :: Iam = 'sphers initialize: '
 
       type(string_t)                         :: Handle
-      class(abs_1d_grid_t), pointer          :: zGrid
+      class(base_grid_t), pointer          :: zGrid
 
       write(*,*) ' '
       write(*,*) Iam // 'entering'
@@ -99,7 +99,7 @@ module tuvx_spherical_geometry
 !-----------------------------------------------------------------------------*
 
       use tuvx_grid_warehouse, only : grid_warehouse_t
-      use tuvx_grid, only        : abs_1d_grid_t
+      use tuvx_grid, only        : base_grid_t
  
 ! input
       real(dk), intent(in) :: zen
@@ -120,7 +120,7 @@ module tuvx_spherical_geometry
       real(dk), allocatable    :: zd(:)
 
       type(string_t)                 :: Handle
-      class(abs_1d_grid_t), pointer  :: zGrid
+      class(base_grid_t), pointer  :: zGrid
 
       write(*,*) ' '
       write(*,*) Iam // 'entering'

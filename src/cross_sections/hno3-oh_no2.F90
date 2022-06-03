@@ -12,7 +12,7 @@ module tuvx_cross_section_hno3_oh_no2
   use musica_string,                           only : string_t
   use tuvx_grid_warehouse,                     only : grid_warehouse_t
   use tuvx_profile_warehouse,                  only : Profile_warehouse_t
-  use tuvx_grid,                            only : abs_1d_grid_t
+  use tuvx_grid,                            only : base_grid_t
 
   implicit none
 
@@ -71,7 +71,7 @@ contains
     type(config_t)              :: tmp_config
     type(string_t)              :: addpntVal
     type(string_t)              :: Handle
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
 
     write(*,*) Iam,'entering'
 
@@ -156,8 +156,8 @@ file_loop: &
     integer(ik)           :: vertNdx
     real(dk), allocatable :: Temp(:)
     type(string_t)                :: Handle
-    class(abs_1d_grid_t), pointer :: lambdaGrid
-    class(abs_1d_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
     class(abs_Profile_t), pointer :: temperature
 
     write(*,*) Iam,'entering'

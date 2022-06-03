@@ -35,7 +35,7 @@ contains
 
     use musica_config,        only : config_t
     use micm_grid_warehouse,  only : grid_warehouse_t
-    use micm_1d_grid,         only : abs_1d_grid_t
+    use micm_1d_grid,         only : base_grid_t
 
     !> radiator object
     class(base_radiator_t), intent(inout) :: this
@@ -47,7 +47,7 @@ contains
     !> local variables
     character(len=*), parameter   :: Iam = "Radiator initialize: "
     type(string_t)                :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid, lambdaGrid
+    class(base_grid_t), pointer :: zGrid, lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'
@@ -84,7 +84,7 @@ contains
     use micm_Profile_warehouse,        only : Profile_warehouse_t
     use micm_Profile,                  only : abs_Profile_t
     use micm_grid_warehouse,           only : grid_warehouse_t
-    use micm_1d_grid,                  only : abs_1d_grid_t
+    use micm_1d_grid,                  only : base_grid_t
     use micm_radXfer_xsect_warehouse,  only : radXfer_xsect_warehouse_t
     use micm_radXfer_abs_cross_section_type, only : abs_cross_section_t
     use debug,                         only : diagout
@@ -106,8 +106,8 @@ contains
     real(dk), allocatable :: CrossSection(:,:)
     character(len=*), parameter :: Iam = 'base radiator upDateState: '
     type(string_t)      :: Handle
-    class(abs_1d_grid_t), pointer :: zGrid
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: zGrid
+    class(base_grid_t), pointer :: lambdaGrid
     class(abs_Profile_t), pointer  :: radiatorProfile
     class(abs_cross_section_t), pointer :: radiatorCrossSection
 

@@ -5,13 +5,13 @@
 module micm_1d_from_csv_file_grid
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_1d_grid,     only : abs_1d_grid_t
+  use micm_1d_grid,     only : base_grid_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(abs_1d_grid_t) :: fromCsvFile_t
+  type, extends(base_grid_t) :: fromCsvFile_t
   contains
     !> Initialize grid
     procedure :: initialize

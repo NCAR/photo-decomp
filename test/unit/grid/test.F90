@@ -18,11 +18,11 @@ contains
   subroutine test_grid_t(aGrid, num_cells, edges, midpoints, deltas)
     use musica_assert,    only : assert, almost_equal
     use musica_constants, only : dk => musica_dk
-    use tuvx_grid,    only : abs_1d_grid_t
+    use tuvx_grid,    only : base_grid_t
 
     integer :: i
 
-    class(abs_1d_grid_t), pointer   :: aGrid
+    class(base_grid_t), pointer   :: aGrid
     integer :: num_cells
     real(dk) :: edges(:), midpoints(:), deltas(:)
 
@@ -60,14 +60,14 @@ contains
     use musica_string,    only : string_t
     use musica_constants, only : ik => musica_ik, dk => musica_dk
     use tuvx_grid_warehouse, only : grid_warehouse_t
-    use tuvx_grid,    only : abs_1d_grid_t
+    use tuvx_grid,    only : base_grid_t
 
     !> local variables
     character(len=*), parameter :: config_flsp = 'data/grid.tst.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
     type(string_t) :: Handle
-    class(abs_1d_grid_t), pointer   :: aGrid
+    class(base_grid_t), pointer   :: aGrid
     integer :: i
 
     integer :: eq_area_grid_cells = 120

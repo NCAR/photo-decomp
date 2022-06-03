@@ -5,28 +5,32 @@
 module tuvx_grid_from_csv_file
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : abs_1d_grid_t
+  use tuvx_grid,     only : base_grid_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(abs_1d_grid_t) :: fromCsvFile_t
+  type, extends(base_grid_t) :: fromCsvFile_t
   contains
-    !> Initialize grid
-    procedure :: initialize
   end type fromCsvFile_t
 
+  !> Constructor
+  interface fromCsvFile_t
+    module procedure constructor
+  end interface fromCsvFile_t
+
 contains
+
   !> Initialize grid
-  subroutine initialize( this, grid_config )
-      
+  function constructor( grid_config ) result ( this )
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
 
     !> arguments
-    class(fromCsvFile_t), intent(inout) :: this
+    type(fromCsvFile_t), pointer :: this
     type(config_t), intent(inout)       :: grid_config
 
     !> local variables
@@ -40,6 +44,8 @@ contains
     character(len=132) :: InputLine
     type(string_t)     :: Filespec
     
+
+    allocate( this )
 
     !> Get the configuration settings
     call grid_config%get( 'Filespec', Filespec, Iam )
@@ -76,7 +82,6 @@ contains
     this%delta_(:) = (this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_))
 
     close(unit=inUnit)
-
-  end subroutine initialize
+  end function constructor
 
 end module tuvx_grid_from_csv_file

@@ -5,13 +5,13 @@
 module micm_1d_equal_delta_grid
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use micm_1d_grid,     only : abs_1d_grid_t
+  use micm_1d_grid,     only : base_grid_t
 
   implicit none
 
   public :: equalDelta_t
 
-  type, extends(abs_1d_grid_t) :: equalDelta_t
+  type, extends(base_grid_t) :: equalDelta_t
   contains
     !> Initialize grid
     procedure :: initialize

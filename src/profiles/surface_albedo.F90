@@ -25,7 +25,7 @@ contains
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use tuvx_grid,  only : abs_1d_grid_t
+    use tuvx_grid,  only : base_grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -37,7 +37,7 @@ contains
     character(len=*), parameter :: Iam = 'From config profile initialize: '
     integer(ik)                   :: ndx
     real(dk)                      :: uniformValue
-    class(abs_1d_grid_t), pointer :: lambdaGrid
+    class(base_grid_t), pointer :: lambdaGrid
     type(string_t)                :: Handle
  
     !> Get the handle

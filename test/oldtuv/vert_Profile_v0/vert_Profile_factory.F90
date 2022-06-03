@@ -27,7 +27,7 @@ contains
     use micm_o2_from_csv_file_vert_Profile, only  : o2fromCsvFile_t
     use micm_o3_from_csv_file_vert_Profile, only  : o3fromCsvFile_t
     use micm_vert_Profile,               only : abs_vert_Profile_t
-    use micm_1d_grid,                    only : abs_1d_grid_t
+    use micm_1d_grid,                    only : base_grid_t
     use micm_grid_warehouse,             only : grid_warehouse_t
 
     !> Arguments

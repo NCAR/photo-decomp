@@ -10,9 +10,9 @@ module micm_1d_grid
   implicit none
 
   private
-  public :: abs_1d_grid_t, abs_1d_grid_ptr
+  public :: base_grid_t, base_grid_ptr
 
-  type, abstract ::  abs_1d_grid_t
+  type, abstract ::  base_grid_t
     !> grid handle
     type(string_t) :: handle_
     !> number of wavelength grid cells
@@ -26,12 +26,12 @@ module micm_1d_grid
   contains
     !> Initialize grid
     procedure(initial), deferred :: initialize
-  end type abs_1d_grid_t
+  end type base_grid_t
 
   !> Pointer type for building sets of spectral wght objects
-  type :: abs_1d_grid_ptr
-    class(abs_1d_grid_t), pointer :: ptr_ => null( )
-  end type abs_1d_grid_ptr
+  type :: base_grid_ptr
+    class(base_grid_t), pointer :: ptr_ => null( )
+  end type base_grid_ptr
 
 interface
 
@@ -40,8 +40,8 @@ interface
       
       use musica_config, only : config_t
 
-      import abs_1d_grid_t
-      class(abs_1d_grid_t), intent(inout) :: this
+      import base_grid_t
+      class(base_grid_t), intent(inout) :: this
       type(config_t), intent(inout)       :: grid_config
     end subroutine initial
 

@@ -7,7 +7,7 @@
 !> Build grid objects
 module micm_grid_factory
 
-  use micm_1d_grid,                only : abs_1d_grid_t
+  use micm_1d_grid,                only : base_grid_t
   use micm_1d_equal_delta_grid,    only : equalDelta_t
 
   implicit none
@@ -33,7 +33,7 @@ contains
     type(config_t), intent(inout) :: config
 
     !> New grid object
-    class(abs_1d_grid_t), pointer :: new_grid_t
+    class(base_grid_t), pointer :: new_grid_t
 
     !> Local variables
     type(string_t) :: grid_type
