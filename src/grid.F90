@@ -10,9 +10,9 @@ module tuvx_grid
   implicit none
 
   private
-  public :: base_grid_t, base_grid_ptr, base_constructor
+  public :: grid_t, base_grid_ptr, base_constructor
 
-  type, abstract ::  base_grid_t
+  type, abstract ::  grid_t
     !> grid handle
     type(string_t) :: handle_
     !> number of wavelength grid cells
@@ -24,11 +24,11 @@ module tuvx_grid
     !> cell deltas
     real(musica_dk), allocatable :: delta_(:)
   contains
-  end type base_grid_t
+  end type grid_t
 
   !> Pointer type for building sets of spectral wght objects
   type :: base_grid_ptr
-    class(base_grid_t), pointer :: ptr_ => null( )
+    class(grid_t), pointer :: ptr_ => null( )
   end type base_grid_ptr
 
 interface
@@ -38,8 +38,8 @@ interface
       
       use musica_config, only : config_t
 
-      import base_grid_t
-      class(base_grid_t), intent(inout) :: this
+      import grid_t
+      class(grid_t), intent(inout) :: this
       type(config_t), intent(inout)       :: grid_config
     end subroutine base_constructor
 

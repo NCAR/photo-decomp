@@ -7,71 +7,80 @@
 !> The ccl4->Products_cross_section type and related functions
 module tuvx_cross_section_ccl4
 
-  use tuvx_cross_section, only : base_cross_section_t, base_constructor
+  use tuvx_cross_section,              only : cross_section_t
 
   implicit none
 
   private
-  public :: ccl4_cross_section_t
+  public :: cross_section_ccl4_t
 
   !> Calculator for ccl4 cross section
-  type, extends(base_cross_section_t) :: ccl4_cross_section_t
+  type, extends(cross_section_t) :: cross_section_ccl4_t
   contains
     !> Calculate the cross section
     procedure :: calculate => run
-  end type ccl4_cross_section_t
+  end type cross_section_ccl4_t
 
   !> Constructor
-  interface ccl4_cross_section_t
+  interface cross_section_ccl4_t
     module procedure constructor
-  end interface ccl4_cross_section_t
+  end interface cross_section_ccl4_t
 
 contains
 
-  !> Initialize the cross section
-  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
- 
-    use musica_config,    only : config_t
-    use musica_constants, only : lk => musica_lk
-    use tuvx_grid_warehouse,    only : grid_warehouse_t
-    use tuvx_profile_warehouse, only : Profile_warehouse_t
- 
- 
-    !> Cross section calculator
-    logical(lk), optional, intent(in)          :: atMidPoint
-    class(base_cross_section_t), pointer  :: this
-    type(config_t), intent(inout)              :: config
-    type(grid_warehouse_t), intent(inout)      :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout)   :: ProfileWareHouse
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    allocate ( ccl4_cross_section_t :: this )
-    call base_constructor( this, config, gridWareHouse, ProfileWareHouse, atMidPoint )
-  end function
+  !> Initialize the cross section
+  function constructor( config, grid_warehouse, profile_warehouse )           &
+      result ( this )
+
+    use musica_config,                 only : config_t
+    use tuvx_cross_section,            only : base_constructor
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
+
+    class(cross_section_t),    pointer       :: this
+    type(config_t),            intent(inout) :: config
+    type(grid_warehouse_t),    intent(inout) :: grid_warehouse
+    type(profile_warehouse_t), intent(inout) :: profile_warehouse
+
+    allocate (cross_section_ccl4_t :: this )
+    call base_constructor( this, config, grid_warehouse, profile_warehouse )
+
+  end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
+  !> Calculate the cross section for a given set of environmental conditions
+  !!
+  !! \todo provide reference and description
+  function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
+      result( cross_section )
 
-    use musica_constants,           only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-    use tuvx_grid_warehouse,        only : grid_warehouse_t
-    use tuvx_grid,               only : base_grid_t
-    use tuvx_profile_warehouse,     only : Profile_warehouse_t
-    use tuvx_profile,               only : base_profile_t
-    use musica_string,              only : string_t
+    use musica_constants,              only : dk => musica_dk
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile,                  only : profile_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
 
-    !> Arguments
-    class(ccl4_cross_section_t), intent(in)  :: this
-    logical(lk), optional, intent(in)        :: atMidPoint
-    !> The warehouses
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=dk), allocatable               :: cross_section(:,:)
+    real(kind=dk), allocatable                 :: cross_section(:,:)
+    !> Cross section calculator
+    class(cross_section_ccl4_t), intent(in)    :: this
+    !> Grid warehouse
+    type(grid_warehouse_t),      intent(inout) :: grid_warehouse
+    !> Profile warehouse
+    type(profile_warehouse_t),   intent(inout) :: profile_warehouse
+    !> Flag indicating whether cross-section data should be at mid-points on
+    !! the wavelength grid.
+    !!
+    !! If this is false or omitted, cross-section data are calculated at
+    !! interfaces on the wavelength grid.
+    logical, optional,           intent(in)    :: at_mid_point
 
-    !> Local variables
+    ! Local variables
     character(len=*), parameter :: Iam = 'ccl4 cross section run: '
-    integer(ik), parameter :: iONE  = 1_ik
     real(dk), parameter :: rZERO = 0.0_dk
     real(dk), parameter :: b0 = 1.0739_dk
     real(dk), parameter :: b1 = -1.6275e-2_dk
@@ -80,23 +89,24 @@ contains
     real(dk), parameter :: b4 = 1.5022e-10_dk
 
     real(dk)    :: Temp, Wpoly, w1
-    integer(ik) :: lambdaNdx, vertNdx, nzdim
+    integer :: lambdaNdx, vertNdx, nzdim
     real(dk), allocatable  :: modelTemp(:)
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_profile_t), pointer :: mdlTemperature
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
+    class(profile_t), pointer :: mdlTemperature
     type(string_t) :: Handle
 
-    write(*,*) Iam,'entering'
+    Handle = 'Vertical Z'
+    zGrid => grid_warehouse%get_grid( Handle )
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid => grid_warehouse%get_grid( Handle )
+    Handle = 'Temperature'
+    mdlTemperature => profile_warehouse%get_Profile( Handle )
 
-    Handle = 'Vertical Z'             ; zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Temperature'            ; mdlTemperature => ProfileWareHouse%get_Profile( Handle )
-
-    nzdim = zGrid%ncells_ + iONE
-    if( present(atMidPoint) ) then
-      if( atMidpoint ) then
-        nzdim = nzdim - iONE
+    nzdim = zGrid%ncells_ + 1
+    if( present( at_mid_point ) ) then
+      if( at_mid_point ) then
+        nzdim = nzdim - 1
         modelTemp = mdlTemperature%mid_val_
       else
         modelTemp = mdlTemperature%edge_val_
@@ -105,27 +115,30 @@ contains
       modelTemp = mdlTemperature%edge_val_
     endif
 
-    allocate( cross_section(lambdaGrid%ncells_,nzdim) )
+    allocate( cross_section( lambdaGrid%ncells_, nzdim ) )
     cross_section = rZERO
 
     do vertNdx = 1,nzdim
-      Temp = max( min( 300._dk,modelTemp(vertNdx) ),210._dk )
-      Temp = Temp - 295._dk 
-      do lambdaNdx = 1,lambdaGrid%ncells_
-        w1 = lambdaGrid%mid_(lambdaNdx)
+      Temp = max( min( 300._dk, modelTemp( vertNdx ) ), 210._dk )
+      Temp = Temp - 295._dk
+      do lambdaNdx = 1, lambdaGrid%ncells_
+        w1 = lambdaGrid%mid_( lambdaNdx )
         if( w1 > 194._dk .and. w1 < 250._dk ) then
-          Wpoly = b0 + w1*(b1 + w1*(b2 + w1*(b3 + b4*w1)))
-          cross_section(lambdaNdx,vertNdx) = this%cross_section_parms(1)%array(lambdaNdx,1) * 10._dk**(Wpoly*Temp)
+          Wpoly = b0 + w1 * ( b1 + w1 * ( b2 + w1 * ( b3 + b4 * w1 ) ) )
+          cross_section( lambdaNdx, vertNdx ) =                               &
+              this%cross_section_parms(1)%array( lambdaNdx, 1 )               &
+              * 10._dk**( Wpoly * Temp )
         else
-          cross_section(lambdaNdx,vertNdx) = this%cross_section_parms(1)%array(lambdaNdx,1)
+          cross_section( lambdaNdx, vertNdx ) =                               &
+              this%cross_section_parms(1)%array(lambdaNdx,1)
         endif
       enddo
     enddo
 
     cross_section = transpose( cross_section )
 
-    write(*,*) Iam,'exiting'
-
   end function run
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_cross_section_ccl4

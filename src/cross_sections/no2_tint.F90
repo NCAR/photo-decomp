@@ -7,66 +7,61 @@
 !> The temperature interpolation cross_section type and related functions
 module tuvx_cross_section_no2_tint
 
-  use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_cross_section, only : base_cross_section_t, cross_section_parms_t
+  use tuvx_cross_section,              only : cross_section_t
 
   implicit none
 
   private
-  public :: no2_tint_cross_section_t
-
-  integer(ik), parameter :: iONE  = 1_ik
-  integer(ik), parameter :: iTWO  = 2_ik
-  real(dk), parameter    :: rZERO = 0.0_dk
-  real(dk), parameter    :: rONE  = 1.0_dk
+  public :: cross_section_no2_tint_t
 
   !> Calculator for tint_cross_section
-  type, extends(base_cross_section_t) :: no2_tint_cross_section_t
+  type, extends(cross_section_t) :: cross_section_no2_tint_t
   contains
     !> Calculate the cross section
     procedure :: calculate => run
     !> clean up
     final     :: finalize
-  end type no2_tint_cross_section_t
+  end type cross_section_no2_tint_t
 
   !> Constructor
-  interface no2_tint_cross_section_t
+  interface cross_section_no2_tint_t
     module procedure constructor
-  end interface no2_tint_cross_section_t
+  end interface cross_section_no2_tint_t
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize no2_tint_cross_section_t object
-  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result ( this )
+  !> Initialize cross_section_no2_tint_t object
+  function constructor( config, grid_warehouse, profile_warehouse )           &
+      result ( this )
 
-    use musica_config,                   only : config_t
-    use musica_string,                   only : string_t
-    use tuvx_netcdf_util,                     only : netcdf_t
+    use musica_assert,                 only : die_msg
+    use musica_constants,              only : dk => musica_dk
+    use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
+    use tuvx_cross_section,            only : cross_section_parms_t
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_netcdf_util,              only : netcdf_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
     use tuvx_util,                     only : inter2
-    use musica_assert,                   only : die_msg
-    use tuvx_grid_warehouse,             only : grid_warehouse_t
-    use tuvx_grid,                    only : base_grid_t
-    use tuvx_profile_warehouse,     only : Profile_warehouse_t
 
-    type(no2_tint_cross_section_t), pointer :: this
+    type(cross_section_no2_tint_t), pointer       :: this
+    type(config_t),                 intent(inout) :: config
+    type(grid_warehouse_t),         intent(inout) :: grid_warehouse
+    type(profile_warehouse_t),      intent(inout) :: profile_warehouse
 
-    !> base cross section type
-    logical(lk), optional, intent(in)              :: atMidPoint
-    !> cross section configuration object
-    type(config_t), intent(inout) :: config
-    !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout)      :: ProfileWareHouse
-
-!   local variables
-    character(len=*), parameter :: Iam = 'no2 tint cross section initialize: '
+    ! local variables
+    character(len=*), parameter :: Iam = 'no2 tint cross section constructor'
     character(len=*), parameter :: Hdr = 'cross_section_'
 
-    integer(ik) :: retcode
-    integer(ik) :: parmNdx, fileNdx, Ndxl, Ndxu
-    integer(ik) :: nParms, nTemps
+    real(dk), parameter    :: rZERO = 0.0_dk
+    real(dk), parameter    :: rONE  = 1.0_dk
+
+    integer :: retcode
+    integer :: parmNdx, fileNdx, Ndxl, Ndxu
+    integer :: nParms, nTemps
     real(dk)              :: tmp
     real(dk), allocatable :: data_lambda(:)
     real(dk), allocatable :: data_parameter(:)
@@ -74,85 +69,95 @@ contains
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t), allocatable :: netcdfFiles(:)
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: lambdaGrid
     type(string_t)     :: Handle
 
-    write(*,*) Iam,'entering'
     allocate(this)
 
-    !> Get model wavelength grids
+    ! Get model wavelength grids
     Handle = 'Photolysis, wavelength'
-    lambdaGrid => gridWareHouse%get_grid( Handle )
+    lambdaGrid => grid_warehouse%get_grid( Handle )
 
-    write(*,*) Iam // 'model wavelength grid edges'
-    write(*,*) lambdaGrid%edge_(55:56)
+    ! Get cross section netcdf filespec
+    call config%get( 'netcdf files', netcdfFiles, Iam, found = found )
 
-    !> Get cross section netcdf filespec
-    call config%get( 'netcdf files', netcdfFiles, Iam, found=found )
-
-has_netcdf_file: &
+has_netcdf_file:                                                              &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( this%cross_section_parms( size( netcdfFiles ) ) )
 file_loop: &
-      do fileNdx = iONE,size(this%cross_section_parms)
+      do fileNdx = 1,size( this%cross_section_parms )
         allocate( netcdf_obj )
-    !> read netcdf cross section parameters
-        call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
-        nParms = size(netcdf_obj%parameters,dim=2)
-    !> must have at least one parameter
-        if( nParms < iTWO ) then
-          write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  array must have 2 or more parameters'
-          call die_msg( 400000002, msg )
+        ! read netcdf cross section parameters
+        call netcdf_obj%read_netcdf_file(                                     &
+                     filespec = netcdfFiles( fileNdx )%to_char( ), Hdr = Hdr )
+        nParms = size( netcdf_obj%parameters, dim = 2 )
+        ! must have at least one parameter
+        if( nParms < 2 ) then
+          write(msg,*) Iam//'File: ',                                         &
+                       trim( netcdfFiles( fileNdx )%to_char( ) ),             &
+                       '  array must have 2 or more parameters'
+          call die_msg( 299570478, msg )
         endif
-        associate( Xsection => this%cross_section_parms(fileNdx) )
-    !> interpolation temperatures must be in netcdf file
-        if( allocated(netcdf_obj%temperature) ) then
+        associate( Xsection => this%cross_section_parms( fileNdx ) )
+        ! interpolation temperatures must be in netcdf file
+        if( allocated( netcdf_obj%temperature ) ) then
           Xsection%temperature = netcdf_obj%temperature
           nTemps = size( Xsection%temperature )
-    !> must have two or more interpolation temperatures
-          if( nTemps < iTWO ) then
-            write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  temperature array has < 2 entries'
-            call die_msg( 400000003, msg )
+          ! must have two or more interpolation temperatures
+          if( nTemps < 2 ) then
+            write(msg,*) Iam//'File: ',                                       &
+                         trim( netcdfFiles( fileNdx )%to_char( ) ),           &
+                         '  temperature array has < 2 entries'
+            call die_msg( 403265743, msg )
           elseif( nTemps < nParms ) then
-            write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  temperature array < number parameters'
-            call die_msg( 400000004, msg )
+            write(msg,*) Iam//'File: ',                                       &
+                         trim( netcdfFiles( fileNdx )%to_char( ) ),           &
+                         '  temperature array < number parameters'
+            call die_msg( 905113375, msg )
           endif
-          Xsection%deltaT = Xsection%temperature(2:nParms) - Xsection%temperature(1:nParms-1)
-          monopos = all( Xsection%deltaT > rZERO )        
+          Xsection%deltaT = Xsection%temperature( 2 : nParms )                &
+                            - Xsection%temperature( 1 : nParms - 1 )
+          monopos = all( Xsection%deltaT > rZERO )
           if( .not. monopos ) then
             if( any( Xsection%deltaT > rZERO ) ) then
-              write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  temperature array not monotonic'
-              call die_msg( 400000005, msg )
+              write(msg,*) Iam//'File: ',                                     &
+                           trim( netcdfFiles( fileNdx )%to_char( ) ),         &
+                           '  temperature array not monotonic'
+              call die_msg( 561440794, msg )
             endif
-            do Ndxl = iONE,nParms/iTWO
-              Ndxu = nParms - Ndxl + iONE
-              tmp = Xsection%temperature(Ndxl)
-              Xsection%temperature(Ndxl) = Xsection%temperature(Ndxu)
-              Xsection%temperature(Ndxu) = tmp
-              data_parameter = netcdf_obj%parameters(:,Ndxl)
-              netcdf_obj%parameters(:,Ndxl) = netcdf_obj%parameters(:,Ndxu)
-              netcdf_obj%parameters(:,Ndxu) = data_parameter
+            do Ndxl = 1, nParms / 2
+              Ndxu = nParms - Ndxl + 1
+              tmp = Xsection%temperature( Ndxl )
+              Xsection%temperature( Ndxl ) = Xsection%temperature( Ndxu )
+              Xsection%temperature( Ndxu ) = tmp
+              data_parameter = netcdf_obj%parameters( :, Ndxl )
+              netcdf_obj%parameters( :, Ndxl ) =                              &
+                  netcdf_obj%parameters( :, Ndxu )
+              netcdf_obj%parameters( :, Ndxu ) = data_parameter
             enddo
-            Xsection%deltaT = Xsection%temperature(iTWO:nParms) - Xsection%temperature(iONE:nParms-iONE)
+            Xsection%deltaT = Xsection%temperature( 2 : nParms )              &
+                              - Xsection%temperature( 1 : nParms - 1 )
           endif
         else
-          write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),' does not have interpolation temperatures'
-          call die_msg( 400000006, msg )
+          write(msg,*) Iam//'File: ',                                         &
+                       trim( netcdfFiles( fileNdx )%to_char( ) ),             &
+                       ' does not have interpolation temperatures'
+          call die_msg( 326727785, msg )
         endif
 
-    !> interpolate from data to model wavelength grid
-        if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(Xsection%array) ) then
-            allocate(Xsection%array(lambdaGrid%ncells_,nParms))
+        ! interpolate from data to model wavelength grid
+        if( allocated( netcdf_obj%wavelength ) ) then
+          if( .not. allocated( Xsection%array ) ) then
+            allocate( Xsection%array( lambdaGrid%ncells_, nParms ) )
           endif
-          do parmNdx = iONE,nParms
+          do parmNdx = 1, nParms
             data_lambda    = netcdf_obj%wavelength
-            data_parameter = netcdf_obj%parameters(:,parmNdx)
-            call this%addpnts( config, data_lambda, data_parameter )
-            call inter2(xto=lambdaGrid%edge_, &
-                        yto=Xsection%array(:,parmNdx), &
-                        xfrom=data_lambda, &
-                        yfrom=data_parameter,ierr=retcode )
+            data_parameter = netcdf_obj%parameters( :, parmNdx )
+            call this%add_points( config, data_lambda, data_parameter )
+            call inter2( xto = lambdaGrid%edge_,                              &
+                         yto = Xsection%array( :, parmNdx ),                  &
+                         xfrom = data_lambda,                                 &
+                         yfrom = data_parameter, ierr = retcode )
           enddo
         else
           Xsection%array = netcdf_obj%parameters
@@ -162,56 +167,66 @@ file_loop: &
       enddo file_loop
     else has_netcdf_file
       write(msg,*) Iam//'must have at least one netcdf input file'
-      call die_msg( 400000008, msg )
+      call die_msg( 832386485, msg )
     endif has_netcdf_file
-
-    write(*,*) Iam,'exiting'
 
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse, atMidpoint ) result( cross_section )
+  !> Calculate the cross section for a given set of environmental conditions
+  function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
+      result( cross_section )
 
-    use tuvx_grid_warehouse,        only : grid_warehouse_t
-    use tuvx_grid,               only : base_grid_t
-    use tuvx_profile_warehouse,     only : Profile_warehouse_t
-    use tuvx_profile,               only : base_profile_t
-    use musica_string,              only : string_t
+    use musica_constants,              only : dk => musica_dk
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile,                  only : profile_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
 
-    !> Arguments
-    !> base cross section
-    class(no2_tint_cross_section_t), intent(in)   :: this
-    logical(lk), optional, intent(in)             :: atMidPoint
-    !> The warehouses
-    type(grid_warehouse_t), intent(inout)         :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout)      :: ProfileWareHouse
     !> Calculated cross section
-    real(kind=dk), allocatable             :: cross_section(:,:)
+    real(kind=dk), allocatable                     :: cross_section(:,:)
+    !> Cross section calculator
+    class(cross_section_no2_tint_t), intent(in)    :: this
+    !> Grid warehouse
+    type(grid_warehouse_t),          intent(inout) :: grid_warehouse
+    !> Grid warehouse
+    type(profile_warehouse_t),       intent(inout) :: profile_warehouse
+    !> Flag indicating whether cross-section data should be at mid-points on
+    !! the wavelength grid.
+    !!
+    !! If this is false or omitted, cross-section data are calculated at
+    !! interfaces on the wavelength grid.
+    logical, optional,               intent(in)    :: at_mid_point
 
-    !> Local variables
-    character(len=*), parameter :: Iam = 'no2 tint cross section calculate: '
-    integer(ik) :: nTemp, nzdim
-    integer(ik) :: fileNdx, tNdx, vertNdx
+    ! Local variables
+    character(len=*), parameter :: Iam =                                      &
+        'no2 tint cross section calculate'
+    real(dk), parameter    :: rZERO = 0.0_dk
+    real(dk), parameter    :: rONE  = 1.0_dk
+
+    integer :: nTemp, nzdim
+    integer :: fileNdx, tNdx, vertNdx
     real(dk)    :: Tadj, Tstar
     real(dk), allocatable  :: wrkCrossSection(:,:)
     real(dk), allocatable  :: modelTemp(:)
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_profile_t), pointer :: mdlTemperature
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
+    class(profile_t), pointer :: mdlTemperature
     type(string_t)     :: Handle
 
-    write(*,*) Iam,'entering'
+    Handle = 'Vertical Z'
+    zGrid => grid_warehouse%get_grid( Handle )
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid => grid_warehouse%get_grid( Handle )
+    Handle = 'Temperature'
+    mdlTemperature => profile_warehouse%get_Profile( Handle )
 
-    Handle = 'Vertical Z'             ; zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Temperature'            ; mdlTemperature => ProfileWareHouse%get_Profile( Handle )
-
-    nzdim = zGrid%ncells_ + iONE
-    if( present(atMidPoint) ) then
-      if( atMidpoint ) then
-        nzdim = nzdim - iONE
+    nzdim = zGrid%ncells_ + 1
+    if( present( at_mid_point ) ) then
+      if( at_mid_point ) then
+        nzdim = nzdim - 1
         modelTemp = mdlTemperature%mid_val_
       else
         modelTemp = mdlTemperature%edge_val_
@@ -220,74 +235,63 @@ file_loop: &
       modelTemp = mdlTemperature%edge_val_
     endif
 
-    allocate( wrkCrossSection(lambdaGrid%ncells_,nzdim) )
+    allocate( wrkCrossSection( lambdaGrid%ncells_, nzdim ) )
     wrkCrossSection = rZERO
 
-    do fileNdx = iONE,size(this%cross_section_parms)
-      associate( dataTemp => this%cross_section_parms(fileNdx)%temperature, wrkXsect => this%cross_section_parms(fileNdx) )
+    do fileNdx = 1, size( this%cross_section_parms )
+      associate( dataTemp => this%cross_section_parms( fileNdx )%temperature, &
+                 wrkXsect => this%cross_section_parms( fileNdx ) )
       nTemp = size( dataTemp )
-      do vertNdx = iONE,nzdim
-        Tadj = min( max( modelTemp(vertNdx),dataTemp(iONE) ),dataTemp(nTemp) )
-        do tNdx = iTWO,nTemp 
-          if( Tadj <= dataTemp(tNdx) ) then
+      do vertNdx = 1, nzdim
+        Tadj = min( max( modelTemp( vertNdx ), dataTemp(1) ),                 &
+                    dataTemp( nTemp ) )
+        do tNdx = 2, nTemp
+          if( Tadj <= dataTemp( tNdx ) ) then
             exit
           endif
         enddo
-        tNdx = min( nTemp,tNdx ) - iONE
-        Tstar = (Tadj - dataTemp(tNdx))/wrkXsect%deltaT(tNdx)
-        wrkCrossSection(:,vertNdx) = wrkCrossSection(:,vertNdx) + wrkXsect%array(:,tNdx) &
-                                   + Tstar * (wrkXsect%array(:,tNdx+1) - wrkXsect%array(:,tNdx))
-        if( vertNdx == 12 ) then
-          write(*,*) Iam // &
-          'tNdx,T,Tadj,Tstar,xsect,inputxs @ 12 = ',tNdx,modelTemp(vertNdx),Tadj,Tstar,wrkCrossSection(55,12),wrkXsect%array(55,1)
-        endif
+        tNdx = min( nTemp, tNdx ) - 1
+        Tstar = ( Tadj - dataTemp( tNdx ) ) / wrkXsect%deltaT( tNdx )
+        wrkCrossSection( :, vertNdx ) = wrkCrossSection( :, vertNdx )         &
+                                        + wrkXsect%array( :, tNdx )           &
+                                    + Tstar * ( wrkXsect%array( :, tNdx + 1 ) &
+                                                - wrkXsect%array( :, tNdx ) )
       enddo
       end associate
     enddo
 
     cross_section = transpose( wrkCrossSection )
 
-    write(*,*) Iam // 'nFiles,nTemp,nzdim = ',size(this%cross_section_parms),&
-                 nTemp,nzdim
-    write(*,*) Iam // 'shape cross section is ',shape(cross_section)
-    write(*,*) Iam // 'cross section @ (12,55)'
-    write(*,'(1pg15.7)') cross_section(12,55)
-
-    write(*,*) Iam,'exiting'
-
   end function run
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> finalize the cross section type
-   subroutine finalize( this )
+  !> finalize the cross section type
+  subroutine finalize( this )
 
-   type(no2_tint_cross_section_t), intent(inout) :: this
+  type(cross_section_no2_tint_t), intent(inout) :: this
 
-   character(len=*), parameter :: Iam = 'no2 tint cross section finalize: '
-   integer(ik) :: ndx
+  integer :: ndx
 
-   write(*,*) Iam,'entering'
+  if( allocated( this%cross_section_parms ) ) then
+    do ndx = 1, size( this%cross_section_parms )
+      associate( Xsection => this%cross_section_parms( ndx ) )
+      if( allocated( Xsection%array ) ) then
+        deallocate( Xsection%array )
+      endif
+      if( allocated( Xsection%temperature ) ) then
+        deallocate( Xsection%temperature )
+      endif
+      if( allocated( Xsection%deltaT ) ) then
+        deallocate( Xsection%deltaT )
+      endif
+      end associate
+    enddo
+    deallocate( this%cross_section_parms )
+  endif
 
-   if( allocated(this%cross_section_parms) ) then
-     do ndx = iONE,size(this%cross_section_parms)
-       associate( Xsection => this%cross_section_parms(ndx) )
-       if( allocated(Xsection%array) ) then
-         deallocate(Xsection%array)
-       endif
-       if( allocated(Xsection%temperature) ) then
-         deallocate(Xsection%temperature)
-       endif
-       if( allocated(Xsection%deltaT) ) then
-         deallocate(Xsection%deltaT)
-       endif
-       end associate
-     enddo
-     deallocate(this%cross_section_parms)
-   endif
+  end subroutine finalize
 
-   write(*,*) Iam,'exiting'
-   
-   end subroutine finalize
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_cross_section_no2_tint

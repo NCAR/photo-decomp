@@ -8,7 +8,7 @@
 module tuvx_cross_section_o2
 
   use musica_constants, only : musica_dk, musica_ik
-  use tuvx_cross_section, only : base_cross_section_t, cross_section_parms_t
+  use tuvx_cross_section, only : cross_section_t, cross_section_parms_t
   use la_srb_type,      only : la_srb_t
 
   implicit none
@@ -17,7 +17,7 @@ module tuvx_cross_section_o2
   public :: o2_cross_section_t
 
   !> Calculator for o2_cross_section
-  type, extends(base_cross_section_t) :: o2_cross_section_t
+  type, extends(cross_section_t) :: o2_cross_section_t
     type(la_srb_t), allocatable              :: la_srb_obj_
   contains
     !> Calculate the cross section
@@ -44,9 +44,9 @@ contains
     use tuvx_util,                     only : inter2
     use musica_assert,                   only : die_msg
     use tuvx_grid_warehouse,             only : grid_warehouse_t
-    use tuvx_grid,                    only : base_grid_t
+    use tuvx_grid,                    only : grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
-    use tuvx_profile,                    only : base_profile_t
+    use tuvx_profile,                    only : profile_t
     use tuvx_la_sr_bands                 only : la_srb_t
 
     !> o2 cross section type
@@ -74,7 +74,7 @@ contains
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: lambdaGrid
 
     write(*,*) Iam,'entering'
 
@@ -143,7 +143,7 @@ file_loop: &
   function run( this, gridWareHouse, ProfileWareHouse ) result( cross_section )
 
     use tuvx_grid_warehouse,         only : grid_warehouse_t
-    use tuvx_grid,                only : base_grid_t
+    use tuvx_grid,                only : grid_t
     use tuvx_profile_warehouse, only : Profile_warehouse_t
     use musica_string,               only : string_t
 
@@ -158,7 +158,7 @@ file_loop: &
     !> Local variables
     integer :: colndx
     character(len=*), parameter :: Iam = 'radXfer o2 cross section calculate: '
-    class(base_grid_t), pointer :: zGrid
+    class(grid_t), pointer :: zGrid
     type(string_t)                :: Handle
     real(musica_dk), allocatable  :: wrkCrossSection(:,:)
 

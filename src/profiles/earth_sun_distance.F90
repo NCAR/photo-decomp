@@ -5,7 +5,7 @@
 module tuvx_profile_earth_sun_distance
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile,     only : base_profile_t
+  use tuvx_profile,     only : profile_t
   use musica_assert,    only : die_msg
 
   implicit none
@@ -13,7 +13,7 @@ module tuvx_profile_earth_sun_distance
   private
   public :: earth_sun_distance_t
 
-  type, extends(base_profile_t) :: earth_sun_distance_t
+  type, extends(profile_t) :: earth_sun_distance_t
   contains
     final     :: finalize
   end type earth_sun_distance_t
@@ -29,7 +29,7 @@ contains
       
     use musica_config, only : config_t
     use musica_string, only : string_t
-    use tuvx_grid,  only : base_grid_t
+    use tuvx_grid,  only : grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -46,7 +46,7 @@ contains
     real(dk)    :: Lon, Lat
     character(len=*), parameter :: Iam = 'earth sun distance initialize: '
     type(string_t) :: Handle
-    class(base_grid_t), pointer :: timeGrid
+    class(grid_t), pointer :: timeGrid
 
     allocate ( this )
 

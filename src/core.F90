@@ -10,7 +10,7 @@ module tuvx_core
   use musica_assert,            only : assert
   use musica_constants,         only : ik => musica_ik, dk => musica_dk, lk => musica_lk
   use tuvx_grid_warehouse,      only : grid_warehouse_t
-  use tuvx_grid,             only : base_grid_t
+  use tuvx_grid,             only : grid_t
   use tuvx_profile_warehouse,   only : Profile_warehouse_t
   use tuvx_spherical_geometry,      only : spherical_geom_t
   use tuvx_la_sr_bands,              only : la_srb_t
@@ -47,7 +47,7 @@ contains
 
     use musica_iterator,              only : iterator_t
     use musica_string,                only : string_t
-    use tuvx_profile,                 only : base_profile_t
+    use tuvx_profile,                 only : profile_t
     use tuvx_diagnostic_util,                        only : diagout
 
     !> Arguments
@@ -66,7 +66,7 @@ contains
     type(config_t)              :: component_config
     type(string_t)              :: Handle
     class(iterator_t), pointer  :: iter
-    class(base_profile_t), pointer :: aProfile
+    class(profile_t), pointer :: aProfile
 
     write(*,*) Iam // 'entering'
 
@@ -149,7 +149,7 @@ contains
 
   subroutine run( this )
 
-  use tuvx_profile,                 only : base_profile_t
+  use tuvx_profile,                 only : profile_t
   use tuvx_radiator_warehouse,      only : radiator_warehouse_t
   use tuvx_radiator,       only : base_radiator_t
   use tuvx_radiative_transfer_solver,        only : radField_t
@@ -164,7 +164,7 @@ contains
   integer(ik)                    :: i_ndx, i_diag
   real(dk), allocatable          :: photoRates(:,:)
   character(len=2)               :: number
-  class(base_profile_t), pointer  :: SZAngles
+  class(profile_t), pointer  :: SZAngles
   class(base_radiator_t), pointer :: aRadiator => null()
   class(radField_t), allocatable :: radiationFld
   type(string_t)                 :: Handle

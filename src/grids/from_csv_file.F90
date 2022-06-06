@@ -5,13 +5,13 @@
 module tuvx_grid_from_csv_file
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : base_grid_t
+  use tuvx_grid,     only : grid_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(base_grid_t) :: fromCsvFile_t
+  type, extends(grid_t) :: fromCsvFile_t
   contains
   end type fromCsvFile_t
 

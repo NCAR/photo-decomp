@@ -5,13 +5,13 @@
 module tuvx_profile_air
 
   use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile, only : base_profile_t
+  use tuvx_profile, only : profile_t
 
   implicit none
 
   public :: airfromCsvFile_t
 
-  type, extends(base_profile_t) :: airfromCsvFile_t
+  type, extends(profile_t) :: airfromCsvFile_t
   contains
     final     :: finalize
   end type airfromCsvFile_t
@@ -29,7 +29,7 @@ contains
     use musica_string, only : string_t
     use musica_assert, only : die_msg
     use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,  only : base_grid_t
+    use tuvx_grid,  only : grid_t
     use tuvx_interpolate
 
     !> arguments
@@ -55,7 +55,7 @@ contains
     type(string_t)     :: Filespec, Interpolator
     type(string_t)     :: Handle
     class(abs_interpolator_t), pointer :: theInterpolator
-    class(base_grid_t), pointer :: zGrid
+    class(grid_t), pointer :: zGrid
 
     write(*,*) Iam // 'entering'
 

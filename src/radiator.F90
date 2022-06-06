@@ -8,7 +8,7 @@
 !!
 module tuvx_radiator
 
-  use musica_constants,       only : dk => musica_dk, ik => musica_ik
+  use musica_constants,       only : dk => musica_dk, ik => musica_ik, lk => musica_lk
   use musica_string,          only : string_t
 
   implicit none
@@ -55,7 +55,7 @@ contains
 
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,         only : base_grid_t
+    use tuvx_grid,         only : grid_t
 
     !> radiator object
     class(base_radiator_t), intent(inout) :: this
@@ -67,7 +67,7 @@ contains
     !> local variables
     character(len=*), parameter   :: Iam = "Radiator initialize: "
     type(string_t)                :: Handle
-    class(base_grid_t), pointer :: zGrid, lambdaGrid
+    class(grid_t), pointer :: zGrid, lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'
@@ -106,13 +106,12 @@ contains
 
     use musica_assert,                 only : die_msg
     use tuvx_profile_warehouse,        only : Profile_warehouse_t
-    use tuvx_profile,                  only : base_profile_t
+    use tuvx_profile,                  only : profile_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_grid,                  only : base_grid_t
-    use tuvx_cross_section_warehouse,  only : radXfer_xsect_warehouse_t
-    use tuvx_cross_section, only : base_cross_section_t
-    use musica_constants,              only : lk => musica_lk
+    use tuvx_grid,                  only : grid_t
+    use tuvx_cross_section, only : cross_section_t
     use tuvx_diagnostic_util,                         only : diagout
+    use tuvx_cross_section_warehouse,  only : cross_section_warehouse_t
 
     !> Arguments
     !> radiator obj
@@ -121,8 +120,8 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
     !> Profile warehouse
     type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
-    !> RadXfer cross section warehouse
-    type(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    type(cross_section_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    !> Radiator state
 
     !> Local variables
     real(dk) , parameter  :: km2cm = 1.e5_dk
@@ -131,10 +130,10 @@ contains
     real(dk), allocatable :: CrossSection(:,:)
     character(len=*), parameter :: Iam = 'base radiator upDateState: '
     type(string_t)      :: Handle
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_profile_t), pointer  :: radiatorProfile
-    class(base_cross_section_t), pointer :: radiatorCrossSection
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
+    class(profile_t), pointer  :: radiatorProfile
+    class(cross_section_t), pointer :: radiatorCrossSection
 
     write(*,*) ' '
     write(*,*) Iam,'entering'
@@ -150,7 +149,7 @@ contains
     radiatorProfile => ProfileWareHouse%get_Profile( this%vertical_profile_name_ )
 
     radiatorCrossSection =>                                                   &
-      radXferXsectWareHouse%get_radXfer_cross_section( this%cross_section_name_ )
+      radXferXsectWareHouse%get( this%cross_section_name_ )
 
     !> check radiator state type allocation
     if( .not. allocated( this%state_%layer_OD_ ) ) then
@@ -162,7 +161,7 @@ contains
                                   size(this%state_%layer_OD_,dim=2)
 
     !> set radiator state members
-    CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse, atMidPoint=.true._lk )
+    CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse, at_mid_point=.true._lk )
     call diagout( 'o2xs.new',CrossSection )
     do wNdx = 1,lambdaGrid%ncells_
       this%state_%layer_OD_(:,wNdx) = radiatorProfile%layer_dens_ * CrossSection(:,wNdx)

@@ -43,7 +43,7 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
-    use tuvx_grid,                     only : base_grid_t
+    use tuvx_grid,                     only : grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_netcdf_util,              only : netcdf_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
@@ -73,7 +73,7 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     type(netcdf_t),   allocatable :: netcdf_obj
     type(string_t)                :: Handle
     type(string_t),   allocatable :: netcdfFiles(:)
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: lambdaGrid
 
     allocate( this )
 
@@ -181,10 +181,10 @@ file_loop: &
       result( quantum_yield )
 
     use musica_string,                 only : string_t
-    use tuvx_grid,                     only : base_grid_t
+    use tuvx_grid,                     only : grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
-    use tuvx_profile,                  only : base_profile_t
+    use tuvx_profile,                  only : profile_t
 
     class(quantum_yield_tint_t),    intent(in) :: this
     type(grid_warehouse_t),      intent(inout) :: grid_warehouse
@@ -198,9 +198,9 @@ file_loop: &
     integer     :: fileNdx, tNdx, vertNdx
     real(dk)    :: Tadj, Tstar
     type(string_t) :: Handle
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_grid_t), pointer :: zGrid
-    class(base_profile_t), pointer :: Temperature
+    class(grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: zGrid
+    class(profile_t), pointer :: Temperature
     real(dk), parameter :: rZERO   = 0.0_dk
     real(dk), parameter :: rONE    = 1.0_dk
 

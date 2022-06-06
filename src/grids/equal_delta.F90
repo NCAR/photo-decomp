@@ -5,13 +5,13 @@
 module tuvx_grid_equal_delta
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : base_grid_t
+  use tuvx_grid,     only : grid_t
 
   implicit none
 
   public :: equalDelta_t
 
-  type, extends(base_grid_t) :: equalDelta_t
+  type, extends(grid_t) :: equalDelta_t
   contains
   end type equalDelta_t
 

@@ -5,13 +5,13 @@
 module tuvx_profile_from_csv_file
 
   use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile, only : base_profile_t
+  use tuvx_profile, only : profile_t
 
   implicit none
 
   public :: fromCsvFile_t
 
-  type, extends(base_profile_t) :: fromCsvFile_t
+  type, extends(profile_t) :: fromCsvFile_t
   contains
     final     :: finalize
   end type fromCsvFile_t
@@ -28,7 +28,7 @@ contains
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use tuvx_grid,  only : base_grid_t
+    use tuvx_grid,  only : grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_interpolate
 
@@ -43,7 +43,7 @@ contains
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
     real(dk), parameter    :: km2cm = 1.e5_dk
-    class(base_grid_t), pointer :: zGrid
+    class(grid_t), pointer :: zGrid
  
     integer(ik) :: istat
     real(dk)    :: zd, Value

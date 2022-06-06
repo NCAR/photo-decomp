@@ -40,7 +40,7 @@ contains
     use musica_assert,        only : die_msg
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,         only : base_grid_t
+    use tuvx_grid,         only : grid_t
     use tuvx_interpolate
     use tuvx_constants,           only : nzero, pzero
     use tuvx_diagnostic_util,                only : diagout
@@ -67,7 +67,7 @@ contains
     real(dk), allocatable         :: winput_SSA(:), winput_G(:)
     type(string_t)                :: Handle
     type(config_t)                :: Aerosol_config
-    class(base_grid_t), pointer :: zGrid, lambdaGrid
+    class(grid_t), pointer :: zGrid, lambdaGrid
     class(abs_interpolator_t), pointer :: theInterpolator
 
     write(*,*) ' '
@@ -196,10 +196,10 @@ contains
 
     use musica_assert,                 only : die_msg
     use tuvx_profile_warehouse,        only : Profile_warehouse_t
-    use tuvx_profile,                  only : base_profile_t
+    use tuvx_profile,                  only : profile_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_grid,                  only : base_grid_t
-    use tuvx_cross_section_warehouse,  only : radXfer_xsect_warehouse_t
+    use tuvx_grid,                  only : grid_t
+    use tuvx_cross_section_warehouse,  only : cross_section_warehouse_t
 
     !> Arguments
     !> radiator obj
@@ -209,14 +209,14 @@ contains
     !> Profile warehouse
     type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
     !> RadXfer cross section warehouse
-    type(radXfer_xsect_warehouse_t), intent(inout) :: radXferXsectWareHouse
+    type(cross_section_warehouse_t), intent(inout) :: radXferXsectWareHouse
 
     !> Local variables
     integer(ik) :: wNdx
     character(len=*), parameter :: Iam = 'Aerosol radiator upDateState: '
     type(string_t)                :: Handle
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
 
     write(*,*) ' '
     write(*,*) Iam,'entering'

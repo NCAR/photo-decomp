@@ -62,7 +62,7 @@ module tuvx_la_sr_bands
 ! Also compute and save corresponding grid indices (ILA, ISRB)
 !----------------------------------------------------------------------
       use tuvx_grid_warehouse,  only : grid_warehouse_t
-      use tuvx_grid,         only : base_grid_t
+      use tuvx_grid,         only : grid_t
       use musica_assert,        only : die_msg
       use musica_string,        only : string_t
 
@@ -76,7 +76,7 @@ module tuvx_la_sr_bands
 
       integer(ik) :: iw, nw
       type(string_t)                     :: Handle
-      class(base_grid_t), pointer      :: lambdaGrid
+      class(grid_t), pointer      :: lambdaGrid
 
       write(*,*) ' '
       write(*,*) Iam // 'entering'
@@ -174,9 +174,9 @@ has_la_srb: &
 !-----------------------------------------------------------------------------*
 
     use tuvx_profile_warehouse,   only : Profile_warehouse_t
-    use tuvx_profile,             only : base_profile_t
+    use tuvx_profile,             only : profile_t
     use tuvx_grid_warehouse,      only : grid_warehouse_t
-    use tuvx_grid,             only : base_grid_t
+    use tuvx_grid,             only : grid_t
     use musica_string,            only : string_t
 
     !> Arguments
@@ -196,9 +196,9 @@ has_la_srb: &
     integer(ik) :: nz, nzm1, nw, i, iz, iw
     real(dk)    :: secchi(size(Airscol))
     real(dk)    :: o2scol(size(Airscol))
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_profile_t), pointer :: temperature
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
+    class(profile_t), pointer :: temperature
     type(string_t) :: Handle
 
 !----------------------------------------------------------------------
@@ -302,9 +302,9 @@ has_la_srb: &
 !-----------------------------------------------------------------------------*
 
     use tuvx_profile_warehouse,   only : Profile_warehouse_t
-    use tuvx_profile,             only : base_profile_t
+    use tuvx_profile,             only : profile_t
     use tuvx_grid_warehouse,      only : grid_warehouse_t
-    use tuvx_grid,             only : base_grid_t
+    use tuvx_grid,             only : grid_t
     use musica_string,            only : string_t
 
     !> Arguments
@@ -324,9 +324,9 @@ has_la_srb: &
     integer(ik) :: nz, nzm1, i, iz, iw
     real(dk)    :: secchi(size(Airscol))
     real(dk)    :: o2scol(size(Airscol))
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_profile_t), pointer :: temperature
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
+    class(profile_t), pointer :: temperature
     type(string_t) :: Handle
 
 !----------------------------------------------------------------------

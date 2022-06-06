@@ -5,14 +5,14 @@
 module tuvx_profile_solar_zenith_angle
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile,     only : base_profile_t
+  use tuvx_profile,     only : profile_t
   use musica_assert,    only : die_msg
 
   implicit none
 
   public :: sza_from_time_t
 
-  type, extends(base_profile_t) :: sza_from_time_t
+  type, extends(profile_t) :: sza_from_time_t
   contains
     final     :: finalize
   end type sza_from_time_t
@@ -28,7 +28,7 @@ contains
       
     use musica_config, only : config_t
     use musica_string, only : string_t
-    use tuvx_grid,  only : base_grid_t
+    use tuvx_grid,  only : grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -45,7 +45,7 @@ contains
     real(dk)    :: Lon, Lat
     character(len=*), parameter :: Iam = 'sza from time initialize: '
     type(string_t) :: Handle
-    class(base_grid_t), pointer :: timeGrid
+    class(grid_t), pointer :: timeGrid
 
     allocate( this )
 

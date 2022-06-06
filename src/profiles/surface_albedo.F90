@@ -5,14 +5,14 @@
 module tuvx_profile_surface_albedo
 
   use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile,     only : base_profile_t
+  use tuvx_profile,     only : profile_t
 
   implicit none
 
   private
   public :: srfAlbedofromConfig_t
 
-  type, extends(base_profile_t) :: srfAlbedofromConfig_t
+  type, extends(profile_t) :: srfAlbedofromConfig_t
   contains
   end type srfAlbedofromConfig_t
 
@@ -28,7 +28,7 @@ contains
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use tuvx_grid,  only : base_grid_t
+    use tuvx_grid,  only : grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
@@ -40,7 +40,7 @@ contains
     character(len=*), parameter :: Iam = 'From config profile initialize: '
     integer(ik)                   :: ndx
     real(dk)                      :: uniformValue
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: lambdaGrid
     type(string_t)                :: Handle
 
     allocate( this )

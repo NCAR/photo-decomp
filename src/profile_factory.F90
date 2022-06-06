@@ -29,7 +29,7 @@ contains
     use tuvx_profile_o3,                 only : o3fromCsvFile_t
     use tuvx_profile_solar_zenith_angle, only : sza_from_time_t
     use tuvx_profile_earth_sun_distance, only : earth_sun_distance_t
-    use tuvx_profile,                    only : base_profile_t
+    use tuvx_profile,                    only : profile_t
     use tuvx_grid_warehouse,             only : grid_warehouse_t
     use tuvx_profile_from_config,        only : fromConfig_t
     use tuvx_profile_surface_albedo,     only : srfAlbedofromConfig_t
@@ -40,7 +40,7 @@ contains
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> New profile object
-    class(base_profile_t), pointer :: new_profile_t
+    class(profile_t), pointer :: new_profile_t
 
     !> Local variables
     character(len=*), parameter :: Iam = 'profile builder: '

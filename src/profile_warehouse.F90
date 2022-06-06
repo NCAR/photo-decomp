@@ -107,13 +107,13 @@ contains
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
-    use tuvx_profile, only : base_profile_t
+    use tuvx_profile, only : profile_t
 
     !> Arguments
     class(profile_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)                     :: profile_handle
 
-    class(base_profile_t), pointer          :: profile_ptr
+    class(profile_t), pointer          :: profile_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'profile warehouse get_profile: '

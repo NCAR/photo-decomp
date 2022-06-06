@@ -1,9 +1,12 @@
 ################################################################################
 # One dimensional grid source
 
-set(GRID_SRC grids/equal_delta.F90
-             grids/from_csv_file.F90
-             grids/from_config.F90
-             PARENT_SCOPE)
+set(SRC equal_delta.F90
+        from_csv_file.F90
+        from_config.F90
+        )
+
+list(TRANSFORM SRC PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+set(GRID_SRC ${SRC} PARENT_SCOPE)
 
 ################################################################################

@@ -10,9 +10,9 @@ module tuvx_profile
   implicit none
 
   private
-  public :: base_profile_t, base_grid_ptr
+  public :: profile_t, base_grid_ptr
 
-  type, abstract ::  base_profile_t
+  type, abstract ::  profile_t
     !> grid handle
     type(string_t) :: handle_
     !> number of wavelength grid cells
@@ -32,11 +32,11 @@ module tuvx_profile
     !> overhead column burden
     real(musica_dk), allocatable :: burden_dens_(:)
   contains
-  end type base_profile_t
+  end type profile_t
 
   !> Pointer type for building sets of spectral wght objects
   type :: base_grid_ptr
-    class(base_profile_t), pointer :: ptr_ => null( )
+    class(profile_t), pointer :: ptr_ => null( )
   end type base_grid_ptr
 
 interface
@@ -48,8 +48,8 @@ interface
       use musica_constants, only : musica_dk
       use tuvx_grid_warehouse,  only : grid_warehouse_t
 
-      import base_profile_t
-      class(base_profile_t), intent(inout)      :: this
+      import profile_t
+      class(profile_t), intent(inout)      :: this
       type(config_t), intent(inout)            :: profile_config
       type(grid_warehouse_t), intent(inout)    :: gridWareHouse
     end subroutine base_constructor

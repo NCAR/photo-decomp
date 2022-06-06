@@ -103,7 +103,7 @@ contains
   !> Get copy of a grid object
   function get_grid( this, grid_handle ) result( grid_ptr )
 
-    use tuvx_grid,      only : base_grid_t
+    use tuvx_grid,      only : grid_t
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
@@ -112,7 +112,7 @@ contains
     class(grid_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)             :: grid_handle
 
-    class(base_grid_t), pointer          :: grid_ptr
+    class(grid_t), pointer          :: grid_ptr
 
     !> Local variables
     character(len=*), parameter :: Iam = 'grid warehouse get_grid: '

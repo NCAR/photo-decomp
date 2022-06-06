@@ -33,7 +33,7 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
-    use tuvx_grid,                     only : base_grid_t
+    use tuvx_grid,                     only : grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_netcdf_util,              only : netcdf_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
@@ -60,9 +60,9 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
 
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
-    use tuvx_grid,                     only : base_grid_t
+    use tuvx_grid,                     only : grid_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile,                  only : base_profile_t
+    use tuvx_profile,                  only : profile_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
     class(quantum_yield_clo_cl_o3p_t), intent(in) :: this
@@ -76,8 +76,8 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     real(dk), parameter ::    rZERO = 0.0_dk
     real(dk), parameter ::    rONE  = 1.0_dk
     integer                       :: nzdim, vertNdx
-    class(base_grid_t), pointer :: zGrid
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: zGrid
+    class(grid_t), pointer :: lambdaGrid
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'

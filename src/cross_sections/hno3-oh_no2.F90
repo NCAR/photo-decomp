@@ -7,60 +7,57 @@
 !> The hno3->oh+no2_cross_section type and related functions
 module tuvx_cross_section_hno3_oh_no2
 
-  use tuvx_cross_section,    only : base_cross_section_t
-  use musica_constants,                        only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use musica_string,                           only : string_t
-  use tuvx_grid_warehouse,                     only : grid_warehouse_t
-  use tuvx_profile_warehouse,                  only : Profile_warehouse_t
-  use tuvx_grid,                            only : base_grid_t
+  use tuvx_cross_section,              only : cross_section_t
 
   implicit none
 
   private
-  public :: hno3_oh_no2_cross_section_t
-
-  integer(ik), parameter :: iONE  = 1_ik
-  real(dk), parameter    :: rZERO = 0.0_dk
-  real(dk), parameter    :: rONE  = 1.0_dk
+  public :: cross_section_hno3_oh_no2_t
 
   !> Calculator for hno3-oh_no2 cross section
-  type, extends(base_cross_section_t) :: hno3_oh_no2_cross_section_t
+  type, extends(cross_section_t) :: cross_section_hno3_oh_no2_t
   contains
     !> Calculate the cross section
     procedure :: calculate => run
-  end type hno3_oh_no2_cross_section_t
+  end type cross_section_hno3_oh_no2_t
 
   !> Constructor
-  interface hno3_oh_no2_cross_section_t
+  interface cross_section_hno3_oh_no2_t
     module procedure constructor
-  end interface hno3_oh_no2_cross_section_t
+  end interface cross_section_hno3_oh_no2_t
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize base_cross_section_t object
-  function constructor( config, gridWareHouse, ProfileWareHouse, atMidPoint ) result( this )
+  !> Initialize cross_section_t object
+  function constructor( config, grid_warehouse, profile_warehouse )           &
+      result( this )
 
-    use musica_config,                   only : config_t
-    use tuvx_netcdf_util,                     only : netcdf_t
+    use musica_assert,                 only : die_msg
+    use musica_config,                 only : config_t
+    use musica_constants,              only : dk => musica_dk
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_netcdf_util,              only : netcdf_t
     use tuvx_util,                     only : inter2
-    use musica_assert,                   only : die_msg
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
 
-    !> base cross section type
-    type(hno3_oh_no2_cross_section_t), pointer :: this
-    !> cross section configuration object
-    type(config_t), intent(inout)            :: config
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
-    logical(lk), intent(in), optional        :: atMidPoint
+    type(cross_section_hno3_oh_no2_t), pointer       :: this
+    type(config_t),                    intent(inout) :: config
+    type(grid_warehouse_t),            intent(inout) :: grid_warehouse
+    type(profile_warehouse_t),         intent(inout) :: profile_warehouse
 
-    !> local variables
-    character(len=*), parameter :: Iam = 'hno3 cross section initialize: '
+    ! local variables
+    character(len=*), parameter :: Iam = 'hno3 cross section initialize'
     character(len=*), parameter :: Hdr = 'cross_section_'
 
-    integer(ik) :: retcode
-    integer(ik) :: parmNdx, fileNdx, nParms
+    real(dk), parameter    :: rZERO = 0.0_dk
+    real(dk), parameter    :: rONE  = 1.0_dk
+
+    integer :: retcode
+    integer :: parmNdx, fileNdx, nParms
     real(dk), allocatable :: data_lambda(:)
     real(dk), allocatable :: data_parameter(:)
     logical :: found
@@ -71,41 +68,45 @@ contains
     type(config_t)              :: tmp_config
     type(string_t)              :: addpntVal
     type(string_t)              :: Handle
-    class(base_grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: lambdaGrid
 
-    write(*,*) Iam,'entering'
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid => grid_warehouse%get_grid( Handle )
 
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
-
-    !> get cross section netcdf filespec
-    call config%get( 'netcdf files', netcdfFiles, Iam, found=found )
+    ! get cross section netcdf filespec
+    call config%get( 'netcdf files', netcdfFiles, Iam, found = found )
 
     allocate( this )
 
 has_netcdf_file: &
     if( found ) then
-      allocate( this%cross_section_parms(size(netcdfFiles)) )
+      allocate( this%cross_section_parms( size( netcdfFiles ) ) )
 file_loop: &
-      do fileNdx = 1,size(this%cross_section_parms)
+      do fileNdx = 1, size( this%cross_section_parms )
         allocate( netcdf_obj )
-    !> read netcdf cross section parameters
-        call netcdf_obj%read_netcdf_file( filespec=netcdfFiles(fileNdx)%to_char(), Hdr=Hdr )
-        nParms = size(netcdf_obj%parameters,dim=2)
+        ! read netcdf cross section parameters
+        call netcdf_obj%read_netcdf_file(                                     &
+                     filespec = netcdfFiles( fileNdx )%to_char( ), Hdr = Hdr )
+        nParms = size( netcdf_obj%parameters, dim = 2 )
         if( nParms < 1 ) then
-          write(msg,*) Iam//'File: ',trim(netcdfFiles(fileNdx)%to_char()),'  parameters array has < 1 column'
-          call die_msg( 400000002, msg )
+          write(msg,*) Iam//'File: ',                                         &
+                       trim( netcdfFiles( fileNdx )%to_char( ) ),             &
+                       '  parameters array has < 1 column'
+          call die_msg( 740621879, msg )
         endif
 
-    !> interpolate from data to model wavelength grid
-        if( allocated(netcdf_obj%wavelength) ) then
-          if( .not. allocated(this%cross_section_parms(fileNdx)%array) ) then
-            allocate(this%cross_section_parms(fileNdx)%array(lambdaGrid%ncells_,nParms))
+        ! interpolate from data to model wavelength grid
+        if( allocated( netcdf_obj%wavelength ) ) then
+          if( .not. allocated( this%cross_section_parms( fileNdx )%array) )   &
+              then
+            allocate( this%cross_section_parms( fileNdx )%array(              &
+                                                lambdaGrid%ncells_, nParms ) )
           endif
-          do parmNdx = 1,nParms
+          do parmNdx = 1, nParms
             data_lambda    = netcdf_obj%wavelength
-            data_parameter = netcdf_obj%parameters(:,parmNdx)
+            data_parameter = netcdf_obj%parameters( :, parmNdx )
             if( parmNdx == 1 ) then
-              call this%addpnts( config, data_lambda, data_parameter )
+              call this%add_points( config, data_lambda, data_parameter )
             elseif( parmNdx == 2 ) then
               tmp_config = config
               addpntKey = 'lower extrapolation'
@@ -114,69 +115,88 @@ file_loop: &
               addpntKey = 'upper extrapolation'
               addpntVal = 'boundary'
               call tmp_config%add( addpntKey, addpntVal, Iam )
-              call this%addpnts( tmp_config, data_lambda, data_parameter )
+              call this%add_points( tmp_config, data_lambda, data_parameter )
             endif
-            call inter2(xto=lambdaGrid%edge_, &
-                        yto=this%cross_section_parms(fileNdx)%array(:,parmNdx), &
-                        xfrom=data_lambda, &
-                        yfrom=data_parameter,ierr=retcode)
+            call inter2( xto = lambdaGrid%edge_,                              &
+                         yto = this%cross_section_parms(                      &
+                                               fileNdx )%array( :, parmNdx ), &
+                         xfrom = data_lambda,                                 &
+                         yfrom = data_parameter, ierr = retcode )
           enddo
         else
-          this%cross_section_parms(fileNdx)%array = netcdf_obj%parameters
+          this%cross_section_parms( fileNdx )%array = netcdf_obj%parameters
         endif
-        if( allocated(netcdf_obj%temperature) ) then
-          this%cross_section_parms(fileNdx)%temperature = netcdf_obj%temperature
+        if( allocated( netcdf_obj%temperature ) ) then
+          this%cross_section_parms( fileNdx )%temperature =                   &
+              netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
     endif has_netcdf_file
 
-    write(*,*) Iam,'exiting'
-
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the photorate cross section for a given set of environmental conditions
-  function run( this, gridWareHouse, ProfileWareHouse, atMidPoint ) result( cross_section )
+  !> Calculate the cross section for a given set of environmental conditions
+  function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
+      result( cross_section )
 
-    use tuvx_profile, only : base_profile_t
-    !> arguments
-    class(hno3_oh_no2_cross_section_t), intent(in) :: this
-    !> cross section configuration object
-    type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    type(Profile_warehouse_t), intent(inout) :: ProfileWareHouse
-    logical(lk), intent(in), optional        :: atMidPoint
+    use musica_constants,              only : dk => musica_dk
+    use musica_string,                 only : string_t
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile,                  only : profile_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
+
     !> Calculated cross section
-    real(kind=dk), allocatable               :: cross_section(:,:)
+    real(kind=dk), allocatable                        :: cross_section(:,:)
+    !> Cross section calculator
+    class(cross_section_hno3_oh_no2_t), intent(in)    :: this
+    !> Grid warehouse
+    type(grid_warehouse_t),             intent(inout) :: grid_warehouse
+    !> Profile warehouse
+    type(profile_warehouse_t),          intent(inout) :: profile_warehouse
+    !> Flag indicating whether cross-section data should be at mid-points on
+    !! the wavelength grid.
+    !!
+    !! If this is false or omitted, cross-section data are calculated at
+    !! interfaces on the wavelength grid.
+    logical, optional,                  intent(in)    :: at_mid_point
 
-    !> local variables
-    character(len=*), parameter :: Iam = 'hno3->oh+no2 cross section calculate: '
+    ! local variables
+    character(len=*), parameter :: Iam =                                      &
+        'hno3->oh+no2 cross section calculate'
     real(dk), parameter         :: T0 = 298._dk
-    integer(ik)           :: vertNdx
+    integer           :: vertNdx
     real(dk), allocatable :: Temp(:)
     type(string_t)                :: Handle
-    class(base_grid_t), pointer :: lambdaGrid
-    class(base_grid_t), pointer :: zGrid
-    class(base_profile_t), pointer :: temperature
+    class(grid_t), pointer :: lambdaGrid
+    class(grid_t), pointer :: zGrid
+    class(profile_t), pointer :: temperature
 
     write(*,*) Iam,'entering'
 
-    Handle = 'Photolysis, wavelength' ; lambdaGrid  => gridWareHouse%get_grid( Handle )
-    Handle = 'Vertical Z'             ; zGrid       => gridWareHouse%get_grid( Handle )
-    Handle = 'Temperature'            ; temperature => ProfileWareHouse%get_Profile( Handle )
+    Handle = 'Photolysis, wavelength'
+    lambdaGrid  => grid_warehouse%get_grid( Handle )
+    Handle = 'Vertical Z'
+    zGrid       => grid_warehouse%get_grid( Handle )
+    Handle = 'Temperature'
+    temperature => profile_warehouse%get_Profile( Handle )
 
-    allocate( cross_section(lambdaGrid%ncells_,zGrid%ncells_+iONE) )
+    allocate( cross_section( lambdaGrid%ncells_, zGrid%ncells_ + 1 ) )
 
     Temp = temperature%edge_val_ - T0
-    do vertNdx = iONE,zGrid%ncells_+iONE
-      cross_section(:,vertNdx) = this%cross_section_parms(1)%array(:,1)*exp( this%cross_section_parms(1)%array(:,2)*Temp(vertNdx) )
+    do vertNdx = 1, zGrid%ncells_ + 1
+      cross_section( :, vertNdx ) =                                           &
+          this%cross_section_parms(1)%array(:,1)                              &
+          * exp( this%cross_section_parms(1)%array(:,2) * Temp( vertNdx ) )
     enddo
 
     cross_section = transpose( cross_section )
 
-    write(*,*) Iam,'exiting'
-
   end function run
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_cross_section_hno3_oh_no2
