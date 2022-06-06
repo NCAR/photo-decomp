@@ -122,7 +122,7 @@ contains
   !> Get copy of a specific radiator object
   function get_radiator_from_handle( this, radiator_handle ) result( radiator )
 
-    use tuvx_radiator, only : abs_radiator_t
+    use tuvx_radiator, only : base_radiator_t
     use musica_string,      only : string_t
     use musica_constants,   only : lk => musica_lk, ik => musica_ik
     use musica_assert,      only : die_msg
@@ -130,7 +130,7 @@ contains
     !> Arguments
     class(radiator_warehouse_t), intent(inout) :: this
     type(string_t), intent(in)                 :: radiator_handle
-    class(abs_radiator_t), pointer             :: radiator
+    class(base_radiator_t), pointer             :: radiator
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radiator warehouse get_radiator: '
@@ -161,7 +161,7 @@ contains
   !> Get index of a specific radiator object
   function get_radiator_ndx_from_handle( this, radiator_handle ) result( Index )
 
-    use tuvx_radiator, only : abs_radiator_t
+    use tuvx_radiator, only : base_radiator_t
     use musica_string,      only : string_t
     use musica_constants,   only : lk => musica_lk, ik => musica_ik
     use musica_assert,      only : die_msg
@@ -199,14 +199,14 @@ contains
   !> Get copy of a radiator object using an iterator
   function get_radiator_from_iterator( this, iterator ) result( radiator )
 
-    use tuvx_radiator, only : abs_radiator_t
+    use tuvx_radiator, only : base_radiator_t
     use musica_constants,   only : lk => musica_lk, ik => musica_ik
     use musica_assert,      only : die_msg
 
     !> Arguments
     class(radiator_warehouse_t), intent(inout) :: this
     type(warehouse_iterator_t),  intent(in)    :: iterator
-    class(abs_radiator_t), pointer             :: radiator
+    class(base_radiator_t), pointer             :: radiator
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radiator warehouse get_radiator from iterator: '
@@ -236,7 +236,6 @@ contains
   !> Is a radiator in the warehouse?
   function in_warehouse( this, radiator_handle )
 
-    use tuvx_radiator, only : abs_radiator_t
     use musica_string,      only : string_t
     use musica_constants,   only : lk => musica_lk, ik => musica_ik
     use musica_assert,      only : die_msg

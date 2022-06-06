@@ -135,7 +135,7 @@ contains
     use musica_string,                 only : to_char
     use tuvx_grid,                  only : base_grid_t
     use tuvx_radiator_warehouse,       only : warehouse_iterator_t
-    use tuvx_radiator,        only : abs_radiator_t
+    use tuvx_radiator,        only : base_radiator_t
     use tuvx_radiator,        only : radiator_state_t
     use tuvx_profile,                  only : base_profile_t
     use tuvx_spherical_geometry,           only : spherical_geom_t
@@ -165,7 +165,7 @@ contains
     real(dk), allocatable                :: airVcol(:), airScol(:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter
-    class(abs_radiator_t), pointer       :: aRadiator => null()
+    class(base_radiator_t), pointer       :: aRadiator => null()
     class(base_profile_t), pointer        :: airProfile => null()
 
     write(*,*) ' '
