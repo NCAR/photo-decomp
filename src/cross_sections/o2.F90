@@ -47,6 +47,7 @@ contains
     use tuvx_grid,                    only : base_grid_t
     use tuvx_profile_warehouse,          only : Profile_warehouse_t
     use tuvx_profile,                    only : base_profile_t
+    use tuvx_la_sr_bands                 only : la_srb_t
 
     !> o2 cross section type
     type(o2_cross_section_t), pointer :: this
@@ -130,7 +131,7 @@ file_loop: &
       enddo file_loop
     endif has_netcdf_file
 
-    call this%la_srb_obj_%initialize( lambdaGrid )
+    this%la_srb_obj_ => la_srb_t( lambdaGrid )
 
     write(*,*) Iam,'exiting'
 

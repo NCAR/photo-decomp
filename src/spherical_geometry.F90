@@ -17,7 +17,6 @@ module tuvx_spherical_geometry
         real(dk)                 :: SolarZenithAngle_
         real(dk), allocatable    :: dsdh_(:,:)  
       contains
-        procedure :: initialize
         procedure :: setSphericalParams
         procedure :: airmas
         final     :: finalize
@@ -28,36 +27,41 @@ module tuvx_spherical_geometry
       real(dk), parameter ::  d2r     = pi/180._dk
       real(dk), parameter ::  NINETY  = 90._dk
 
+      !> Constructor
+      interface spherical_geom_t
+        module procedure constructor
+      end interface spherical_geom_t
+
       contains
 
-      subroutine initialize(this, gridWareHouse )
+      function constructor( gridWareHouse ) result( this )
+          use tuvx_grid_warehouse, only : grid_warehouse_t
+          use tuvx_grid, only        : base_grid_t
 
-      use tuvx_grid_warehouse, only : grid_warehouse_t
-      use tuvx_grid, only        : base_grid_t
+          type(spherical_geom_t), pointer :: this
+          !> Arguments
+          type(grid_warehouse_t), intent(inout)  :: gridWareHouse
 
-      !> Arguments
-      class(spherical_geom_t), intent(inout) :: this
-      type(grid_warehouse_t), intent(inout)  :: gridWareHouse
+          !> Local variables
+          character(len=*), parameter            :: Iam = 'sphers initialize: '
 
-      !> Local variables
-      character(len=*), parameter            :: Iam = 'sphers initialize: '
+          type(string_t)                         :: Handle
+          class(base_grid_t), pointer          :: zGrid
 
-      type(string_t)                         :: Handle
-      class(base_grid_t), pointer          :: zGrid
+          write(*,*) ' '
+          write(*,*) Iam // 'entering'
 
-      write(*,*) ' '
-      write(*,*) Iam // 'entering'
+          allocate( this )
 
-      Handle = "Vertical Z"
-      zGrid => gridWareHouse%get_grid( Handle )
+          Handle = "Vertical Z"
+          zGrid => gridWareHouse%get_grid( Handle )
 
-      allocate( this%nid_(0:zGrid%ncells_) )
-      allocate( this%dsdh_(0:zGrid%ncells_,zGrid%ncells_) )
+          allocate( this%nid_(0:zGrid%ncells_) )
+          allocate( this%dsdh_(0:zGrid%ncells_,zGrid%ncells_) )
 
-      write(*,*) ' '
-      write(*,*) Iam // 'exiting'
-
-      end subroutine initialize
+          write(*,*) ' '
+          write(*,*) Iam // 'exiting'
+      end function constructor
 
       subroutine setSphericalParams(this, zen, gridWareHouse)
 !-----------------------------------------------------------------------------*

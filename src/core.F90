@@ -137,8 +137,7 @@ contains
     deallocate( iter )
 
     !> instantiate and initialize spherical geometry type
-    allocate( photolysis_core_obj%sphericalGeom_ )
-    call photolysis_core_obj%sphericalGeom_%initialize( photolysis_core_obj%GridWareHouse_ )
+    photolysis_core_obj%sphericalGeom_ => spherical_geom_t( photolysis_core_obj%GridWareHouse_ )
     !> instantiate and initialize lyman alpha, srb type
     photolysis_core_obj%la_srb_ => la_srb_t( photolysis_core_obj%GridWareHouse_ )
 
