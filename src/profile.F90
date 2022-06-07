@@ -10,7 +10,7 @@ module tuvx_profile
   implicit none
 
   private
-  public :: profile_t, base_grid_ptr
+  public :: profile_t, grid_ptr
 
   type, abstract ::  profile_t
     !> grid handle
@@ -35,9 +35,9 @@ module tuvx_profile
   end type profile_t
 
   !> Pointer type for building sets of spectral wght objects
-  type :: base_grid_ptr
+  type :: grid_ptr
     class(profile_t), pointer :: ptr_ => null( )
-  end type base_grid_ptr
+  end type grid_ptr
 
 interface
 
