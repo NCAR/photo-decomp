@@ -44,14 +44,14 @@
          "weights": {
             "netcdf files": ["data/SW/RB-Meter,model_501_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Eppley UV Photometer": {
          "weights": {
             "netcdf files": ["data/SW/Eppley-UV-Photometer_spectral_wght_1.nc"],
             "spectral wght type": "Eppley UV Photometer",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "PAR, 400-700nm, umol m-2 s-1": {
@@ -68,7 +68,7 @@
          "weights": {
             "netcdf files": ["data/SW/DNA_damage_in_vitro(Setlow,1974)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "SCUP-mice (de Gruijl et al., 1993)": {
@@ -80,7 +80,7 @@
          "weights": {
             "netcdf files": ["data/SW/SCUP-human(de Gruijl and van der Leun,1994)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Standard human erythema(Webb et al., 2011)": {
@@ -97,14 +97,14 @@
          "weights": {
             "netcdf files": ["data/SW/Erythema,humans(Anders et al.,1995)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Occupational TLV(ACGIH,1992)": {
          "weights": {
             "netcdf files": ["data/SW/Occupational TLV (ACGIH,1992)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Phytoplankton (Boucher et al., 1994)": {
@@ -116,21 +116,21 @@
          "weights": {
             "netcdf files": ["data/SW/Phytoplankton, phaeo(Cullen et al. 1992)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Phytoplankton, proro (Cullen et al., 1992)": {
          "weights": {
             "netcdf files": ["data/SW/Phytoplankton, proro(Cullen et al. 1992)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Cataract, pig(Oriowo et al.,2001)": {
          "weights": {
             "netcdf files": ["data/SW/Cataract, pig(Oriowo et al.,2001)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "Plant damage (Caldwell, 1971)": {
@@ -152,14 +152,14 @@
          "weights": {
             "netcdf files": ["data/SW/Previtamin-D3 (CIE 2006)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "NMSC (CIE 2006)": {
          "weights": {
             "netcdf files": ["data/SW/NMSC (CIE 2006)_spectral_wght_1.nc"],
             "spectral wght type": "base spectral wght",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       }
     }

@@ -9,14 +9,14 @@
       "name": "fix-zero",
       "type": "base",
       "netcdf files": [ "data/cross_section.base.1.nc", "data/cross_section.base.2.nc" ],
-      "lower extrapolation": "12.5"
+      "lower extrapolation": { "type": "constant", "value" : 12.5 }
     },
     {
       "name": "extend-fix",
       "type": "base",
       "netcdf files": [ "data/cross_section.base.1.nc", "data/cross_section.base.2.nc" ],
-      "lower extrapolation": "boundary",
-      "upper extrapolation": "32.3"
+      "lower extrapolation": { "type": "boundary" },
+      "upper extrapolation": { "type": "constant", "value": 32.3 }
     }
   ]
 }

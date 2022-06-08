@@ -68,7 +68,7 @@
                "name": "O2",
                "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
                "type": "base",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          ],
          "radiators": [
@@ -114,7 +114,7 @@
             "cross section": {
                "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
                "type": "base",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             },
             "quantum yield": {
                "quantum yield type": "base quantum yield",
@@ -275,7 +275,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/NO3-NO2+O(3P)_quantum_yield_1.nc"],
                "quantum yield type": "tint quantum yield",
-               "lower extrapolation": "1.0"
+               "lower extrapolation": { "type": "constant", "value": 1.0 }
             }
          },
          "HNO3+hv->OH+NO2": {
@@ -315,7 +315,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/NO2_quantum_yield_1.nc"],
                "quantum yield type": "NO2 tint quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "C2H5CHO+hv->C2H5+HCO": {
@@ -355,7 +355,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/CH2O_quantum_yield_1.nc"],
                "quantum yield type": "base quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "CH2O+hv->H2+CO": {
@@ -366,7 +366,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/CH2O_quantum_yield_1.nc"],
                "quantum yield type": "CH2O quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "CH3COCH2CH3+hv->CH3CO+CH2CH3": {
@@ -392,7 +392,7 @@
             "cross section": {
                "netcdf files": ["data/XSQY/CHBr3_cross_section_1.nc"],
                "type": "CHBr3+hv->Products",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             },
             "quantum yield": {
                "quantum yield type": "base quantum yield",
@@ -447,7 +447,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/I2_quantum_yield_1.nc"],
                "quantum yield type": "base quantum yield",
-               "lower extrapolation": "1.0"
+               "lower extrapolation": { "type": "constant", "value": 1.0 }
             }
          },
          "IO+hv->I+O": {
@@ -1097,7 +1097,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/CHOCHO-HCO_HCO_quantum_yield_1.nc"],
                "quantum yield type": "base quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "CHOCHO+hv->H2+CO+CO": {
@@ -1108,7 +1108,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/CHOCHO-H2_CO_CO_quantum_yield_1.nc"],
                "quantum yield type": "base quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "CHOCHO+hv->CH2O+CO": {
@@ -1119,7 +1119,7 @@
             "quantum yield": {
                "netcdf files": ["data/XSQY/CHOCHO-CH2O_CO_quantum_yield_1.nc"],
                "quantum yield type": "base quantum yield",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          },
          "CH3COCHO+hv->CH3CO+HCO": {

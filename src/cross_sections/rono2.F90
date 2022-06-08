@@ -64,8 +64,7 @@ contains
     character(len=:), allocatable :: addpntKey
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t), allocatable :: netcdfFiles(:)
-    type(config_t)              :: tmp_config
-    type(string_t)              :: addpntVal
+    type(config_t)              :: tmp_config, extrap_config
     type(string_t)              :: Handle
     class(grid_t), pointer :: lambdaGrid
     type(string_t) :: required_keys(2), optional_keys(3)
@@ -121,11 +120,11 @@ file_loop:                                                                    &
             elseif( parmNdx == 2 ) then
               tmp_config = config
               addpntKey = 'lower extrapolation'
-              addpntVal = 'boundary'
-              call tmp_config%add( addpntKey, addpntVal, Iam )
+              call extrap_config%empty( )
+              call extrap_config%add( 'type', 'boundary', Iam )
+              call tmp_config%add( addpntKey, extrap_config, Iam )
               addpntKey = 'upper extrapolation'
-              addpntVal = 'boundary'
-              call tmp_config%add( addpntKey, addpntVal, Iam )
+              call tmp_config%add( addpntKey, extrap_config, Iam )
               call this%add_points( tmp_config, data_lambda, data_parameter )
             endif
             call inter2( xto = lambdaGrid%edge_,                              &

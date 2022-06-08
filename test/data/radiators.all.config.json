@@ -68,7 +68,7 @@
                "name": "O2",
                "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
                "type": "base",
-               "lower extrapolation": "boundary"
+               "lower extrapolation": { "type": "boundary" }
             }
          ],
          "radiators": [
