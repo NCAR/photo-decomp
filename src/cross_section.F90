@@ -80,7 +80,7 @@ contains
     call assert_msg( 124969900,                                               &
                      config%validate( required_keys, optional_keys ),         &
                      "Bad configuration data format for "//                   &
-                     "n2o_n2+o1d cross section." )
+                     "base cross section." )
     allocate( new_obj )
     call base_constructor( new_obj, config, grid_warehouse, profile_warehouse )
 

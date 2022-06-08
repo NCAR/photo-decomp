@@ -50,7 +50,7 @@ contains
 
     required_keys(1) = "type"
     optional_keys(1) = "name"
-    call assert_msg( 124969900,                                               &
+    call assert_msg( 210014560,                                               &
                      config%validate( required_keys, optional_keys ),         &
                      "Bad configuration data format for "//                   &
                      "n2o_n2+o1d cross section." )

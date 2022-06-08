@@ -46,18 +46,26 @@ contains
 
     ! load and test cross section w/o extrapolation
     call assert( 560066370, iter%next( ) )
-    call config%get( iter, cs_config, Iam )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section => cross_section_t( cs_config, grids, profiles )
+
+    deallocate( cross_section )
 
     ! load and test cross section w/ fixed lower extrapolation and no upper
     ! extrapolation
     call assert( 102622205, iter%next( ) )
-    call config%get( iter, cs_config, Iam )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section => cross_section_t( cs_config, grids, profiles )
+
+    deallocate( cross_section )
 
     ! load and test cross section w/ extrpolation from lower boundary and
     ! fixed upper extrpolation
     call assert( 101168966, iter%next( ) )
-    call config%get( iter, cs_config, Iam )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section => cross_section_t( cs_config, grids, profiles )
 
+    deallocate( cross_section )
 
     ! clean up
     deallocate( iter )
