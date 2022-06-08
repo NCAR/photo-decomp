@@ -17,7 +17,9 @@ contains
 
   subroutine test_cross_section_t( )
 
+    use musica_assert,                 only : assert
     use musica_config,                 only : config_t
+    use musica_iterator,               only : iterator_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
@@ -25,7 +27,9 @@ contains
     class(profile_warehouse_t), pointer :: profiles
     class(cross_section_t),     pointer :: cross_section
 
-    type(config_t) :: config
+    character(len=*), parameter :: Iam = "base cross section tests"
+    type(config_t) :: config, cs_set, cs_config
+    class(iterator_t), pointer :: iter
 
     ! load test grids
     call config%from_file( "data/grid.simple.config.json" )
@@ -35,7 +39,28 @@ contains
     call config%from_file( "data/profile.simple.config.json" )
     profiles => profile_warehouse_t( config, grids )
 
+    ! get cross section config data
+    call config%from_file( "data/cross_section.base.config.json" )
+    call config%get( "cross sections", cs_set, Iam )
+    iter => cs_set%get_iterator( )
+
+    ! load and test cross section w/o extrapolation
+    call assert( 560066370, iter%next( ) )
+    call config%get( iter, cs_config, Iam )
+
+    ! load and test cross section w/ fixed lower extrapolation and no upper
+    ! extrapolation
+    call assert( 102622205, iter%next( ) )
+    call config%get( iter, cs_config, Iam )
+
+    ! load and test cross section w/ extrpolation from lower boundary and
+    ! fixed upper extrpolation
+    call assert( 101168966, iter%next( ) )
+    call config%get( iter, cs_config, Iam )
+
+
     ! clean up
+    deallocate( iter )
     deallocate( grids )
     deallocate( profiles )
 
