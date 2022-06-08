@@ -21,6 +21,9 @@ endmacro(add_std_test)
 ################################################################################
 # Photo-decomp tests
 
+add_executable(cross_section_test unit/cross_section/base.F90)
+add_std_test(cross_section_test)
+
 add_executable(grid_test unit/grid/test.F90)
 add_std_test(grid_test)
 
