@@ -4,23 +4,27 @@
 ! one dimension, equally spaced  grid type
 module tuvx_grid_equal_delta
 
-  use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_grid,     only : grid_t
+  use musica_constants, only : &
+    dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use tuvx_grid,        only : grid_t
 
   implicit none
 
-  public :: equalDelta_t
+  public :: equal_delta_t
 
-  type, extends(grid_t) :: equalDelta_t
+  type, extends(grid_t) :: equal_delta_t
   contains
-  end type equalDelta_t
+  end type equal_delta_t
 
   !> Constructor
-  interface equalDelta_t
+  interface equal_delta_t
     module procedure constructor
-  end interface equalDelta_t
+  end interface equal_delta_t
 
 contains
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !> Initialize grid
   function constructor( grid_config ) result ( this )
       
@@ -28,13 +32,14 @@ contains
     use musica_string, only : string_t
 
     !> arguments
-    type(equalDelta_t), pointer :: this
-    type(config_t), intent(inout)      :: grid_config
+    type(config_t), intent(inout) :: grid_config
+
     !> local variables
     integer(ik) :: n
+    logical(lk) :: found
     real(dk)    :: Lower_val, Upper_val, Delta_val
     character(len=*), parameter :: Iam = 'EqualDelta grid initialize: '
-    logical(lk) :: found
+    type(equal_delta_t), pointer  :: this
 
     allocate ( this )
 
@@ -54,12 +59,16 @@ contains
     allocate( this%delta_(this%ncells_) )
     allocate( this%edge_(this%ncells_+1_ik) )
     do n = 1,this%ncells_+1_ik
-      this%edge_(n) = min( real((n - 1_ik),kind=dk)*Delta_val + Lower_val,Upper_val )
+      this%edge_(n) = &
+        min( real((n - 1_ik), kind=dk) * Delta_val + Lower_val, Upper_val )
     enddo
-    this%mid_(:) = .5_dk &
-                   *(this%edge_(1_ik:this%ncells_) + this%edge_(2_ik:this%ncells_+1_ik))
-    this%delta_(:) = (this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_))
+    this%mid_(:) = .5_dk * &
+      (this%edge_(1_ik:this%ncells_) + this%edge_(2_ik:this%ncells_+1_ik))
+    this%delta_(:) = &
+      this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_)
 
   end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_grid_equal_delta

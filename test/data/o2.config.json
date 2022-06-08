@@ -46,15 +46,14 @@
    },
    "Components": {
       "Radiative transfer": {
-         "Radiative xfer cross sections": {
-            "O2": {
-               "cross section": {
-                  "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
-                  "cross section type": "base cross section",
-                  "lower extrapolation": "boundary"
-               }
+         "cross sections": [
+            {
+               "name": "O2",
+               "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
+               "type": "base",
+               "lower extrapolation": "boundary"
             }
-         },
+         ],
          "radiators": [
             {
                "name": "O2",

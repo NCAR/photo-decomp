@@ -53,6 +53,7 @@ contains
   !> Initialize radiator_t object
   subroutine base_constructor( this, radiator_config, gridWareHouse )
 
+    use musica_assert,                 only : assert_msg
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_grid,         only : grid_t
@@ -68,6 +69,16 @@ contains
     character(len=*), parameter   :: Iam = "Radiator initialize: "
     type(string_t)                :: Handle
     class(grid_t), pointer :: zGrid, lambdaGrid
+    type(string_t) :: required_keys(4), optional_keys(0)
+
+    required_keys(1) = "name"
+    required_keys(2) = "type"
+    required_keys(3) = "cross section"
+    required_keys(4) = "vertical profile"
+    call assert_msg( 691711954,                                               &
+                     radiator_config%validate( required_keys, optional_keys ),&
+                     "Bad configuration data format for "//                   &
+                     "base radiator." )
 
     write(*,*) ' '
     write(*,*) Iam,'entering'

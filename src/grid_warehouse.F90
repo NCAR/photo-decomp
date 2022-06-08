@@ -7,7 +7,7 @@
 !> The grid warehouse type and related functions
 module tuvx_grid_warehouse
 
-  use tuvx_grid, only : base_grid_ptr
+  use tuvx_grid, only : grid_ptr
 
   implicit none
 
@@ -18,8 +18,7 @@ module tuvx_grid_warehouse
   type :: grid_warehouse_t
     private
     !> grid objects
-!   class(base_grid_ptr), allocatable :: grid_objs_(:)
-    type(base_grid_ptr), allocatable :: grid_objs_(:)
+    type(grid_ptr), allocatable :: grid_objs_(:)
   contains
     !> get a copy of a grid object
     procedure :: get_grid
@@ -56,11 +55,9 @@ contains
     type(config_t)              :: grid_set, grid_config
     class(iterator_t), pointer  :: iter
     class(grid_warehouse_t), pointer :: grid_warehouse_ptr
-    type(base_grid_ptr)            :: grid_obj
+    type(grid_ptr)            :: grid_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
-
-    write(*,*) Iam // 'entering'
 
     allocate( grid_warehouse_obj )
 
@@ -76,8 +73,6 @@ contains
     do while( iter%next() )
       keychar = grid_set%key(iter)
       aswkey  = keychar 
-      write(*,*) ' '
-      write(*,*) Iam,'key = ',trim(keychar)
       call grid_set%get( iter, grid_config, Iam )
       call grid_config%add( 'Handle', aswkey, Iam )
 !-----------------------------------------------------------------------------
@@ -89,12 +84,7 @@ contains
 
     deallocate( iter )
 
-    write(*,*) ' '
-    write(*,'(a,''There are '',i3,'' grid objects'')') Iam,size(new_obj%grid_objs_)
-
     end associate
-
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 
@@ -103,7 +93,7 @@ contains
   !> Get copy of a grid object
   function get_grid( this, grid_handle ) result( grid_ptr )
 
-    use tuvx_grid,      only : grid_t
+    use tuvx_grid,         only : grid_t
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
@@ -115,12 +105,8 @@ contains
     class(grid_t), pointer          :: grid_ptr
 
     !> Local variables
-    character(len=*), parameter :: Iam = 'grid warehouse get_grid: '
     integer(ik) :: ndx
     logical(lk) :: found
-
-    write(*,*) ' '
-    write(*,*) Iam,'entering'
 
     found = .false._lk
     do ndx = 1,size(this%grid_objs_)
@@ -133,10 +119,9 @@ contains
     if( found ) then
       allocate( grid_ptr, source = this%grid_objs_(ndx)%ptr_ )
     else
-      call die_msg( 460768214, "Invalid grid handle: '"// grid_handle%to_char()//"'" )
+      call die_msg( 460768214, "Invalid grid handle: '"// &
+        grid_handle%to_char()//"'" )
     endif
-
-    write(*,*) Iam,'exiting'
 
   end function get_grid
 
@@ -152,15 +137,10 @@ contains
 
     !> Local variables
     integer(kind=ik) :: ndx
-    character(len=*), parameter :: Iam = 'grid warehouse finalize: '
-
-    write(*,*) Iam,'entering'
 
     if( allocated( this%grid_objs_ ) ) then
       deallocate( this%grid_objs_ )
     endif
-
-    write(*,*) Iam,'exiting'
 
   end subroutine finalize
 

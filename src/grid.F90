@@ -10,7 +10,7 @@ module tuvx_grid
   implicit none
 
   private
-  public :: grid_t, base_grid_ptr, base_constructor
+  public :: grid_t, grid_ptr, base_constructor
 
   type, abstract ::  grid_t
     !> grid handle
@@ -27,21 +27,25 @@ module tuvx_grid
   end type grid_t
 
   !> Pointer type for building sets of spectral wght objects
-  type :: base_grid_ptr
+  type :: grid_ptr
     class(grid_t), pointer :: ptr_ => null( )
-  end type base_grid_ptr
+  end type grid_ptr
 
 interface
 
-    !> Initialize grid
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !> construct the grid
     subroutine base_constructor( this, grid_config )
       
       use musica_config, only : config_t
 
       import grid_t
-      class(grid_t), intent(inout) :: this
-      type(config_t), intent(inout)       :: grid_config
+      class(grid_t), intent(inout)  :: this
+      type(config_t), intent(inout) :: grid_config
     end subroutine base_constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end interface
 

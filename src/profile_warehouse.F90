@@ -7,7 +7,7 @@
 !> The profile warehouse type and related functions
 module tuvx_profile_warehouse
 
-  use tuvx_profile, only : base_grid_ptr
+  use tuvx_profile, only : grid_ptr
 
   implicit none
 
@@ -18,7 +18,7 @@ module tuvx_profile_warehouse
   type :: profile_warehouse_t
     private
     !> profile objects
-    type(base_grid_ptr), allocatable :: profile_objs_(:)
+    type(grid_ptr), allocatable :: profile_objs_(:)
   contains
     !> get a copy of a profile object
     procedure :: get_profile
@@ -56,10 +56,10 @@ contains
     !> local variables
     type(config_t)              :: profile_set, profile_config
     class(iterator_t), pointer  :: iter
+    type(grid_ptr)              :: profile_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
     character(len=*), parameter :: Iam = "profile warehouse constructor: "
-    type(base_grid_ptr)            :: profile_obj
     class(profile_warehouse_t), pointer :: profile_warehouse_ptr
 
     allocate( profile_warehouse_obj )

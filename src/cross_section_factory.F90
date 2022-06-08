@@ -71,88 +71,88 @@ contains
     character(len=*), parameter :: Iam = 'cross section builder'
 
     new_cross_section => null( )
-    call config%get( 'cross section type', cross_section_type, Iam )
+    call config%get( 'type', cross_section_type, Iam )
 
     select case( cross_section_type%to_char() )
-      case( 'Air cross section' )
+      case( 'air' )
         new_cross_section => cross_section_rayliegh_t( config, grid_warehouse,&
                                                            profile_warehouse )
-      case( 'base cross section' )
+      case( 'base' )
         new_cross_section => cross_section_t( config, grid_warehouse,         &
                                                            profile_warehouse )
-      case( 'BrO+hv->Br+O cross section' )
+      case( 'BrO+hv->Br+O' )
         new_cross_section => cross_section_bro_br_o_t( config, grid_warehouse,&
                                                            profile_warehouse )
-      case( 'CCl4+hv->Products cross section' )
+      case( 'CCl4+hv->Products' )
         new_cross_section => cross_section_ccl4_t( config, grid_warehouse,    &
                                                            profile_warehouse )
-      case( 'CCl3F+hv->Products cross section' )
+      case( 'CCl3F+hv->Products' )
         new_cross_section => cross_section_cfc11_t( config, grid_warehouse,   &
                                                            profile_warehouse )
-      case( 'CHCl3+hv->Products cross section' )
+      case( 'CHCl3+hv->Products' )
         new_cross_section => cross_section_chcl3_t( config, grid_warehouse,   &
                                                            profile_warehouse )
-      case( 'CH2(OH)CH2(ONO2)+hv->CH2(OH)CH2(O.)+NO2 cross section' )
+      case( 'CH2(OH)CH2(ONO2)+hv->CH2(OH)CH2(O.)+NO2' )
         new_cross_section => cross_section_nitroxy_ethanol_t( config,         &
                                            grid_warehouse, profile_warehouse )
-      case( 'CH2O cross section' )
+      case( 'CH2O' )
         new_cross_section => cross_section_ch2o_t( config, grid_warehouse,    &
                                                            profile_warehouse )
-      case( 'CH3COCH2(ONO2)+hv->CH3COCH2(O.)+NO2 cross section' )
+      case( 'CH3COCH2(ONO2)+hv->CH3COCH2(O.)+NO2' )
         new_cross_section => cross_section_nitroxy_acetone_t( config,         &
                                            grid_warehouse, profile_warehouse )
-      case( 'CH3COCH3+hv->CH3CO+CH3 cross section' )
+      case( 'CH3COCH3+hv->CH3CO+CH3' )
         new_cross_section => cross_section_ch3coch3_ch3co_ch3_t( config,      &
                                            grid_warehouse, profile_warehouse )
-      case( 'CH3ONO2+hv->CH3O+NO2 cross section' )
+      case( 'CH3ONO2+hv->CH3O+NO2' )
         new_cross_section => cross_section_ch3ono2_ch3o_no2_t( config,        &
                                            grid_warehouse, profile_warehouse )
-      case( 'CHBr3+hv->Products cross section' )
+      case( 'CHBr3+hv->Products' )
         new_cross_section => cross_section_chbr3_t( config, grid_warehouse,   &
                                                            profile_warehouse )
-      case( 'Cl2+hv->Cl+Cl cross section' )
+      case( 'Cl2+hv->Cl+Cl' )
         new_cross_section => cross_section_cl2_cl_cl_t( config,               &
                                            grid_warehouse, profile_warehouse )
-      case( 'ClONO2 cross section' )
+      case( 'ClONO2' )
         new_cross_section => cross_section_clono2_t( config, grid_warehouse,  &
                                                            profile_warehouse )
-      case( 'H2O2+hv->OH+OH cross section' )
+      case( 'H2O2+hv->OH+OH' )
         new_cross_section => cross_section_h2o2_oh_oh_t( config,              &
                                            grid_warehouse, profile_warehouse )
-      case( 'HCFC+hv->Products cross section' )
+      case( 'HCFC+hv->Products' )
         new_cross_section => cross_section_hcfc_t( config, grid_warehouse,    &
                                                            profile_warehouse )
-      case( 'HNO3+hv->OH+NO2 cross section' )
+      case( 'HNO3+hv->OH+NO2' )
         new_cross_section => cross_section_hno3_oh_no2_t( config,             &
                                            grid_warehouse, profile_warehouse )
-      case( 'HOBr+hv->OH+Br cross section' )
+      case( 'HOBr+hv->OH+Br' )
         new_cross_section => cross_section_hobr_oh_br_t( config,              &
                                            grid_warehouse, profile_warehouse )
-      case( 'N2O+hv->N2+O(1D) cross section' )
+      case( 'N2O+hv->N2+O(1D)' )
         new_cross_section => cross_section_n2o_n2_o1d_t( config,              &
                                            grid_warehouse, profile_warehouse )
-      case( 'N2O5+hv->NO2+NO3 cross section' )
+      case( 'N2O5+hv->NO2+NO3' )
         new_cross_section => cross_section_n2o5_no2_no3_t( config,            &
                                            grid_warehouse, profile_warehouse )
-      case( 'NO2 tint cross section' )
+      case( 'NO2 tint' )
         new_cross_section => cross_section_no2_tint_t( config, grid_warehouse,&
                                                            profile_warehouse )
-      case( 'O3 cross section' )
+      case( 'O3' )
         new_cross_section => cross_section_o3_tint_t( config, grid_warehouse, &
                                                            profile_warehouse )
-      case( 'OClO+hv->Products cross section' )
+      case( 'OClO+hv->Products' )
         new_cross_section => cross_section_oclo_t( config, grid_warehouse,    &
                                                            profile_warehouse )
-      case( 'RONO2 cross section' )
+      case( 'RONO2' )
         new_cross_section => cross_section_rono2_t( config, grid_warehouse,   &
                                                            profile_warehouse )
-      case( 'SO2 cross section' )
+      case( 'SO2' )
         new_cross_section => cross_section_t( config, grid_warehouse,         &
                                                            profile_warehouse )
-      case( 't_butyl_nitrate+hv->Products cross section' )
+      case( 't_butyl_nitrate+hv->Products' )
         new_cross_section => cross_section_t_butyl_nitrate_t ( config,        &
                                            grid_warehouse, profile_warehouse )
-      case( 'tint cross section' )
+      case( 'tint' )
         new_cross_section => cross_section_tint_t( config, grid_warehouse,    &
                                                            profile_warehouse )
       case default

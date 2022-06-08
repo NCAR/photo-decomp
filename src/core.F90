@@ -78,7 +78,7 @@ contains
     !> Radiative transfer key must be in config
     call components_config%get( "Radiative transfer", radXfer_config, Iam )
     !> Radiative transfer cross sections are optional
-    call radXfer_config%get( "Radiative xfer cross sections", radXfer_cross_sections_config, Iam, found=found )
+    call radXfer_config%get( "cross sections", radXfer_cross_sections_config, Iam, found=found )
     !> Radiators keys must be in config
     call radXfer_config%get( "radiators", Radiators_config, Iam )
 

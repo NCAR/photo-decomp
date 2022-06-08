@@ -34,7 +34,9 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
 
+    use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
     use tuvx_cross_section,            only : base_constructor
@@ -44,6 +46,17 @@ contains
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
+    type(string_t) :: required_keys(2), optional_keys(3)
+
+    required_keys(1) = "type"
+    required_keys(2) = "netcdf files"
+    optional_keys(1) = "lower extrapolation"
+    optional_keys(2) = "upper extrapolation"
+    optional_keys(3) = "name"
+    call assert_msg( 283520455,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for                       &
+                     cfc-11->Products cross section." )
     allocate (cross_section_cfc11_t :: this )
     call base_constructor( this, config, grid_warehouse, profile_warehouse )
 

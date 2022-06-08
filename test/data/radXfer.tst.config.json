@@ -33,11 +33,10 @@
          "Filespec": "../test/data/test.ozone"
       }
    },
-   "Radiative xfer cross sections": {
-      "Air": {
-         "cross section": {
-            "cross section type": "Air cross section"
-         }
+   "cross sections": [
+      {
+         "name": "air",
+         "type": "air"
       }
-    }
+   ]
 }

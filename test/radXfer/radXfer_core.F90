@@ -128,7 +128,7 @@ contains
     call assert( 412238773, all( abs(TemperatureProfile%delta_val_) < 20._dk ) )
 
     !> Get copy of the rayliegh cross section
-    Handle = 'Air'
+    Handle = 'air'
     RaylieghCrossSection => this%theradXferXsectWareHouse_%get( Handle )
     aCrossSection = RaylieghCrossSection%calculate( this%theGridWareHouse_, this%theProfileWareHouse_ )
     call assert( 412238776, all( aCrossSection >= 0._dk ) )
