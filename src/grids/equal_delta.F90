@@ -22,6 +22,9 @@ module tuvx_grid_equal_delta
   end interface equal_delta_t
 
 contains
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !> Initialize grid
   function constructor( grid_config ) result ( this )
       
@@ -65,5 +68,7 @@ contains
       this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_)
 
   end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_grid_equal_delta

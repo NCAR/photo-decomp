@@ -33,6 +33,8 @@ module tuvx_grid
 
 interface
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     !> construct the grid
     subroutine base_constructor( this, grid_config )
       
@@ -42,6 +44,8 @@ interface
       class(grid_t), intent(inout)  :: this
       type(config_t), intent(inout) :: grid_config
     end subroutine base_constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end interface
 

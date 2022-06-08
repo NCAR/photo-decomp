@@ -23,6 +23,9 @@ module tuvx_grid_from_config
 
 contains
   !> Initialize grid
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   function constructor( grid_config ) result ( this )
       
     use musica_config, only : config_t
@@ -49,5 +52,7 @@ contains
       this%edge_(2_ik:this%ncells_+1_ik) - this%edge_(1_ik:this%ncells_)
 
   end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_grid_from_config

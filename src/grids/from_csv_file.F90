@@ -23,6 +23,8 @@ module tuvx_grid_from_csv_file
 
 contains
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !> Initialize grid
   function constructor( grid_config ) result ( this )
 
@@ -88,5 +90,7 @@ contains
 
     close(unit=inUnit)
   end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_grid_from_csv_file
