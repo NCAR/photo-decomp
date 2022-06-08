@@ -1,6 +1,6 @@
-netcdf cross_section_base_2 {
+netcdf cross_section_base {
 dimensions:
-        bins = 2 ;
+        bins = 4 ;
         parameters = 1 ;
         temperatures = UNLIMITED ; // (0 currently)
 variables:
@@ -10,7 +10,7 @@ variables:
                 cross_section_parameters:units = "cm^2" ;
 data:
 
- wavelength = 103.0, 104.0 ;
+ wavelength = 101.0, 102.0, 103.0, 104.0 ;
 
- cross_section_parameters = 40.0, 50.0 ;
+ cross_section_parameters = 5.0, 10.0, 40.0, 50.0 ;
 }

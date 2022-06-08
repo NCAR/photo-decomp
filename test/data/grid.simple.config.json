@@ -3,7 +3,7 @@
       "Vertical Z": {
          "Grid type": "Equal interval",
          "Grid begins at" : 0.0,
-         "Grid ends at" : 10.0,
+         "Grid ends at" : 5.0,
          "Grid cell delta" : 1.0
       },
       "Photolysis, wavelength": {
