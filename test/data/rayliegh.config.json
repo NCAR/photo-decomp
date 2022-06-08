@@ -46,19 +46,18 @@
    },
    "Components": {
       "Radiative transfer": {
-         "Radiative xfer cross sections": {
-            "Air": {
-               "cross section": {
-                  "cross section type": "Air cross section"
-               }
+         "cross sections": [
+            {
+               "name": "air",
+               "type": "air"
             }
          },
          "radiators": [
             {
                "name": "air",
                "type": "base",
-               "cross section": "Air",
-               "vertical profile": "Air",
+               "cross section": "air",
+               "vertical profile": "Air"
             }
          ],
          "Diagnostics" : [ "air" ]

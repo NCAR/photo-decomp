@@ -38,7 +38,7 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
 
-    use musica_assert,                 only : die_msg
+    use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : grid_t
@@ -76,6 +76,17 @@ contains
     type(string_t), allocatable   :: netcdfFiles(:)
     class(grid_t), pointer :: lambdaGrid
     type(string_t)     :: Handle
+    type(string_t) :: required_keys(2), optional_keys(3)
+
+    required_keys(1) = "type"
+    required_keys(2) = "netcdf files"
+    optional_keys(1) = "lower extrapolation"
+    optional_keys(2) = "upper extrapolation"
+    optional_keys(3) = "name"
+    call assert_msg( 988762814,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for "//                   &
+                     "o3 tint cross section." )
 
     allocate( this )
 

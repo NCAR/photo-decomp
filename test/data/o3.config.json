@@ -46,14 +46,13 @@
    },
    "Components": {
       "Radiative transfer": {
-         "Radiative xfer cross sections": {
-            "O3": {
-               "cross section": {
-                  "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
-                  "cross section type": "O3 cross section"
-               }
+         "cross sections": [
+            {
+               "name": "O3",
+               "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
+               "type": "O3"
             }
-         },
+         ],
          "radiators": [
             {
                "name": "O3",

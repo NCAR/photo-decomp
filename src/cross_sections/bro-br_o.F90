@@ -31,7 +31,7 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result( this )
 
-    use musica_assert,                 only : die_msg
+    use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
@@ -65,6 +65,15 @@ contains
     type(string_t), allocatable :: netcdfFiles(:)
     class(grid_t), pointer :: lambdaGrid
     class(grid_t), pointer :: zGrid
+    type(string_t) :: required_keys(2), optional_keys(1)
+
+    required_keys(1) = "type"
+    required_keys(2) = "netcdf files"
+    optional_keys(1) = "name"
+    call assert_msg( 290238001,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for "//                   &
+                     "bro->bro+o cross section." )
 
     allocate( this )
 

@@ -34,7 +34,9 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
 
+    use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
     use tuvx_cross_section,            only : base_constructor
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
@@ -44,6 +46,14 @@ contains
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
+    type(string_t) :: required_keys(1), optional_keys(1)
+
+    required_keys(1) = "type"
+    optional_keys(1) = "name"
+    call assert_msg( 587251674,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for "//                   &
+                     "rayliegh cross section." )
     allocate( cross_section_rayliegh_t :: this )
     call base_constructor( this, config, grid_warehouse, profile_warehouse )
 
@@ -85,8 +95,7 @@ contains
     integer :: colndx, nzdim
     class(grid_t), pointer :: zGrid
     class(grid_t), pointer :: lambdaGrid
-    character(len=*), parameter :: Iam =                                      &
-        'radXfer rayliegh cross section calculate'
+    character(len=*), parameter :: Iam = 'rayliegh cross section calculate'
     type(string_t)                :: Handle
     real(musica_dk)               :: wmicrn
     real(musica_dk), allocatable  :: pwr(:), wrk(:)

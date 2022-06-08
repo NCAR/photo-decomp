@@ -34,17 +34,26 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
 
+    use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
+    use musica_string,                 only : string_t
     use tuvx_cross_section,            only : base_constructor
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
-
 
     class(cross_section_t),    pointer       :: this
     type(config_t),            intent(inout) :: config
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
+    type(string_t) :: required_keys(1), optional_keys(1)
+
+    required_keys(1) = "type"
+    optional_keys(1) = "name"
+    call assert_msg( 292794572,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for "//                   &
+                     "t_butyl_nitrate cross section." )
     allocate( cross_section_t_butyl_nitrate_t :: this )
     call base_constructor( this, config, grid_warehouse, profile_warehouse )
 

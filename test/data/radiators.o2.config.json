@@ -46,26 +46,23 @@
    },
    "Components": {
       "Radiative transfer": {
-         "Radiative xfer cross sections": {
-            "Air": {
-               "cross section": {
-                  "cross section type": "Air cross section"
-               }
+         "cross sections": [
+            {
+               "name": "air",
+               "type": "air"
             },
-            "O3": {
-               "cross section": {
-                  "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
-                  "cross section type": "O3 cross section"
-               }
+            {
+               "name": "O3",
+               "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
+               "type": "O3"
             },
-            "O2": {
-               "cross section": {
-                  "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
-                  "cross section type": "base cross section",
-                  "lower extrapolation": "boundary"
-               }
+            {
+               "name": "O2",
+               "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
+               "type": "base",
+               "lower extrapolation": "boundary"
             }
-         },
+         ],
          "radiators": [
             {
                "name": "O2",

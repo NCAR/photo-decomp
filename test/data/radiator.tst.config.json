@@ -33,18 +33,17 @@
          "Filespec": "../test/data/test.ozone"
       }
    },
-   "Radiative xfer cross sections": {
-      "Air": {
-         "cross section": {
-            "cross section type": "Air cross section"
-         }
+   "cross sections": [
+      {
+         "name": "air",
+         "type": "air"
       }
-   },
+   ],
    "radiators": [
       {
         "name": "air",
         "type": "base",
-        "cross section": "Air",
+        "cross section": "air",
         "vertical profile": "Air"
       },
       {

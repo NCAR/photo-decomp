@@ -37,7 +37,7 @@ contains
   !> Initialize radiator_t object
   function constructor( radiator_config, gridWareHouse ) result( this )
 
-    use musica_assert,        only : die_msg
+    use musica_assert,        only : assert_msg, die_msg
     use musica_config,        only : config_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_grid,         only : grid_t
@@ -69,6 +69,18 @@ contains
     type(config_t)                :: Aerosol_config
     class(grid_t), pointer :: zGrid, lambdaGrid
     class(abs_interpolator_t), pointer :: theInterpolator
+    type(string_t) :: required_keys(5), optional_keys(1)
+
+    required_keys(1) = "type"
+    required_keys(2) = "optical depths"
+    required_keys(3) = "single scattering albedo"
+    required_keys(4) = "asymmetry factor"
+    required_keys(5) = "name"
+    optional_keys(1) = "550 nm optical depth"
+    call assert_msg( 584205621,                                               &
+                     radiator_config%validate( required_keys, optional_keys ),&
+                     "Bad configuration data format for "//                   &
+                     "aerosol radiator." )
 
     write(*,*) ' '
     write(*,*) Iam,'entering'

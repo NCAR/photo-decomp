@@ -63,13 +63,13 @@ contains
     !> local variables
     integer :: ndx
     character(len=*), parameter :: Iam = "Cross section constructor"
-    type(config_t) :: reaction_set, reaction_config
+    type(config_t) :: cross_section_set
     type(config_t) :: cross_section_config
     class(iterator_t), pointer :: iter
     type(cross_section_ptr) :: cross_section_ptr
     character(:), allocatable   :: jsonkey
     character(len=32)           :: keychar
-    type(string_t)              :: areaction_key
+    type(string_t)              :: cross_section_name
     type(string_t), allocatable :: netcdfFiles(:)
     logical                     :: found
 
@@ -77,29 +77,28 @@ contains
     allocate( string_t :: new_obj%handles_(0) )
     allocate( new_obj%cross_section_objs_(0) )
 
-    jsonkey = 'Radiative xfer cross sections'
-    call config%get( jsonkey, reaction_set, Iam, found = found )
+    jsonkey = 'cross sections'
+    call config%get( jsonkey, cross_section_set, Iam, found = found )
+
     ! cross section objects are not required
-has_radXfer_xsects: &
-    if( found ) then
-      iter => reaction_set%get_iterator( )
+    if( .not. found ) return
 
-      ! iterate over cross sections
-      do while( iter%next( ) )
-        keychar = reaction_set%key( iter )
-        areaction_key = keychar
-        new_obj%handles_ = [ new_obj%handles_, areaction_key ]
-        call reaction_set%get( iter, reaction_config, Iam )
+    ! iterate over cross sections
+    iter => cross_section_set%get_iterator( )
+    do while( iter%next( ) )
+      call cross_section_set%get( iter, cross_section_config, Iam )
 
-        ! build and store cross section object
-        call reaction_config%get( "cross section", cross_section_config, Iam )
-        cross_section_ptr%val_ => cross_section_builder( cross_section_config,&
+      ! save the cross section name for lookups
+      call cross_section_config%get( "name", cross_section_name, Iam )
+      new_obj%handles_ = [ new_obj%handles_, cross_section_name ]
+
+      ! build and store cross section object
+      cross_section_ptr%val_ => cross_section_builder( cross_section_config,  &
                                            grid_warehouse, profile_warehouse )
-        new_obj%cross_section_objs_ =                                         &
-            [ new_obj%cross_section_objs_, cross_section_ptr ]
-      end do
-      deallocate( iter )
-    endif has_radXfer_xsects
+      new_obj%cross_section_objs_ =                                         &
+          [ new_obj%cross_section_objs_, cross_section_ptr ]
+    end do
+    deallocate( iter )
 
   end function constructor
 

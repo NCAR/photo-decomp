@@ -34,7 +34,7 @@ contains
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result( this )
 
-    use musica_assert,                 only : die_msg
+    use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
@@ -69,6 +69,17 @@ contains
     type(string_t)              :: addpntVal
     type(string_t)              :: Handle
     class(grid_t), pointer :: lambdaGrid
+    type(string_t) :: required_keys(2), optional_keys(3)
+
+    required_keys(1) = "type"
+    required_keys(2) = "netcdf files"
+    optional_keys(1) = "lower extrapolation"
+    optional_keys(2) = "upper extrapolation"
+    optional_keys(3) = "name"
+    call assert_msg( 634988317,                                               &
+                     config%validate( required_keys, optional_keys ),         &
+                     "Bad configuration data format for "//                   &
+                     "HNO3 cross section." )
 
     Handle = 'Photolysis, wavelength'
     lambdaGrid => grid_warehouse%get_grid( Handle )
