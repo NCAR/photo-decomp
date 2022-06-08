@@ -4,117 +4,120 @@
 !from csv file type
 module tuvx_profile_o3
 
-  use musica_constants,  only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use tuvx_profile, only : profile_t
+  use musica_constants,  only : &
+    dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use tuvx_profile,      only : profile_t
 
   implicit none
 
-  public :: o3fromCsvFile_t
+  public :: o3_from_csv_file_t
 
-  type, extends(profile_t) :: o3fromCsvFile_t
+  type, extends(profile_t) :: o3_from_csv_file_t
   contains
     final     :: finalize
-  end type o3fromCsvFile_t
+  end type o3_from_csv_file_t
 
   !> Constructor
-  interface o3fromCsvFile_t
+  interface o3_from_csv_file_t
     module procedure constructor
-  end interface o3fromCsvFile_t
+  end interface o3_from_csv_file_t
 
 contains
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !> Initialize grid
-  function constructor( profile_config, gridWareHouse ) result( this )
+  function constructor( profile_config, grid_warehouse ) result( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
-    use tuvx_grid,  only : grid_t
+    use tuvx_grid,     only : grid_t
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_interpolate
 
     !> arguments
-    type(o3fromCsvFile_t), pointer :: this
     type(config_t), intent(inout)         :: profile_config
-    type(grid_warehouse_t), intent(inout) :: gridWareHouse
+    type(o3_from_csv_file_t), pointer     :: this
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
     !> local variables
     integer(ik), parameter :: iTWO = 2_ik
     real(dk),    parameter :: rONE = 1._dk
-    real(dk),    parameter :: ONEHALF = .5_dk
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
     real(dk), parameter    :: km2cm = 1.e5_dk
-    character(len=*), parameter :: Iam = 'O3_from_csv_file profile initialize: '
+    character(len=*), parameter :: Iam = &
+      'O3_from_csv_file profile initialize: '
  
     integer(ik) :: istat, m
     real(dk)    :: zd, Value, zTop
     real(dk)    :: rfact
     real(dk)    :: Scale2DU, InputDU, O3ScaleFactor
-    real(dk), allocatable :: zdata(:)
-    real(dk), allocatable :: profile(:)
     logical(lk) :: found
     character(len=132) :: InputLine
     type(string_t)     :: Filespec, Interpolator
     type(string_t)     :: Handle
-    class(abs_interpolator_t), pointer :: theInterpolator
+    real(dk), allocatable :: zdata(:)
+    real(dk), allocatable :: profile(:)
     class(grid_t), pointer :: zGrid
-
-    write(*,*) Iam // 'entering'
-
+    class(abs_interpolator_t), pointer :: theInterpolator
 
     allocate( this )
 
     !> Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
-    call profile_config%get( 'Handle', this%handle_, Iam, default = 'None' )
-    call profile_config%get( 'Interpolator', Interpolator, Iam, default = 'interp1' )
-    call profile_config%get( 'Scale heigth', this%hscale_, Iam, default = 4.5_dk )
-    call profile_config%get( 'Reference column', Scale2DU, Iam, default = 300._dk )
+    call profile_config%get( 'Handle', this%handle_, Iam, &
+      default = 'None' )
+    call profile_config%get( 'Interpolator', Interpolator, Iam, &
+      default = 'interp1' )
+    call profile_config%get( 'Scale heigth', this%hscale_, Iam, &
+      default = 4.5_dk )
+    call profile_config%get( 'Reference column', Scale2DU, Iam, &
+      default = 300._dk )
 
     !> Does input grid file exist?
     inquire( file=Filespec%to_char(), exist=found )
-    file_exists: if( found ) then
-      open(unit=inUnit,file=Filespec%to_char(),iostat=istat)
-      if( istat == Ok ) then
-        !> Skip the header
-        do
-          read(inUnit,'(a)',iostat=istat) InputLine
-          if( istat /= Ok ) then
-            exit
-          elseif( verify( InputLine(1:1),'#!$%*' ) /= 0 ) then
-            exit
-          endif
-        enddo
-        if( istat == Ok ) then
-          allocate( profile(0) )
-          allocate( zdata(0) )
-          !> Read the data
-          do
-            read(InputLine,*,iostat=istat) zd, Value
-            if( istat /= Ok ) then
-              call die_msg( 560768229, "Invalid data format in " // Filespec%to_char() )
-            endif
-            profile = [profile,Value]
-            zdata = [zdata,zd]
-            read(inUnit,'(a)',iostat=istat) InputLine
-            if( istat /= Ok ) then
-              exit
-            endif
-          enddo
-        else
-          call die_msg( 560768227, "Error reading " // Filespec%to_char() )
-        endif
-      else
-        call die_msg( 560768231, "Error opening " // Filespec%to_char() )
-      endif
-    else file_exists
+    if( .not. found ) then
       call die_msg( 560768215, "File " // Filespec%to_char() // " not found" )
-    endif file_exists
+    endif
+
+    open(unit=inUnit,file=Filespec%to_char(),iostat=istat)
+    if( istat /= Ok ) then
+      call die_msg( 560768231, "Error opening " // Filespec%to_char() )
+    endif
+
+    !> Skip the header
+    do
+      read(inUnit,'(a)',iostat=istat) InputLine
+      if( istat /= Ok ) then
+        call die_msg( 560768227, "Error reading " // Filespec%to_char() )
+      elseif( verify( InputLine(1:1),'#!$%*' ) /= 0 ) then
+        exit
+      endif
+    enddo
+
+    allocate( profile(0) )
+    allocate( zdata(0) )
+    !> Read the data
+    do
+      read(InputLine,*,iostat=istat) zd, Value
+      if( istat /= Ok ) then
+        call die_msg( 560768229, "Invalid data format in " &
+          // Filespec%to_char() )
+      endif
+      profile = [profile,Value]
+      zdata = [zdata,zd]
+      read(inUnit,'(a)',iostat=istat) InputLine
+      if( istat /= Ok ) then
+        exit
+      endif
+    enddo
 
     close(unit=inUnit)
 
     Handle = 'Vertical Z'
-    zGrid => gridWareHouse%get_grid( Handle )
+    zGrid => grid_warehouse%get_grid( Handle )
     this%ncells_ = zGrid%ncells_
 
     !> Set o3 concentration if data ztop < mdl top
@@ -145,62 +148,72 @@ contains
       case( 'interp4' )
         allocate( interp4_t :: theInterpolator )
       case default
-        call die_msg( 560768275, "interpolator " // Interpolator%to_char() // " not a valid selection" )
+        call die_msg( 560768275, "interpolator " // Interpolator%to_char() &
+          // " not a valid selection" )
     end select
 
     this%edge_val_ = theInterpolator%interpolate( zGrid%edge_, zdata,profile )
 
-    write(*,*) ' '
-    write(*,*) Iam // 'data z grid'
-    write(*,'(1p10g15.7)') zdata
-    write(*,*) ' '
-    write(*,*) Iam // this%handle_%to_char() // ' on data z grid'
-    write(*,'(1p10g15.7)') profile
+    this%mid_val_ = .5_dk * ( &
+      this%edge_val_(iONE:this%ncells_) + &
+      this%edge_val_(iTWO:this%ncells_+iONE) &
+    )
 
-    this%mid_val_ = ONEHALF &
-                   *(this%edge_val_(iONE:this%ncells_) + this%edge_val_(iTWO:this%ncells_+iONE))
-    this%delta_val_ = (this%edge_val_(iTWO:this%ncells_+iONE) - this%edge_val_(iONE:this%ncells_))
+    this%delta_val_ = this%edge_val_(iTWO:this%ncells_+iONE) - &
+     this%edge_val_(iONE:this%ncells_)
+
     this%layer_dens_ = zGrid%delta_ * this%mid_val_ * km2cm
-    this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
+    
+    this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
+      this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
 
     if( Scale2DU /= rONE ) then
       InputDU = sum( this%layer_dens_ ) / 2.687e16_dk
       O3ScaleFactor = Scale2DU/InputDU
+
       if( O3ScaleFactor /= rONE ) then
         this%edge_val_ = O3ScaleFactor * this%edge_val_
-        this%mid_val_ = ONEHALF &
-                   *(this%edge_val_(iONE:this%ncells_) + this%edge_val_(iTWO:this%ncells_+iONE))
-        this%delta_val_ = (this%edge_val_(iTWO:this%ncells_+iONE) - this%edge_val_(iONE:this%ncells_))
+
+        this%mid_val_ = .5_dk * ( &
+          this%edge_val_(iONE:this%ncells_) + &
+          this%edge_val_(iTWO:this%ncells_+iONE) &
+        )
+
+        this%delta_val_ = this%edge_val_(iTWO:this%ncells_+iONE) - &
+          this%edge_val_(iONE:this%ncells_)
+
         this%layer_dens_ = zGrid%delta_ * this%mid_val_ * km2cm
-        this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
+
+        this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
+          this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
+
       endif
+
     endif
-
-    write(*,*) ' '
-    write(*,*) Iam // this%handle_%to_char() // ' @ mdl z grid edges'
-    write(*,'(1p10g15.7)') this%edge_val_
-
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine finalize( this )
 
-  type(o3fromCsvFile_t), intent(inout) :: this
+    type(o3_from_csv_file_t), intent(inout) :: this
 
-  if( allocated( this%edge_val_ ) ) then
-    deallocate( this%edge_val_ )
-  endif
-  if( allocated( this%mid_val_ ) ) then
-    deallocate( this%mid_val_ )
-  endif
-  if( allocated( this%delta_val_ ) ) then
-    deallocate( this%delta_val_ )
-  endif
-  if( allocated( this%layer_dens_ ) ) then
-    deallocate( this%layer_dens_ )
-  endif
+    if( allocated( this%edge_val_ ) ) then
+      deallocate( this%edge_val_ )
+    endif
+    if( allocated( this%mid_val_ ) ) then
+      deallocate( this%mid_val_ )
+    endif
+    if( allocated( this%delta_val_ ) ) then
+      deallocate( this%delta_val_ )
+    endif
+    if( allocated( this%layer_dens_ ) ) then
+      deallocate( this%layer_dens_ )
+    endif
 
   end subroutine finalize
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_profile_o3

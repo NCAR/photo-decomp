@@ -36,32 +36,31 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> profile warehouse constructor
-  function constructor( config, gridwarehouse ) result( profile_warehouse_obj )
+  function constructor( config, grid_warehouse) & 
+    result( profile_warehouse_obj )
 
-    use musica_config,                 only : config_t
-    use musica_iterator,               only : iterator_t
-    use musica_string,                 only : string_t
-    use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_profile_factory,     only : profile_builder
+    use musica_config,        only : config_t
+    use musica_iterator,      only : iterator_t
+    use musica_string,        only : string_t
+    use tuvx_grid_warehouse,  only : grid_warehouse_t
+    use tuvx_profile_factory, only : profile_builder
 
     !> Arguments
     !> profile configuration data
     type(config_t), intent(inout) :: config
-    type(grid_warehouse_t), intent(inout) :: gridwarehouse
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
     !> New profile_warehouse_obj
     class(profile_warehouse_t), pointer :: profile_warehouse_obj
 
     !> local variables
-    character(len=*), parameter :: Iam = "profile warehouse constructor: "
     type(config_t)              :: profile_set, profile_config
     class(iterator_t), pointer  :: iter
-    class(profile_warehouse_t), pointer :: profile_warehouse_ptr
-    type(base_grid_ptr)            :: profile_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
-
-    write(*,*) Iam // 'entering'
+    character(len=*), parameter :: Iam = "profile warehouse constructor: "
+    type(base_grid_ptr)            :: profile_obj
+    class(profile_warehouse_t), pointer :: profile_warehouse_ptr
 
     allocate( profile_warehouse_obj )
 
@@ -77,25 +76,18 @@ contains
     do while( iter%next() )
       keychar = profile_set%key(iter)
       aswkey  = keychar 
-      write(*,*) ' '
-      write(*,*) Iam,'key = ',trim(keychar)
       call profile_set%get( iter, profile_config, Iam )
       call profile_config%add( 'Handle', aswkey, Iam )
 !-----------------------------------------------------------------------------
 !> Build profile objects
 !-----------------------------------------------------------------------------
-      profile_obj%ptr_ => profile_builder( profile_config, gridwarehouse )
+      profile_obj%ptr_ => profile_builder( profile_config, grid_warehouse)
       new_obj%profile_objs_ = [new_obj%profile_objs_,profile_obj]
     end do
 
     deallocate( iter )
 
-    write(*,*) ' '
-    write(*,'(a,''There are '',i3,'' profile objects'')') Iam,size(new_obj%profile_objs_)
-
     end associate
-
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 
@@ -120,9 +112,6 @@ contains
     integer(ik) :: ndx
     logical(lk) :: found
 
-    write(*,*) ' '
-    write(*,*) Iam,'entering'
-
     found = .false._lk
     do ndx = 1,size(this%profile_objs_)
       if( profile_handle .eq. this%profile_objs_(ndx)%ptr_%handle_ ) then
@@ -131,13 +120,12 @@ contains
       endif
     end do
 
-    if( found ) then
-      allocate( profile_ptr, source = this%profile_objs_(ndx)%ptr_ )
-    else
-      call die_msg( 460768214, "Invalid profile handle: '"// profile_handle%to_char()//"'" )
+    if( .not. found ) then
+      call die_msg( 460768214, "Invalid profile handle: '"// & 
+        profile_handle%to_char()//"'" )
     endif
 
-    write(*,*) Iam,'exiting'
+    allocate( profile_ptr, source = this%profile_objs_(ndx)%ptr_ )
 
   end function get_profile
 
@@ -155,13 +143,9 @@ contains
     integer(kind=ik) :: ndx
     character(len=*), parameter :: Iam = 'profile warehouse finalize: '
 
-    write(*,*) Iam,'entering'
-
     if( allocated( this%profile_objs_ ) ) then
       deallocate( this%profile_objs_ )
     endif
-
-    write(*,*) Iam,'exiting'
 
   end subroutine finalize
 

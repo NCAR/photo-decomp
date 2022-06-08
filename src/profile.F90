@@ -41,19 +41,23 @@ module tuvx_profile
 
 interface
 
-    !> Initialize grid
-    subroutine base_constructor( this, profile_config, gridWareHouse )
-      
-      use musica_config, only : config_t
-      use musica_constants, only : musica_dk
-      use tuvx_grid_warehouse,  only : grid_warehouse_t
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      import profile_t
-      class(profile_t), intent(inout)      :: this
-      type(config_t), intent(inout)            :: profile_config
-      type(grid_warehouse_t), intent(inout)    :: gridWareHouse
-    end subroutine base_constructor
+  !> Initialize grid
+  subroutine base_constructor( this, profile_config, grid_warehouse )
+    
+    use musica_config, only : config_t
+    use musica_constants, only : musica_dk
+    use tuvx_grid_warehouse,  only : grid_warehouse_t
+
+    import profile_t
+    class(profile_t), intent(inout)      :: this
+    type(config_t), intent(inout)            :: profile_config
+    type(grid_warehouse_t), intent(inout)    :: grid_warehouse
+  end subroutine base_constructor
 
 end interface
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_profile

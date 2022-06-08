@@ -8,6 +8,7 @@ set(SRC air.F90
         from_csv_file.F90
         o2.F90
         o3.F90
+        profile_utils.F90
         solar_zenith_angle.F90
         surface_albedo.F90
         )

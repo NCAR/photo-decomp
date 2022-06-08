@@ -4,24 +4,28 @@
 ! profile specified in json config file
 module tuvx_profile_surface_albedo
 
-  use musica_constants, only : dk => musica_dk, ik => musica_ik, lk => musica_lk
+  use musica_constants, only : &
+    dk => musica_dk, ik => musica_ik, lk => musica_lk
   use tuvx_profile,     only : profile_t
 
   implicit none
 
   private
-  public :: srfAlbedofromConfig_t
+  public :: surface_albedo_t
 
-  type, extends(profile_t) :: srfAlbedofromConfig_t
+  type, extends(profile_t) :: surface_albedo_t
   contains
-  end type srfAlbedofromConfig_t
+  end type surface_albedo_t
 
   !> Constructor
-  interface srfAlbedofromConfig_t
+  interface surface_albedo_t
     module procedure constructor
-  end interface srfAlbedofromConfig_t
+  end interface surface_albedo_t
 
 contains
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !> Initialize grid
   function constructor( profile_config, gridWareHouse ) result( this )
       
@@ -32,16 +36,16 @@ contains
     use tuvx_grid_warehouse,  only : grid_warehouse_t
 
     !> Arguments
-    type(srfAlbedofromConfig_t), pointer :: this
-    type(config_t), intent(inout)               :: profile_config
-    type(grid_warehouse_t), intent(inout)       :: gridWareHouse
+    type(config_t), intent(inout)         :: profile_config
+    type(surface_albedo_t), pointer       :: this
+    type(grid_warehouse_t), intent(inout) :: gridWareHouse
 
     !> Local variables
+    real(dk)                    :: uniformValue
+    integer(ik)                 :: ndx
+    type(string_t)              :: Handle
+    class(grid_t), pointer      :: lambdaGrid
     character(len=*), parameter :: Iam = 'From config profile initialize: '
-    integer(ik)                   :: ndx
-    real(dk)                      :: uniformValue
-    class(grid_t), pointer :: lambdaGrid
-    type(string_t)                :: Handle
 
     allocate( this )
  
@@ -55,11 +59,19 @@ contains
     call profile_config%get( "Uniform Value", uniformValue, Iam )
 
     this%ncells_ = lambdaGrid%ncells_
+
     this%edge_val_ = (/ (uniformValue,ndx=1,this%ncells_+1_ik) /)
-    this%mid_val_ = .5_dk &
-                   *(this%edge_val_(1_ik:this%ncells_) + this%edge_val_(2_ik:this%ncells_+1_ik))
-    this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - this%edge_val_(1_ik:this%ncells_))
+
+    this%mid_val_ = .5_dk * ( & 
+      this%edge_val_(1_ik:this%ncells_) + &
+      this%edge_val_(2_ik:this%ncells_+1_ik) &
+    )
+
+    this%delta_val_ = this%edge_val_(2_ik:this%ncells_+1_ik) - &
+      this%edge_val_(1_ik:this%ncells_)
 
   end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_profile_surface_albedo

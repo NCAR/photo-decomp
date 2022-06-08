@@ -77,7 +77,7 @@ contains
 
   subroutine run( this )
 
-  use tuvx_profile_air, only : airfromCsvFile_t
+  use tuvx_profile_air, only : profile_air_t
 
   !> Arguments
   class(radXfer_core_t), intent(inout)  :: this
