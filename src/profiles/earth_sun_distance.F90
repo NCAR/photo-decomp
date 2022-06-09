@@ -75,7 +75,7 @@ contains
 
     do tNdx = 1_ik,this%ncells_+1_ik
       ut = timeGrid%edge_(tNdx) - tmzone
-      soldst = earth_sun_distance(Year, Jday, ut, Lat, Lon )
+      soldst = earth_sun_distance(Year, Jday, ut )
 
       this%edge_val_  = [this%edge_val_,soldst]
     enddo

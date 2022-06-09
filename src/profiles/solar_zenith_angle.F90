@@ -8,7 +8,7 @@ module tuvx_profile_solar_zenith_angle
     dk => musica_dk, ik => musica_ik, lk => musica_lk
   use tuvx_profile,       only : profile_t
   use musica_assert,      only : die_msg
-  use tuvx_profile_utils, only : julian_day_of_year,  earth_sun_distance
+  use tuvx_profile_utils, only : julian_day_of_year, solar_zenith_angle
 
   implicit none
 
@@ -74,7 +74,7 @@ contains
 
     do tNdx = 1_ik,this%ncells_+1_ik
       ut = timeGrid%edge_(tNdx) - tmzone
-      solarElevation = earth_sun_distance(Year, Jday, ut, Lat, Lon )
+      solarElevation = solar_zenith_angle(Year, Jday, ut, Lat, Lon )
       this%edge_val_ = [this%edge_val_,NINETY - solarElevation]
     enddo
 
