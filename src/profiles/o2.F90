@@ -154,6 +154,9 @@ contains
     this%exo_layer_dens_ = [this%layer_dens_,exo_layer_dens]
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + exo_layer_dens
 
+    deallocate( zGrid )
+    deallocate( theInterpolator )
+
     write(*,*) Iam // 'exiting'
 
   end function constructor

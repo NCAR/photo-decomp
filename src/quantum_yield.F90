@@ -72,7 +72,7 @@ contains
     type(netcdf_t), allocatable   :: netcdf_obj
     type(string_t)                :: Handle
     type(string_t), allocatable   :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
+    class(grid_t),  pointer       :: lambdaGrid => null( )
 
     ! Get model wavelength grid
     Handle = 'Photolysis, wavelength'
@@ -131,6 +131,8 @@ file_loop: &
       endif
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end subroutine base_constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -152,10 +154,10 @@ file_loop: &
 
     ! Local variables
     character(len=*), parameter :: Iam = 'base quantum yield calculate'
-    integer                 :: vertNdx
-    class(grid_t), pointer :: zGrid
+    integer                     :: vertNdx
+    class(grid_t),  pointer     :: zGrid => null( )
     type(string_t)              :: Handle
-    real(dk), allocatable       :: wrkQuantumYield(:,:)
+    real(dk),       allocatable :: wrkQuantumYield(:,:)
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -170,6 +172,8 @@ file_loop: &
     enddo
 
     quantum_yield = transpose( wrkQuantumYield )
+
+    deallocate( zGrid )
 
   end function run
 

@@ -28,12 +28,12 @@ module tuvx_diagnostic_util
    open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios)
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to open ',filename,'; error = ',ios
-     stop 'OpnErr'
+     stop 3
    endif
    write(unit=44,iostat=ios) variable
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to write ',filename,'; error = ',ios
-     stop 'OpnErr'
+     stop 3
    endif
 
    close(unit=44)
@@ -58,13 +58,13 @@ module tuvx_diagnostic_util
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to open ',filename,'; error = ',ios
      write(*,*) trim(iomsg)
-     stop 'OpnErr'
+     stop 3
    endif
    write(unit=44,iostat=ios,iomsg=iomsg) variable
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_1d: failed to write ',filename,'; error = ',ios
      write(*,*) trim(iomsg)
-     stop 'WriteErr'
+     stop 3
    endif
 
    close(unit=44)
@@ -83,12 +83,12 @@ module tuvx_diagnostic_util
    open(unit=44,file='OUTPUTS/'//filename,form='unformatted',iostat=ios)
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_2d: failed to open ',filename,'; error = ',ios
-     stop 'OpnErr'
+     stop 3
    endif
    write(unit=44,iostat=ios) variable
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_2d: failed to write ',filename,'; error = ',ios
-     stop 'OpnErr'
+     stop 3
    endif
 
    close(unit=44)
@@ -108,13 +108,13 @@ module tuvx_diagnostic_util
      write(*,*) 'diagnostic_2d_dk: failed to open ',filename,'; error = ',ios
      write(*,*) trim(iomsg)
      call execute_command_line('pwd')
-     stop 'OpnErr'
+     stop 3
    endif
    write(unit=44,iostat=ios,iomsg=iomsg) variable
    if( ios /= 0 ) then
      write(*,*) 'diagnostic_2d_dk: failed to write ',filename,'; error = ',ios
      write(*,*) trim(iomsg)
-     stop 'WriteErr'
+     stop 3
    endif
 
    close(unit=44)

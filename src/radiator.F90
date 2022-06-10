@@ -31,11 +31,11 @@ module tuvx_radiator
   !> base radiator type
   type :: base_radiator_t
     type(string_t)         :: handle_
-    type(radiator_state_t) :: state_
     !> Name of the vertical profile to use
     type(string_t) :: vertical_profile_name_
     !> Name of the absorption cross-section to use
     type(string_t) :: cross_section_name_
+    type(radiator_state_t) :: state_
   contains
     !> Update radiator for new environmental conditions
     procedure :: upDateState
@@ -105,6 +105,8 @@ contains
     write(*,*) Iam // 'state_%layer_G_ is allocated = ',allocated(this%state_%layer_G_)
     write(*,*) Iam // 'state_%layer_OD_ is (',size(this%state_%layer_OD_,dim=1),' x ',size(this%state_%layer_OD_,dim=2),')'
 
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
     write(*,*) ' '
     write(*,*) Iam,'exiting'
 
@@ -186,6 +188,11 @@ contains
       this%state_%layer_SSA_ = 0._dk
       this%state_%layer_G_   = 0._dk
     endif
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( radiatorProfile )
+    deallocate( radiatorCrossSection )
 
     write(*,*) ' '
     write(*,*) Iam,'exiting'

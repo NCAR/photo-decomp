@@ -21,7 +21,7 @@ program radXfer_test
   !> Get the model configuration file and options from the command line
 ! if( command_argument_count( ) /= 1 ) call fail_run( )
 ! call get_command_argument( command_argument_count( ), argument )
-  argument = 'data/radXfer.tst.config.json'
+  argument = 'test/data/radXfer.tst.config.json'
 
   configFileSpec = argument
 
@@ -31,6 +31,8 @@ program radXfer_test
   !> set radXfer cross sections
   call radXfer_core%test()
 
+  deallocate( radXfer_core )
+
   contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -39,7 +41,7 @@ program radXfer_test
   subroutine fail_run( )
 
     write(*,*) "Usage: ./radXfer_test configuration_file.json"
-    stop 'Improper arguments'
+    stop 3
 
   end subroutine fail_run
 

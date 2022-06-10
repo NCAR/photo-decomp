@@ -103,11 +103,11 @@ contains
 
     real(dk)    :: Temp, Wpoly, w1
     integer :: lambdaNdx, vertNdx, nzdim
-    real(dk), allocatable  :: modelTemp(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
-    type(string_t) :: Handle
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
+    type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -149,6 +149,10 @@ contains
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

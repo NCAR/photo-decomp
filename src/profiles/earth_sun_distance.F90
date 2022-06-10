@@ -75,6 +75,8 @@ contains
                   *(this%edge_val_(1_ik:this%ncells_) + this%edge_val_(2_ik:this%ncells_+1_ik))
     this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - this%edge_val_(1_ik:this%ncells_))
 
+    deallocate( timeGrid )
+
   end function constructor
 
   function JulianDayofYear( year, month, day ) result( julianday )

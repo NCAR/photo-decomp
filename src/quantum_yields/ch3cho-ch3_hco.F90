@@ -76,15 +76,15 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
         'ch3cho+hv->ch3_hco quantum yield calculate'
     real(dk), parameter ::    rZERO = 0.0_dk
     real(dk), parameter ::    rONE  = 1.0_dk
-    integer               :: nzdim, vertNdx
-    real(dk)              :: air_dens_factor
-    real(dk), allocatable :: quantum_yield_chnl1(:)
-    real(dk), allocatable :: quantum_yield_chnl2(:)
-    real(dk), allocatable :: quantum_yield_wrk(:)
-    real(dk), allocatable         :: modelDens(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlDensity
+    integer                       :: nzdim, vertNdx
+    real(dk)                      :: air_dens_factor
+    real(dk),         allocatable :: quantum_yield_chnl1(:)
+    real(dk),         allocatable :: quantum_yield_chnl2(:)
+    real(dk),         allocatable :: quantum_yield_wrk(:)
+    real(dk),         allocatable :: modelDens(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlDensity => null( )
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
@@ -118,6 +118,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     enddo
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlDensity )
 
   end function run
 

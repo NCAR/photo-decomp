@@ -60,6 +60,8 @@ contains
                    *(this%edge_val_(1_ik:this%ncells_) + this%edge_val_(2_ik:this%ncells_+1_ik))
     this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - this%edge_val_(1_ik:this%ncells_))
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 end module tuvx_profile_surface_albedo

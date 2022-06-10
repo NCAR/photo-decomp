@@ -39,15 +39,15 @@ contains
       (/ 101.0_dk, 102.0_dk, 103.0_dk, 104.0_dk /)
 
     ! load test grids
-    call config%from_file( "data/grid.simple.config.json" )
+    call config%from_file( "test/data/grid.simple.config.json" )
     grids => grid_warehouse_t( config )
 
     ! load test profiles
-    call config%from_file( "data/profile.simple.config.json" )
+    call config%from_file( "test/data/profile.simple.config.json" )
     profiles => profile_warehouse_t( config, grids )
 
     ! get cross section config data
-    call config%from_file( "data/cross_section.base.config.json" )
+    call config%from_file( "test/data/cross_section.base.config.json" )
     call config%get( "cross sections", cs_set, Iam )
     iter => cs_set%get_iterator( )
 

@@ -93,10 +93,10 @@ contains
     real(dk), parameter :: a = -0.993E-3_dk
     real(dk), parameter :: b = 0.5307_dk
     real(dk), parameter :: c = -115.5_dk
-    integer(ik)           :: nzdim, vertNdx
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    type(string_t) :: Handle
+    integer(ik)            :: nzdim, vertNdx
+    class(grid_t), pointer :: zGrid => null( )
+    class(grid_t), pointer :: lambdaGrid => null( )
+    type(string_t)         :: Handle
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -124,6 +124,9 @@ contains
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function run
 

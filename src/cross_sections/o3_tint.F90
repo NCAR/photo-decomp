@@ -72,10 +72,10 @@ contains
     real(dk), allocatable :: data_parameter(:)
     logical :: found, monopos
     character(len=:), allocatable :: msg
-    type(netcdf_t), allocatable   :: netcdf_obj
-    type(string_t), allocatable   :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
-    type(string_t)     :: Handle
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t),   allocatable :: netcdfFiles(:)
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    type(string_t)                :: Handle
     type(string_t) :: required_keys(2), optional_keys(3)
 
     required_keys(1) = "type"
@@ -185,6 +185,8 @@ file_loop: &
       call die_msg( 729003940, msg )
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -221,12 +223,12 @@ file_loop: &
     integer :: nTemp
     integer :: fileNdx, tNdx, wNdx, nzdim
     real(dk)    :: Tadj, Tstar
-    real(dk), allocatable :: modelTemp(:)
-    real(dk), allocatable :: wrkCrossSection(:,:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
-    type(string_t)     :: Handle
+    real(dk),         allocatable :: modelTemp(:)
+    real(dk),         allocatable :: wrkCrossSection(:,:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
+    type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -288,6 +290,10 @@ lambda_loop:                                                                  &
     enddo vert_loop
 
     cross_section = transpose( wrkCrossSection )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

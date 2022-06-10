@@ -28,7 +28,7 @@ module tuvx_grid
 
   !> Pointer type for building sets of spectral wght objects
   type :: grid_ptr
-    class(grid_t), pointer :: ptr_ => null( )
+    class(grid_t), pointer :: val_ => null( )
   end type grid_ptr
 
 interface

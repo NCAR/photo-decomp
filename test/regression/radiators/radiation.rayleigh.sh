@@ -6,13 +6,13 @@ set -e
 set -v
 
 exec_oldtuv() {
-  ./oldtuv DO_RAYLEIGH DO_O2 DO_O3 DO_AEROSOLS DO_CLOUDS < test/regression/tuv_scenario_2.in
+  ./oldtuv DO_RAYLEIGH < test/regression/tuv_scenario_2.in
 }
 exec_newtuv() {
-  ./tuv-x test/data/photorates.test.config.json
+  ./tuv-x test/data/radiators.rayleigh.config.json
 }
 exec_analysis() {
-  python3 test/regression/photolysis_rate/xsqy.compare.py test/regression/photolysis_rate OUTPUTS
+  python3 tool/diagnostics/var.compare.py test/regression/radiators/radiation.rayleigh.compare.json
 }
 
 if ! exec_oldtuv; then

@@ -84,7 +84,7 @@ contains
 !-----------------------------------------------------------------------------
 !> Build profile objects
 !-----------------------------------------------------------------------------
-      profile_obj%ptr_ => profile_builder( profile_config, gridwarehouse )
+      profile_obj%val_ => profile_builder( profile_config, gridwarehouse )
       new_obj%profile_objs_ = [new_obj%profile_objs_,profile_obj]
     end do
 
@@ -125,14 +125,14 @@ contains
 
     found = .false._lk
     do ndx = 1,size(this%profile_objs_)
-      if( profile_handle .eq. this%profile_objs_(ndx)%ptr_%handle_ ) then
+      if( profile_handle .eq. this%profile_objs_(ndx)%val_%handle_ ) then
         found = .true._lk
         exit
       endif
     end do
 
     if( found ) then
-      allocate( profile_ptr, source = this%profile_objs_(ndx)%ptr_ )
+      allocate( profile_ptr, source = this%profile_objs_(ndx)%val_ )
     else
       call die_msg( 460768214, "Invalid profile handle: '"// profile_handle%to_char()//"'" )
     endif
@@ -158,6 +158,11 @@ contains
     write(*,*) Iam,'entering'
 
     if( allocated( this%profile_objs_ ) ) then
+      do ndx = 1, size( this%profile_objs_ )
+        if( associated( this%profile_objs_( ndx )%val_ ) ) then
+          deallocate( this%profile_objs_( ndx )%val_ )
+        end if
+      end do
       deallocate( this%profile_objs_ )
     endif
 

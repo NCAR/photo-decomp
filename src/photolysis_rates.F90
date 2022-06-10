@@ -170,8 +170,8 @@ contains
     type(string_t)        :: Handle, annotatedRate
     character(len=64)     :: jlabel
     character(len=64), allocatable :: annotatedjlabel(:)
-    class(grid_t), pointer :: zGrid => null()
-    class(grid_t), pointer :: lambdaGrid => null()
+    class(grid_t),    pointer :: zGrid => null()
+    class(grid_t),    pointer :: lambdaGrid => null()
     class(profile_t), pointer :: airProfile => null()
     class(profile_t), pointer :: etfl => null()
 
@@ -223,6 +223,7 @@ rate_loop:                                                                    &
         call la_srb%calculate_xs( grid_warehouse, profile_warehouse, airVcol, &
                                   airScol, cross_section )
         deallocate( airVcol, airScol )
+        deallocate( airProfile )
       endif
 
       xsqyWrk = [ xsqyWrk, reshape( cross_section * quantum_yield,            &
@@ -255,6 +256,10 @@ rate_loop:                                                                    &
           form = 'unformatted' )
       write(33) xsqyWrk
     close( unit = 33 )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( etfl )
 
   end subroutine get
 

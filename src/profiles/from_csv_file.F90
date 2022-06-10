@@ -143,6 +143,9 @@ contains
     this%layer_dens_ = this%mid_val_ * zGrid%delta_ * km2cm
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + this%edge_val_(this%ncells_+1_ik) * this%hscale_ * km2cm
 
+    deallocate( zGrid )
+    deallocate( theInterpolator )
+
     write(*,*) Iam // 'exiting'
 
   end function constructor

@@ -62,11 +62,11 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     character(len=:), allocatable :: addpntKey
-    type(netcdf_t), allocatable :: netcdf_obj
-    type(string_t), allocatable :: netcdfFiles(:)
-    type(config_t)              :: tmp_config, extrap_config
-    type(string_t)              :: Handle
-    class(grid_t), pointer :: lambdaGrid
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t),   allocatable :: netcdfFiles(:)
+    type(config_t)                :: tmp_config, extrap_config
+    type(string_t)                :: Handle
+    class(grid_t),    pointer     :: lambdaGrid => null( )
     type(string_t) :: required_keys(2), optional_keys(3)
 
     required_keys(1) = "type"
@@ -144,6 +144,8 @@ file_loop:                                                                    &
       enddo file_loop
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -183,9 +185,10 @@ file_loop:                                                                    &
     integer :: nzdim
     real(dk), parameter :: T0 = 298._dk
     real(dk) :: Temp
-    real(dk), allocatable :: modelTemp(:)
-    class(grid_t), pointer :: zGrid, lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
     type(string_t)                :: Handle
 
     Handle = 'Photolysis, wavelength'
@@ -217,6 +220,10 @@ file_loop:                                                                    &
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

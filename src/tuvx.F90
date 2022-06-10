@@ -32,7 +32,9 @@ program tuvx
   !> run photolysis
   call photolysis_core%run()
 
-  contains
+  deallocate( photolysis_core )
+
+contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -40,8 +42,10 @@ program tuvx
   subroutine fail_run( )
 
     write(*,*) "Usage: ./photolysis configuration_file.json"
-    stop 'Photolysis: Improper arguments'
+    stop 3
 
   end subroutine fail_run
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end program tuvx

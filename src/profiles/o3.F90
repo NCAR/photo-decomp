@@ -180,6 +180,8 @@ contains
     write(*,*) Iam // this%handle_%to_char() // ' @ mdl z grid edges'
     write(*,'(1p10g15.7)') this%edge_val_
 
+    deallocate( zGrid )
+    deallocate( theInterpolator )
     write(*,*) Iam // 'exiting'
 
   end function constructor

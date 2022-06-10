@@ -85,10 +85,11 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
 
     integer                       :: lambdaNdx
     integer                       :: nzdim, vertNdx
-    real(dk), allocatable         :: modelTemp(:), modelDens(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature, mdlDensity
+    real(dk),         allocatable :: modelTemp(:), modelDens(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
+    class(profile_t), pointer     :: mdlDensity => null( )
     type(string_t)                :: Handle
 
     ! w = wavelength, nm
@@ -172,6 +173,11 @@ lambda_loop: &
     enddo vert_loop
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
+    deallocate( mdlDensity )
 
   end function run
 

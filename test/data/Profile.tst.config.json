@@ -8,36 +8,36 @@
       },
       "Photolysis, wavelength": {
          "Grid type": "From csv file",
-         "Filespec": "../data/DATAE1/GRIDS/combined.grid"
+         "Filespec": "data/DATAE1/GRIDS/combined.grid"
       }
    },
    "Profiles": {
       "O3": {
          "Profile type": "From csv file",
-         "Filespec": "../data/DATAE1/ATM/ussa.ozone"
+         "Filespec": "data/DATAE1/ATM/ussa.ozone"
       },
       "Air": {
          "Profile type": "From csv file",
-         "Filespec": "../data/DATAE1/ATM/ussa.dens"
+         "Filespec": "data/DATAE1/ATM/ussa.dens"
       },
       "O2": {
          "Profile type": "O2 from csv file",
-         "Filespec": "../data/DATAE1/ATM/ussa.dens"
+         "Filespec": "data/DATAE1/ATM/ussa.dens"
       },
       "Temperature": {
          "Profile type": "From csv file",
-         "Filespec": "../data/DATAE1/ATM/ussa.temp"
+         "Filespec": "data/DATAE1/ATM/ussa.temp"
       },
       "UnitTest": {
          "Profile type": "From csv file",
-         "Filespec": "../test/data/test.ozone"
+         "Filespec": "test/data/test.ozone"
       },
       "Etfl": {
          "Profile type": "Etfl from csv file",
-         "Filespec": ["../data/DATAE1/SUNNEW/susim_hi.flx",
-                      "../data/DATAE1/SUNNEW/atlas3_1994_317_a.dat",
-                      "../data/DATAE1/SUNNEW/sao2010.solref.converted",
-                      "../data/DATAE1/SUNNEW/neckel.flx"],
+         "Filespec": ["data/DATAE1/SUNNEW/susim_hi.flx",
+                      "data/DATAE1/SUNNEW/atlas3_1994_317_a.dat",
+                      "data/DATAE1/SUNNEW/sao2010.solref.converted",
+                      "data/DATAE1/SUNNEW/neckel.flx"],
          "Interpolator": ["","","","interp4"]
       }
    }

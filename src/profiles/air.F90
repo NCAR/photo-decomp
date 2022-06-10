@@ -154,11 +154,14 @@ contains
 
     allocate( this%burden_dens_(zGrid%ncells_) )
     accum = this%layer_dens_(zGrid%ncells_)
+    this%burden_dens_(zGrid%ncells_) = this%layer_dens_(this%ncells_)
     do k = zGrid%ncells_-1_ik,1_ik,-1_ik
       accum = accum + this%layer_dens_(k)
       this%burden_dens_(k) = accum
     enddo
 
+    deallocate( zGrid )
+    deallocate( theInterpolator )
     write(*,*) Iam // 'exiting'
 
   end function constructor

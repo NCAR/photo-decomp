@@ -6,13 +6,13 @@ set -e
 set -v
 
 exec_oldtuv() {
-  ./oldtuv DO_AEROSOLS < test/regression/tuv_scenario_2.in
+  ./oldtuv DO_O2 < test/regression/tuv_scenario_2.in
 }
 exec_newtuv() {
-  ./tuv-x test/data/radiators.aerosols.config.json
+  ./tuv-x test/data/radiators.o2.config.json
 }
 exec_analysis() {
-  python3 tool/diagnostics/var.compare.py test/regression/radiation.aerosols.compare.json
+  python3 tool/diagnostics/var.compare.py test/regression/radiators/radiation.o2.compare.json
 }
 
 if ! exec_oldtuv; then

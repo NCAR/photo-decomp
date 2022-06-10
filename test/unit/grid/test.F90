@@ -63,7 +63,7 @@ contains
     use tuvx_grid,    only : grid_t
 
     !> local variables
-    character(len=*), parameter :: config_flsp = 'data/grid.tst.config.json'
+    character(len=*), parameter :: config_flsp = 'test/data/grid.tst.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
     type(string_t) :: Handle
@@ -184,6 +184,7 @@ contains
     call test_grid_t(aGrid, config_grid_cells, config_edges, config_midpoints, config_deltas)
     deallocate( aGrid )
 
+    deallocate( thewarehouse )
 
   end subroutine test_grids
 

@@ -8,7 +8,7 @@
       },
       "Photolysis, wavelength": {
          "Grid type": "From csv file",
-         "Filespec": "data/grid.photo.simple.csv"
+         "Filespec": "test/data/grid.photo.simple.csv"
       },
       "Time, hrs": {
          "Grid type": "From config file",

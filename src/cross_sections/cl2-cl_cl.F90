@@ -93,11 +93,11 @@ contains
     real(dk), parameter     :: rONE = 1.0_dk
     integer :: lambdaNdx, vertNdx, nzdim
     real(dk)    :: aa, bb, bbsq, alpha, ex1, ex2
-    real(dk), allocatable   :: modelTemp(:)
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
-    class(profile_t), pointer :: Temperature
-    type(string_t) :: Handle
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: lambdaGrid
+    class(grid_t),    pointer     :: zGrid
+    class(profile_t), pointer     :: Temperature
+    type(string_t)                :: Handle
 
     Handle = 'Photolysis, wavelength'
     lambdaGrid => grid_warehouse%get_grid( Handle )
@@ -138,6 +138,10 @@ contains
     end associate
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( Temperature )
 
   end function run
 

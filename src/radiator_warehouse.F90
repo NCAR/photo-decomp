@@ -229,8 +229,6 @@ contains
     write(*,*) ' '
     write(*,*) Iam,'exiting'
 
-!   stop 'debugging'
-
   end function get_radiator_from_iterator
 
   !> Is a radiator in the warehouse?
@@ -328,6 +326,11 @@ contains
     write(*,*) Iam,'entering'
 
     if( allocated( this%radiators_ ) ) then
+      do ndx = 1, size( this%radiators_ )
+        if( associated( this%radiators_( ndx )%val_ ) ) then
+          deallocate( this%radiators_( ndx )%val_ )
+        end if
+      end do
       deallocate( this%radiators_ )
     endif
 

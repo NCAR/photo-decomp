@@ -43,7 +43,7 @@ module tuvx_radiative_transfer_solver
      type(radiator_warehouse_t), intent(inout) :: radiatorWareHouse
      type(spherical_geom_t), intent(inout)     :: sphericalGeom
 
-     class(radField_t), allocatable            :: radField
+     class(radField_t), pointer                :: radField
 
      end function upDateRadField
 

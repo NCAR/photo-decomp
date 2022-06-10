@@ -93,9 +93,9 @@ contains
 
     ! Local variables
     integer :: colndx, nzdim
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    character(len=*), parameter :: Iam = 'rayliegh cross section calculate'
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    character(len=*), parameter   :: Iam = 'rayliegh cross section calculate'
     type(string_t)                :: Handle
     real(musica_dk)               :: wmicrn
     real(musica_dk), allocatable  :: pwr(:), wrk(:)
@@ -130,6 +130,9 @@ contains
     enddo
 
     cross_section = transpose( wrkCrossSection )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function run
 

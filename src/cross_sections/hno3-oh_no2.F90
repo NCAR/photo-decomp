@@ -63,11 +63,11 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     character(len=:), allocatable :: addpntKey
-    type(netcdf_t), allocatable :: netcdf_obj
-    type(string_t), allocatable :: netcdfFiles(:)
-    type(config_t)              :: tmp_config, extrap_config
-    type(string_t)              :: Handle
-    class(grid_t), pointer :: lambdaGrid
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t),   allocatable :: netcdfFiles(:)
+    type(config_t)                :: tmp_config, extrap_config
+    type(string_t)                :: Handle
+    class(grid_t),    pointer     :: lambdaGrid => null( )
     type(string_t) :: required_keys(2), optional_keys(3)
 
     required_keys(1) = "type"
@@ -144,6 +144,8 @@ file_loop: &
       enddo file_loop
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -179,11 +181,11 @@ file_loop: &
         'hno3->oh+no2 cross section calculate'
     real(dk), parameter         :: T0 = 298._dk
     integer           :: vertNdx
-    real(dk), allocatable :: Temp(:)
+    real(dk),         allocatable :: Temp(:)
     type(string_t)                :: Handle
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
-    class(profile_t), pointer :: temperature
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(profile_t), pointer     :: temperature => null( )
 
     write(*,*) Iam,'entering'
 
@@ -204,6 +206,10 @@ file_loop: &
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( temperature )
 
   end function run
 

@@ -105,10 +105,10 @@ contains
     real(dk), parameter :: rONE     = 1.0_dk
     integer                   :: nzdim, vertNdx
     real(dk)                      :: Tadj
-    real(dk), allocatable         :: modelTemp(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
     type(string_t)                :: Handle
     character(len=:), allocatable :: msg
 
@@ -150,6 +150,10 @@ contains
     endif
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

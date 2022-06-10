@@ -8,7 +8,7 @@
       },
       "Photolysis, wavelength": {
          "Grid type": "From csv file",
-         "Filespec": "../data/DATAE1/GRIDS/combined.grid"
+         "Filespec": "data/DATAE1/GRIDS/combined.grid"
       },
       "Time, hrs": {
          "Grid type": "From config file",

@@ -130,6 +130,7 @@ contains
       enddo
     else
       this%state_%layer_OD_ = input_OD(1)
+      allocate( interp3_t :: theInterpolator )
     endif
     
     call radiator_config%get( "single scattering albedo", input_SSA, Iam )
@@ -194,10 +195,11 @@ contains
     write(*,*) Iam // 'layer G @ lambda = ',lambdaGrid%mid_(lambdaGrid%ncells_)
     write(*,'(1p10g15.7)') this%state_%layer_G_(:,lambdaGrid%ncells_)
 
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( theInterpolator )
     write(*,*) ' '
     write(*,*) Iam,'exiting'
-
-!   stop 'Debugging'
 
   end function constructor
 
@@ -226,9 +228,9 @@ contains
     !> Local variables
     integer(ik) :: wNdx
     character(len=*), parameter :: Iam = 'Aerosol radiator upDateState: '
-    type(string_t)                :: Handle
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
+    type(string_t)         :: Handle
+    class(grid_t), pointer :: zGrid => null( )
+    class(grid_t), pointer :: lambdaGrid => null( )
 
     write(*,*) ' '
     write(*,*) Iam,'entering'
@@ -245,6 +247,9 @@ contains
     if( .not. allocated( this%state_%layer_OD_ ) ) then
       call die_msg( 2222222,"In radiator%upDateState radiator state not allocate" )
     endif
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
     write(*,*) ' '
     write(*,*) Iam,'exiting'

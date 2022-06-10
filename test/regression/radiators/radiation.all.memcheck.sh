@@ -6,13 +6,13 @@ set -e
 set -v
 
 exec_oldtuv() {
-  ./oldtuv DO_O2 < test/regression/tuv_scenario_2.in
+  ./oldtuv DO_RAYLEIGH DO_O2 DO_O3 DO_AEROSOLS DO_CLOUDS < test/regression/tuv_scenario_2.in
 }
 exec_newtuv() {
-  ./tuv-x test/data/radiators.o2.config.json
+  valgrind --error-exitcode=1 --trace-children=yes --leak-check=full ./tuv-x test/data/radiators.all.config.json
 }
 exec_analysis() {
-  python3 tool/diagnostics/var.compare.py test/regression/radiation.o2.compare.json
+  python3 tool/diagnostics/var.compare.py test/regression/radiators/radiation.all.compare.json
 }
 
 if ! exec_oldtuv; then
