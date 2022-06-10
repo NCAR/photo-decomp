@@ -27,7 +27,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize grid
-  function constructor(  profile_config, gridWareHouse ) result( this )
+  function constructor(  profile_config, grid_warehouse ) result( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
@@ -39,7 +39,7 @@ contains
     !> arguments
     type(config_t), intent(inout)         :: profile_config
     type(from_csv_file_t), pointer        :: this
-    type(grid_warehouse_t), intent(inout) :: gridWareHouse
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
     !> local variables
     character(len=*), parameter :: Iam = 'From_csv_file profile initialize: '
@@ -111,7 +111,7 @@ contains
     close(unit=inUnit)
 
     Handle = 'Vertical Z'
-    zGrid => gridWareHouse%get_grid( Handle )
+    zGrid => grid_warehouse%get_grid( Handle )
     this%ncells_ = zGrid%ncells_
 
     !> assign actual interpolator for this profile

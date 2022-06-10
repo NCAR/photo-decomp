@@ -27,7 +27,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize grid
-  function constructor( profile_config, gridWareHouse ) result( this )
+  function constructor( profile_config, grid_warehouse ) result( this )
       
     use musica_config, only : config_t
     use musica_string, only : string_t
@@ -38,7 +38,7 @@ contains
     !> Arguments
     type(config_t), intent(inout)         :: profile_config
     type(surface_albedo_t), pointer       :: this
-    type(grid_warehouse_t), intent(inout) :: gridWareHouse
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
     !> Local variables
     real(dk)                    :: uniformValue
@@ -53,7 +53,7 @@ contains
     call profile_config%get( 'Handle', this%handle_, Iam, default = 'None' )
 
     Handle = 'Photolysis, wavelength'
-    lambdaGrid => gridWareHouse%get_grid( Handle )
+    lambdaGrid => grid_warehouse%get_grid( Handle )
 
     !> Get values from config file
     call profile_config%get( "Uniform Value", uniformValue, Iam )

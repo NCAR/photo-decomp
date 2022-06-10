@@ -65,6 +65,108 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     The two functions below calculate the local solar azimuth and 
+  !     elevation angles, and
+  !     the distance to and angle subtended by the Sun, at a specific 
+  !     location and time using approximate formulas in The Astronomical 
+  !     Almanac.  Accuracy of angles is 0.01 deg or better (the angular 
+  !     width of the Sun is about 0.5 deg, so 0.01 deg is more than
+  !     sufficient for most applications).
+  !
+  !     Unlike many GCM (and other) sun angle routines, this
+  !     one gives slightly different sun angles depending on
+  !     the year.  The difference is usually down in the 4th
+  !     significant digit but can slowly creep up to the 3rd
+  !     significant digit after several decades to a century.
+  !
+  !     A refraction correction appropriate for the "US Standard
+  !     Atmosphere" is added, so that the returned sun position is
+  !     the APPARENT one.  The correction is below 0.1 deg for solar
+  !     elevations above 9 deg.  To remove it, comment out the code
+  !     block where variable REFRAC is set, and replace it with
+  !     REFRAC = 0.0.
+  !
+  !     In June, 2022 Kyle Shores ripped these two functions out of the files
+  !     solar_zenith_angle.F90 and earth_sun_distance.F90 because the code
+  !     was largely the same between the two files. In that process, the code
+  !     was refactored so that it would be easier to read.
+  !
+  ! --------------------------------------------------------------------
+  !   References:
+  !
+  !     Michalsky, J., 1988: The Astronomical Almanac's algorithm for
+  !        approximate solar position (1950-2050), Solar Energy 40,
+  !        227-235 (but the version of this program in the Appendix
+  !        contains errors and should not be used)
+  !    url: https://www.sciencedirect.com/science/article/pii/0038092X8890045X
+  !
+  !     The Astronomical Almanac, U.S. Gov't Printing Office, Washington,
+  !        D.C. (published every year): the formulas used from the 1995
+  !        version are as follows:
+  !        p. A12: approximation to sunrise/set times
+  !        p. B61: solar elevation ("altitude") and azimuth
+  !        p. B62: refraction correction
+  !        p. C24: mean longitude, mean anomaly, ecliptic longitude,
+  !                obliquity of ecliptic, right ascension, declination,
+  !                Earth-Sun distance, angular diameter of Sun
+  !        p. L2:  Greenwich mean sidereal time (ignoring T^2, T^3 terms)
+  ! --------------------------------------------------------------------
+  !   Authors:  Dr. Joe Michalsky (joe@asrc.albany.edu)
+  !             Dr. Lee Harrison (lee@asrc.albany.edu)
+  !             Atmospheric Sciences Research Center
+  !             State University of New York
+  !             Albany, New York
+  ! --------------------------------------------------------------------
+  !   Modified by:  Dr. Warren Wiscombe (wiscombe@climate.gsfc.nasa.gov)
+  !                 NASA Goddard Space Flight Center
+  !                 Code 913
+  !                 Greenbelt, MD 20771
+  ! --------------------------------------------------------------------
+  !   WARNING:  Do not use this routine outside the year range
+  !             1950-2050.  The approximations become increasingly
+  !             worse, and the calculation of Julian date becomes
+  !             more involved.
+  ! --------------------------------------------------------------------
+  !   Uses double precision for safety and because Julian dates can
+  !   have a large number of digits in their full form (but in practice
+  !   this version seems to work fine in single precision if you only
+  !   need about 3 significant digits and aren't doing precise climate
+  !   change or solar tracking work).
+  ! --------------------------------------------------------------------
+  !   Why does this routine require time input as Greenwich Mean Time 
+  !   (GMT; also called Universal Time, UT) rather than "local time"?
+  !   Because "local time" (e.g. Eastern Standard Time) can be off by
+  !   up to half an hour from the actual local time (called "local mean
+  !   solar time").  For society's convenience, "local time" is held 
+  !   constant across each of 24 time zones (each technically 15 longitude
+  !   degrees wide although some are distorted, again for societal 
+  !   convenience).  Local mean solar time varies continuously around a 
+  !   longitude belt;  it is not a step function with 24 steps.  
+  !   Thus it is far simpler to calculate local mean solar time from GMT,
+  !   by adding 4 min for each degree of longitude the location is
+  !   east of the Greenwich meridian or subtracting 4 min for each degree
+  !   west of it.  
+  ! --------------------------------------------------------------------
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !   Input:
+  !      year     year (integer; range 1950 to 2050)
+  !      day      day of year at LAT-LONG location (integer; range 1-366)
+  !      hour     hour of DAY [GMT or UT] (REAL; range -13.0 to 36.0)
+  !               = (local hour) + (time zone number)
+  !                 + (Daylight Savings Time correction; -1 or 0)
+  !               where (local hour) range is 0 to 24,
+  !               (time zone number) range is -12 to +12, and
+  !               (Daylight Time correction) is -1 if on Daylight Time
+  !               (summer half of year), 0 otherwise;  
+  !               Example: 8:30 am Eastern Daylight Time would be
+  !
+  !                           HOUR = 8.5 + 5 - 1 = 12.5
+  !   Output:
+  !      solar_distance   distance to sun [Astronomical Units, AU]
+  !               (1 AU = mean Earth-sun distance = 1.49597871E+11 m
+  !                in IAU 1976 System of Astronomical Constants)
   function earth_sun_distance( year, day, hour ) result( solar_distance )
 
     !> arguments
@@ -87,7 +189,29 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function solar_zenith_angle( year, day, hour, lat, long ) result( solar_elevation )
+  !   Input:
+  !      year     year (integer; range 1950 to 2050)
+  !      day      day of year at LAT-LONG location (integer; range 1-366)
+  !      hour     hour of DAY [GMT or UT] (REAL; range -13.0 to 36.0)
+  !               = (local hour) + (time zone number)
+  !                 + (Daylight Savings Time correction; -1 or 0)
+  !               where (local hour) range is 0 to 24,
+  !               (time zone number) range is -12 to +12, and
+  !               (Daylight Time correction) is -1 if on Daylight Time
+  !               (summer half of year), 0 otherwise;  
+  !               Example: 8:30 am Eastern Daylight Time would be
+  !
+  !                           HOUR = 8.5 + 5 - 1 = 12.5
+  !      LAT      latitude [degrees]
+  !               (REAL; range -90.0 to 90.0; north is positive)
+  !      LONG     longitude [degrees]
+  !               (REAL; range -180.0 to 180.0; east is positive)
+  !   Output:
+  !      solar_elevation       solar elevation angle [-90 to 90 degs]; 
+  !               solar zenith angle = 90 - EL
+  function solar_zenith_angle( year, day, hour, lat, long ) &
+      result( solar_elevation )
+
     !> arguments
     integer(ik), intent(in) ::  year, day
     real(dk), intent(in)    ::  hour, lat, long
@@ -121,7 +245,8 @@ contains
     ha = calculate_hour_angle( time, hour, long, ra )
 
     !     noon when ha = 0
-    solar_elevation  = asin( sin( dec )*sin( lat*d2r ) + cos( dec )*cos( lat*d2r )*cos( ha ) )
+    solar_elevation  = asin( sin( dec )*sin( lat*d2r ) + &
+      cos( dec )*cos( lat*d2r )*cos( ha ) )
 
     !                     ** convert elevation to degrees
     solar_elevation = solar_elevation / d2r
@@ -134,148 +259,6 @@ contains
   end function solar_zenith_angle
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !     Calculates the local solar azimuth and elevation angles, and
-  !     the distance to and angle subtended by the Sun, at a specific 
-  !     location and time using approximate formulas in The Astronomical 
-  !     Almanac.  Accuracy of angles is 0.01 deg or better (the angular 
-  !     width of the Sun is about 0.5 deg, so 0.01 deg is more than
-  !     sufficient for most applications).
-
-  !     Unlike many GCM (and other) sun angle routines, this
-  !     one gives slightly different sun angles depending on
-  !     the year.  The difference is usually down in the 4th
-  !     significant digit but can slowly creep up to the 3rd
-  !     significant digit after several decades to a century.
-
-  !     A refraction correction appropriate for the "US Standard
-  !     Atmosphere" is added, so that the returned sun position is
-  !     the APPARENT one.  The correction is below 0.1 deg for solar
-  !     elevations above 9 deg.  To remove it, comment out the code
-  !     block where variable REFRAC is set, and replace it with
-  !     REFRAC = 0.0.
-
-  !   References:
-
-  !     Michalsky, J., 1988: The Astronomical Almanac's algorithm for
-  !        approximate solar position (1950-2050), Solar Energy 40,
-  !        227-235 (but the version of this program in the Appendix
-  !        contains errors and should not be used)
-  !        url: https://www.sciencedirect.com/science/article/pii/0038092X8890045X
-
-  !     The Astronomical Almanac, U.S. Gov't Printing Office, Washington,
-  !        D.C. (published every year): the formulas used from the 1995
-  !        version are as follows:
-  !        p. A12: approximation to sunrise/set times
-  !        p. B61: solar elevation ("altitude") and azimuth
-  !        p. B62: refraction correction
-  !        p. C24: mean longitude, mean anomaly, ecliptic longitude,
-  !                obliquity of ecliptic, right ascension, declination,
-  !                Earth-Sun distance, angular diameter of Sun
-  !        p. L2:  Greenwich mean sidereal time (ignoring T^2, T^3 terms)
-
-
-  !   Authors:  Dr. Joe Michalsky (joe@asrc.albany.edu)
-  !             Dr. Lee Harrison (lee@asrc.albany.edu)
-  !             Atmospheric Sciences Research Center
-  !             State University of New York
-  !             Albany, New York
-
-  !   Modified by:  Dr. Warren Wiscombe (wiscombe@climate.gsfc.nasa.gov)
-  !                 NASA Goddard Space Flight Center
-  !                 Code 913
-  !                 Greenbelt, MD 20771
-
-
-  !   WARNING:  Do not use this routine outside the year range
-  !             1950-2050.  The approximations become increasingly
-  !             worse, and the calculation of Julian date becomes
-  !             more involved.
-
-  !   Input:
-
-  !      YEAR     year (integer; range 1950 to 2050)
-
-  !      DAY      day of year at LAT-LONG location (integer; range 1-366)
-
-  !      HOUR     hour of DAY [GMT or UT] (REAL; range -13.0 to 36.0)
-  !               = (local hour) + (time zone number)
-  !                 + (Daylight Savings Time correction; -1 or 0)
-  !               where (local hour) range is 0 to 24,
-  !               (time zone number) range is -12 to +12, and
-  !               (Daylight Time correction) is -1 if on Daylight Time
-  !               (summer half of year), 0 otherwise;  
-  !               Example: 8:30 am Eastern Daylight Time would be
-  !
-  !                           HOUR = 8.5 + 5 - 1 = 12.5
-
-  !      LAT      latitude [degrees]
-  !               (REAL; range -90.0 to 90.0; north is positive)
-
-  !      LONG     longitude [degrees]
-  !               (REAL; range -180.0 to 180.0; east is positive)
-
-
-  !   Output:
-
-  !      EL       solar elevation angle [-90 to 90 degs]; 
-  !               solar zenith angle = 90 - EL
-
-  !      SOLDST   distance to sun [Astronomical Units, AU]
-  !               (1 AU = mean Earth-sun distance = 1.49597871E+11 m
-  !                in IAU 1976 System of Astronomical Constants)
-
-
-  !   Local Variables:
-
-  !     DEC       Declination (radians)
-
-  !     ECLONG    Ecliptic longitude (radians)
-
-  !     GMST      Greenwich mean sidereal time (hours)
-
-  !     HA        Hour angle (radians, -pi to pi)
-
-  !     JD        Modified Julian date (number of days, including 
-  !               fractions thereof, from Julian year J2000.0);
-  !               actual Julian date is JD + 2451545.0
-
-  !     LMST      Local mean sidereal time (radians)
-
-  !     MNANOM    Mean anomaly (radians, normalized to 0 to 2*pi)
-
-  !     MNLONG    Mean longitude of Sun, corrected for aberration 
-  !               (deg; normalized to 0-360)
-
-  !     OBLQEC    Obliquity of the ecliptic (radians)
-
-  !     RA        Right ascension  (radians)
-
-  !     REFRAC    Refraction correction for US Standard Atmosphere (degs)
-
-  ! --------------------------------------------------------------------
-  !   Uses double precision for safety and because Julian dates can
-  !   have a large number of digits in their full form (but in practice
-  !   this version seems to work fine in single precision if you only
-  !   need about 3 significant digits and aren't doing precise climate
-  !   change or solar tracking work).
-  ! --------------------------------------------------------------------
-
-  !   Why does this routine require time input as Greenwich Mean Time 
-  !   (GMT; also called Universal Time, UT) rather than "local time"?
-  !   Because "local time" (e.g. Eastern Standard Time) can be off by
-  !   up to half an hour from the actual local time (called "local mean
-  !   solar time").  For society's convenience, "local time" is held 
-  !   constant across each of 24 time zones (each technically 15 longitude
-  !   degrees wide although some are distorted, again for societal 
-  !   convenience).  Local mean solar time varies continuously around a 
-  !   longitude belt;  it is not a step function with 24 steps.  
-  !   Thus it is far simpler to calculate local mean solar time from GMT,
-  !   by adding 4 min for each degree of longitude the location is
-  !   east of the Greenwich meridian or subtracting 4 min for each degree
-  !   west of it.  
-
-  ! --------------------------------------------------------------------
 
   !   TIME
   !   
@@ -308,7 +291,6 @@ contains
   !   2,451,545.0, denoted J2000.0).  The fact that this routine uses
   !   1949 as a point of reference is merely for numerical convenience.
   ! --------------------------------------------------------------------
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function calculate_time( year, day, hour ) result( time )
     !> Arguments
@@ -320,13 +302,17 @@ contains
     real(dk)    ::  time
     integer(ik) ::  delta, leap
     real(dk)    :: JD
+    !     JD        Modified Julian date (number of days, including 
+    !               fractions thereof, from Julian year J2000.0);
+    !               actual Julian date is JD + 2451545.0
 
     !                    ** current Julian date (actually add 2,400,000 
     !                    ** for true JD);  leap = leap days since 1949;
     !                    ** 32916.5 is midnite 0 jan 1949 minus 2.4e6
     delta  = year - 1949_ik
     leap   = delta / 4_ik
-    JD     = 32916.5_dk + real(delta*365_ik + leap + day,dk) + hour / day_to_hours
+    JD     = 32916.5_dk + real(delta*365_ik + leap + day,dk) + &
+      hour / day_to_hours
 
     !                    ** last yr of century not leap yr unless divisible
     !                    ** by 400 (not executed for the allowed year range,
@@ -343,6 +329,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     mean_long    Mean longitude of Sun, corrected for aberration 
+  !               (deg; normalized to 0-360)
   function calculate_mean_long( time ) result( mean_long )
 
     !> Arguments
@@ -363,6 +351,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     mean_anomaly    Mean anomaly (radians, normalized to 0 to 2*pi)
   function calculate_mean_anomaly( time ) result( mean_anomaly )
 
     !> Arguments
@@ -385,6 +374,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     DEC       Declination (radians)
   function calculate_declination( ecliptic_longitude, obliquity ) result (dec)
     !> arguments
     real(dk), intent(in)    ::  ecliptic_longitude, obliquity
@@ -398,6 +388,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     OBLQEC    Obliquity of the ecliptic (radians)
   function calculate_obliquity( time ) result ( oblqec )
     !> arguments
     real(dk), intent(in) :: time
@@ -413,6 +404,7 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  !     ECLONG    Ecliptic longitude (radians)
   function calculate_ecliptic_longitude( mean_anomaly, mean_long ) &
       result( eclong )
 
@@ -440,7 +432,10 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function calculate_right_ascension( ecliptic_longitude, obliquity ) result ( ra )
+  !     RA        Right ascension  (radians)
+  function calculate_right_ascension( ecliptic_longitude, obliquity ) &
+      result ( ra )
+
     !> Arguments
     real(dk), intent(in) :: ecliptic_longitude, obliquity
 
@@ -465,7 +460,10 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function calculate_hour_angle( time, hour, long, right_ascension ) result( ha )
+  !     HA        Hour angle (radians, -pi to pi)
+  function calculate_hour_angle( time, hour, long, right_ascension ) &
+      result( ha )
+
     !> arguments
     real(dk), intent(in)    ::  time, hour, long, right_ascension
 
@@ -476,6 +474,7 @@ contains
     real(dk), parameter :: twopi = 2._dk*pi
     real(dk), parameter :: d2r   = pi/180._dk
 
+    ! lmst      Local mean sidereal time (radians)
     real(dk) :: gmst, ha, lmst
 
     !                    ** greenwich mean sidereal time in hours
