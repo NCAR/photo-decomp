@@ -1,5 +1,5 @@
 {
-   "photo dissociation rate constants": {
+   "photolysis reactions": {
       "O3+hv->O2+O(1D)": {
          "cross section": {
             "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],

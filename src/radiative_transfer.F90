@@ -74,21 +74,25 @@ contains
 
     character(len=*), parameter :: Iam = 'radXfer component constructor: '
     type(string_t)       :: solver
-
-    write(*,*) ' '
-    write(*,*) Iam // 'entering'
+    type(config_t) :: child_config
 
     allocate( radXfer_component )
 
-    !> instantiate and initialize the radXfer cross section warehouse
-    radXfer_component%radXferXsectWareHouse_ => cross_section_warehouse_t( config, gridWareHouse, ProfileWareHouse )
-    !> instantiate and initialize the radiator warehouse
-    radXfer_component%radiatorWareHouse_ => radiator_warehouse_t( config, gridWareHouse )
+    ! instantiate and initialize the radXfer cross section warehouse
+    call config%get( "cross sections", child_config, Iam )
+    radXfer_component%radXferXsectWareHouse_ =>                               &
+        cross_section_warehouse_t( child_config, gridWareHouse,               &
+                                   ProfileWareHouse )
 
-    !> save the configuration (used for preprocessing input data only)
+    ! instantiate and initialize the radiator warehouse
+    call config%get( "radiators", child_config, Iam )
+    radXfer_component%radiatorWareHouse_ =>                                   &
+        radiator_warehouse_t( child_config, gridWareHouse )
+
+    ! save the configuration (used for preprocessing input data only)
     radXfer_component%config_ = config
 
-    !> get the radiative transfer solver
+    ! get the radiative transfer solver
     call config%get( "Solver", solver, Iam, default="Delta Eddington" )
     if( solver == 'Discrete Ordinants' ) then
       call config%get( "nStreams", radXfer_component%nStreams_, Iam, default=4_ik )
@@ -96,9 +100,6 @@ contains
     else
       allocate( delta_eddington_t :: radXfer_component%radXferSolver_ )
     endif
-
-    write(*,*) ' '
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 

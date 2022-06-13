@@ -52,7 +52,7 @@ contains
     class(profile_warehouse_t), pointer       :: profile_warehouse
 
     ! local variables
-    type(config_t)              :: profile_set, profile_config
+    type(config_t)              :: profile_config
     class(iterator_t), pointer  :: iter
     type(profile_ptr)           :: profile_obj
     character(len=32)           :: keychar
@@ -61,29 +61,23 @@ contains
     class(profile_warehouse_t), pointer :: profile_warehouse_ptr
 
     allocate( profile_warehouse )
-
-    associate( new_obj => profile_warehouse )
-
-    allocate( new_obj%profile_objs_(0) )
-
-    call config%get( 'Profiles', profile_set, Iam )
-    iter => profile_set%get_iterator( )
+    allocate( profile_warehouse%profile_objs_(0) )
 
     ! iterate over profiles
+    iter => config%get_iterator( )
     do while( iter%next( ) )
-      keychar = profile_set%key( iter )
+      keychar = config%key( iter )
       aswkey  = keychar
-      call profile_set%get( iter, profile_config, Iam )
+      call config%get( iter, profile_config, Iam )
       call profile_config%add( 'Handle', aswkey, Iam )
 
       ! Build profile objects
       profile_obj%val_ => profile_builder( profile_config, grid_warehouse )
-      new_obj%profile_objs_ = [ new_obj%profile_objs_, profile_obj ]
+      profile_warehouse%profile_objs_ =                                       &
+          [ profile_warehouse%profile_objs_, profile_obj ]
     end do
 
     deallocate( iter )
-
-    end associate
 
   end function constructor
 

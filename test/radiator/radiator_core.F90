@@ -51,32 +51,36 @@ contains
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radiator core constructor: '
-    type(config_t)              :: tst_config
+    type(config_t)              :: tst_config, child_config
 
-    write(*,*) Iam // 'entering'
-
-    !> master configuration -> config type
+    ! main configuration -> config type
     call tst_config%from_file( config_flsp%to_char() )
 
-    !> Instantiate object
+    ! Instantiate object
     allocate( radiator_core_t :: radiator_core_obj )
 
-    !> Initialize grid warehouse
-    radiator_core_obj%theGridWarehouse_ => grid_warehouse_t( tst_config )
+    ! Initialize grid warehouse
+    call tst_config%get( "grids", child_config, Iam )
+    radiator_core_obj%theGridWarehouse_ => grid_warehouse_t( child_config )
 
-    !> Initialize profile warehouse
-    radiator_core_obj%theProfileWarehouse_ => Profile_warehouse_t( tst_config, radiator_core_obj%theGridWareHouse_ )
+    ! Initialize profile warehouse
+    call tst_config%get( "profiles", child_config, Iam )
+    radiator_core_obj%theProfileWarehouse_ =>                                 &
+        profile_warehouse_t( child_config,                                    &
+                             radiator_core_obj%theGridWareHouse_ )
 
-    !> Initialize radXfer xsect warehouse
-    radiator_core_obj%theradXferXsectWarehouse_ => cross_section_warehouse_t( &
-                                                  tst_config, &
-                                                  radiator_core_obj%theGridWareHouse_, &
-                                                  radiator_core_obj%theProfileWarehouse_ )
+    ! Initialize radXfer xsect warehouse
+    call tst_config%get( "cross sections", child_config, Iam )
+    radiator_core_obj%theradXferXsectWarehouse_ =>                            &
+        cross_section_warehouse_t( child_config,                              &
+                                   radiator_core_obj%theGridWareHouse_,       &
+                                   radiator_core_obj%theProfileWarehouse_ )
 
-    !> Initialize radiator warehouse
-    radiator_core_obj%theRadiatorWarehouse_ => radiator_warehouse_t( tst_config, radiator_core_obj%theGridWareHouse_ )
-
-    write(*,*) Iam // 'exiting'
+    ! Initialize radiator warehouse
+    call tst_config%get( "radiators", child_config, Iam )
+    radiator_core_obj%theRadiatorWarehouse_ =>                                &
+        radiator_warehouse_t( child_config,                                   &
+                              radiator_core_obj%theGridWareHouse_ )
 
   end function constructor
 

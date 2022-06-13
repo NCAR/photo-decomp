@@ -1,5 +1,5 @@
 {
-   "Grids": {
+   "grids": {
       "Vertical Z": {
          "Grid type": "Equal interval",
          "Grid begins at" : 0.0,

@@ -1,5 +1,5 @@
 {
-   "Grids": {
+   "grids": {
       "Vertical Z": {
          "Grid type": "Equal interval",
          "Grid begins at" : 0.0,
@@ -11,7 +11,7 @@
          "Filespec": "data/DATAE1/GRIDS/combined.grid"
       }
    },
-   "Profiles": {
+   "profiles": {
       "O3": {
          "Profile type": "O3 from csv file",
          "Filespec": "data/DATAE1/ATM/ussa.ozone"
