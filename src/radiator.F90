@@ -33,10 +33,10 @@ module tuvx_radiator
     type(string_t)         :: handle_
     !> Name of the vertical profile to use
     type(string_t) :: vertical_profile_name_
-    !> Radiator optical properties
-    type(radiator_state_t) :: state_
     !> Name of the absorption cross-section to use
     type(string_t) :: cross_section_name_
+    !> Radiator optical properties
+    type(radiator_state_t) :: state_
   contains
     !> Update radiator for new environmental conditions
     procedure :: upDateState
