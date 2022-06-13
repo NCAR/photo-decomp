@@ -827,7 +827,7 @@ module tuvx_linear_algebra_linpack
 
       IF (b(1) == rZERO) THEN
         write(*,*) 'tridiag: pivot 1 is zero; halting'
-        STOP 'tridiag: zero pivot'
+        STOP 3
       ENDIF
       n = size(b)
       bet   = b(1)
@@ -837,7 +837,7 @@ module tuvx_linear_algebra_linpack
          bet = b(j) - a(j)*gam(j)
          IF (bet == rZERO) THEN
            write(*,'('' tridiag: pivot '',i4,''is zero; halting'')') j
-           STOP 'tridiag: zero pivot'
+           STOP 3
          ENDIF
          u(j) = (r(j) - a(j)*u(j - 1))/bet
       ENDDO

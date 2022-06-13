@@ -1,7 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!from csv file type
+!> O2 profile from csv file type
 module tuvx_profile_o2
 
   use musica_constants,  only : &
@@ -28,7 +28,7 @@ contains
 
   !> Initialize grid
   function constructor( profile_config, grid_warehouse ) result( this )
-      
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
@@ -36,19 +36,18 @@ contains
     use tuvx_grid_warehouse, only : grid_warehouse_t
     use tuvx_interpolate
 
-    !> arguments
     type(config_t), intent(inout)         :: profile_config
     type(o2_from_csv_file_t), pointer     :: this
     type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
-    !> local variables
+    ! local variables
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
     real(dk), parameter    :: o2Vmr = .2095_dk
     real(dk), parameter    :: km2cm = 1.e5_dk
 
     character(len=*), parameter :: Iam = 'From_csv_file profile initialize: '
- 
+
     integer(ik) :: istat, nData
     real(dk)    :: zd, Value
     real(dk)    :: exo_layer_dens
@@ -64,7 +63,7 @@ contains
 
     allocate( this )
 
-    !> Get the configuration settings
+    ! Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
     call profile_config%get( 'Handle', this%handle_, Iam, &
       default = 'None' )
@@ -73,7 +72,7 @@ contains
     call profile_config%get( 'Scale heigth', this%hscale_, Iam, &
       default = 8.01_dk )
 
-    !> Does input grid file exist?
+    ! Does input grid file exist?
     inquire( file=Filespec%to_char(), exist=found )
     if( .not. found ) then
       call die_msg( 560768215, "File " // Filespec%to_char() // " not found" )
@@ -84,7 +83,7 @@ contains
       call die_msg( 560768231, "Error opening " // Filespec%to_char() )
     endif
 
-    !> Skip the header
+    ! Skip the header
     do
       read(inUnit,'(a)',iostat=istat) InputLine
       if( istat /= Ok ) then
@@ -97,11 +96,11 @@ contains
 
     allocate( profile(0) )
     allocate( zdata(0) )
-    !> Read the data
+    ! Read the data
     do
       read(InputLine,*,iostat=istat) zd, Value
       if( istat /= Ok ) then
-        call die_msg( 560768229, "Invalid data format in " & 
+        call die_msg( 560768229, "Invalid data format in " &
           // Filespec%to_char() )
       endif
       profile = [profile,Value]
@@ -118,7 +117,7 @@ contains
     zGrid => grid_warehouse%get_grid( Handle )
     this%ncells_ = zGrid%ncells_
 
-    !> assign actual interpolator for this profile
+    ! assign actual interpolator for this profile
     select case( Interpolator%to_char() )
       case( 'interp1' )
         allocate( interp1_t :: theInterpolator )
@@ -129,7 +128,7 @@ contains
       case( 'interp4' )
         allocate( interp4_t :: theInterpolator )
       case default
-        call die_msg( 560768275, "interpolator " // Interpolator%to_char() & 
+        call die_msg( 560768275, "interpolator " // Interpolator%to_char() &
           // " not a valid selection" )
     end select
 
@@ -154,10 +153,13 @@ contains
 
     exo_layer_dens = this%edge_val_(this%ncells_+1_ik) * this%hscale_ * km2cm
 
-    this%exo_layer_dens_ = [this%layer_dens_,exo_layer_dens]
+    this%exo_layer_dens_ = [ this%layer_dens_, exo_layer_dens ]
 
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
       exo_layer_dens
+
+    deallocate( zGrid )
+    deallocate( theInterpolator )
 
   end function constructor
 

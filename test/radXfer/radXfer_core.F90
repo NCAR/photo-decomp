@@ -145,6 +145,11 @@ contains
     write(*,'(1p10g15.7)') aCrossSection(1,:)
     call assert( 412238775, all( aCrossSection(1,:) == aCrossSection(zGrid%ncells_,:) ) )
 
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( TemperatureProfile )
+    deallocate( AirProfile )
+    deallocate( RaylieghCrossSection )
     write(*,*) Iam // 'exiting'
 
   end subroutine run

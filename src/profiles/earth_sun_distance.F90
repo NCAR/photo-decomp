@@ -1,7 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!solar zenith angle from time type
+!> Earth-Sun distance profile type
 module tuvx_profile_earth_sun_distance
 
   use musica_constants, only : &
@@ -31,7 +31,7 @@ contains
 
   !> Initialize distance between sun, earth in AU
   function constructor( profile_config, grid_warehouse ) result ( this )
-      
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use tuvx_grid,     only : grid_t
@@ -81,12 +81,14 @@ contains
     enddo
 
     this%mid_val_ = .5_dk * ( &
-      this%edge_val_(1_ik:this%ncells_) + & 
+      this%edge_val_(1_ik:this%ncells_) + &
       this%edge_val_(2_ik:this%ncells_+1_ik) &
     )
 
-    this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - & 
+    this%delta_val_ = (this%edge_val_(2_ik:this%ncells_+1_ik) - &
       this%edge_val_(1_ik:this%ncells_))
+
+    deallocate( timeGrid )
 
   end function constructor
 

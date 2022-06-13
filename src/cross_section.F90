@@ -80,7 +80,7 @@ contains
     call assert_msg( 124969900,                                               &
                      config%validate( required_keys, optional_keys ),         &
                      "Bad configuration data format for "//                   &
-                     "n2o_n2+o1d cross section." )
+                     "base cross section." )
     allocate( new_obj )
     call base_constructor( new_obj, config, grid_warehouse, profile_warehouse )
 
@@ -179,6 +179,8 @@ file_loop: &
       enddo file_loop
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end subroutine base_constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -210,9 +212,9 @@ file_loop: &
     integer :: nzdim
     character(len=*), parameter :: Iam =                                      &
         'radXfer base cross section calculate: '
-    class(grid_t), pointer :: zGrid
-    type(string_t)                :: Handle
-    real(dk), allocatable         :: wrkCrossSection(:,:)
+    class(grid_t), pointer     :: zGrid => null( )
+    type(string_t)             :: Handle
+    real(dk),      allocatable :: wrkCrossSection(:,:)
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -234,6 +236,8 @@ file_loop: &
 
     cross_section = transpose( wrkCrossSection )
 
+    deallocate( zGrid )
+
   end function run
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -241,6 +245,7 @@ file_loop: &
   !> Adds points to the cross section grid based on configuration data
   subroutine add_points( this, config, data_lambda, data_parameter )
 
+    use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use tuvx_util,                     only : addpnt
@@ -258,32 +263,52 @@ file_loop: &
     integer  :: nRows
     real(dk) :: lowerLambda, upperLambda
     real(dk) :: addpnt_val_lower, addpnt_val_upper
-    type(string_t)  :: addpnt_type_
+    type(string_t)  :: addpnt_type
+    type(config_t)  :: extrap_config
     logical         :: found
     character(len=:), allocatable :: number
+    type(string_t) :: required_keys(1), optional_keys(1)
 
-    !> add endpoints to data arrays; first the lower bound
+    required_keys(1) = "type"
+    optional_keys(1) = "value"
+
     nRows = size( data_lambda )
     lowerLambda = data_lambda(1) ; upperLambda = data_lambda( nRows )
-    call config%get( 'lower extrapolation', addpnt_type_, Iam, found = found )
-    if( .not. found ) then
-      addpnt_val_lower = rZERO
-    elseif( addpnt_type_ == 'boundary' ) then
-      addpnt_val_lower = data_parameter(1)
-    else
-      number = addpnt_type_%to_char( )
-      read( number, '(g30.20)' ) addpnt_val_lower
+
+    ! add endpoints to data arrays; first the lower bound
+    addpnt_val_lower = rZERO
+    call config%get( 'lower extrapolation', extrap_config, Iam, found = found )
+    if( found ) then
+      call assert_msg( 671608110,                                             &
+                       extrap_config%validate( required_keys, optional_keys ),&
+                       "Bad format for extrapolation in base cross section." )
+      call extrap_config%get( "type", addpnt_type, Iam )
+      if( addpnt_type == "boundary" ) then
+        addpnt_val_lower = data_parameter(1)
+      elseif( addpnt_type == "constant" ) then
+        call extrap_config%get( "value", addpnt_val_lower, Iam )
+      else
+        call die_msg( 316405971,                                              &
+                      "Bad extrapolation type: '"//addpnt_type//"'" )
+      endif
     endif
 
     !> add endpoints to data arrays; now the upper bound
-    call config%get( 'upper extrapolation', addpnt_type_, Iam, found=found )
-    if( .not. found ) then
-      addpnt_val_upper = rZERO
-    elseif( addpnt_type_ == 'boundary' ) then
-      addpnt_val_upper = data_parameter( nRows )
-    else
-      number = addpnt_type_%to_char( )
-      read( number, '(g30.20)' ) addpnt_val_upper
+    addpnt_val_upper = rZERO
+    call config%get( 'upper extrapolation', extrap_config, Iam, found = found )
+    if( found ) then
+      call assert_msg( 918590095,                                             &
+                       extrap_config%validate( required_keys, optional_keys ),&
+                       "Bad format for extrapolation in base cross section." )
+      call extrap_config%get( "type", addpnt_type, Iam )
+      if( addpnt_type == "boundary" ) then
+        addpnt_val_upper = data_parameter( nRows )
+      elseif( addpnt_type == "constant" ) then
+        call extrap_config%get( "value", addpnt_val_upper, Iam )
+      else
+        call die_msg( 302970879,                                              &
+                      "Bad extrapolation type: '"//addpnt_type//"'" )
+      endif
     endif
 
     call addpnt( x = data_lambda, y = data_parameter,                         &

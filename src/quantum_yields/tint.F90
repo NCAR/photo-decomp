@@ -73,7 +73,7 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     type(netcdf_t),   allocatable :: netcdf_obj
     type(string_t)                :: Handle
     type(string_t),   allocatable :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
+    class(grid_t),    pointer     :: lambdaGrid
 
     allocate( this )
 
@@ -172,6 +172,8 @@ file_loop: &
       call die_msg( 158918286, msg )
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -197,10 +199,10 @@ file_loop: &
     integer     :: nTemp
     integer     :: fileNdx, tNdx, vertNdx
     real(dk)    :: Tadj, Tstar
-    type(string_t) :: Handle
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
-    class(profile_t), pointer :: Temperature
+    type(string_t)            :: Handle
+    class(grid_t),    pointer :: lambdaGrid => null( )
+    class(grid_t),    pointer :: zGrid => null( )
+    class(profile_t), pointer :: Temperature => null( )
     real(dk), parameter :: rZERO   = 0.0_dk
     real(dk), parameter :: rONE    = 1.0_dk
 
@@ -238,6 +240,10 @@ file_loop: &
     enddo file_loop
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( Temperature )
 
   end function run
 

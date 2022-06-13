@@ -259,14 +259,14 @@ from_interval_loop: &
 !-----------------------------------------------------------------------------*
       if( any( x(2:n) <= x(1:n-1) ) ) then
         write(*,*) Iam,'grid not monotonically increasing'
-        stop 'GridErr'
+        stop 3
       endif
 !-----------------------------------------------------------------------------*
 !  does xnew == any x value?
 !-----------------------------------------------------------------------------*
       if( any( x(:) == xnew ) ) then
         write(*,*) Iam,'xnew exactly matches a grid x value'
-        stop 'GridErr'
+        stop 3
       endif
 !-----------------------------------------------------------------------------*
 ! find the index at which xnew needs to be inserted into x
@@ -287,7 +287,7 @@ from_interval_loop: &
       endif
       if( .not. found ) then
         write(*,*) Iam,'something really wrong; all stop'
-        stop 'codeErr'
+        stop 3
       endif
 !-----------------------------------------------------------------------------*
 ! increment x,y arrays, then insert xnew,ynew

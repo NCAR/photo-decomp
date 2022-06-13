@@ -99,12 +99,15 @@ contains
     !> Diagnostics for testing
     Handle = 'Temperature' ; aProfile => photolysis_core_obj%ProfileWareHouse_%get_Profile( Handle )
     call diagout( 'vptmp.new', aProfile%edge_val_ )
+    deallocate( aProfile )
 
     Handle = 'Air' ; aProfile => photolysis_core_obj%ProfileWareHouse_%get_Profile( Handle )
     call diagout( 'vpair.new', aProfile%edge_val_ )
+    deallocate( aProfile )
 
     Handle = 'O3' ; aProfile => photolysis_core_obj%ProfileWareHouse_%get_Profile( Handle )
     call diagout( 'vpco3.new', aProfile%layer_dens_ )
+    deallocate( aProfile )
 
     !> set up the components; first call radiative transfer component
     iter => components_config%get_iterator()
@@ -161,13 +164,13 @@ contains
   !> Local variables
   character(len=*), parameter :: Iam = 'Photolysis core run: '
 
-  integer(ik)                    :: i_ndx, i_diag
-  real(dk), allocatable          :: photoRates(:,:)
-  character(len=2)               :: number
-  class(profile_t), pointer  :: SZAngles
+  integer(ik)                     :: i_ndx, i_diag
+  real(dk), allocatable           :: photoRates(:,:)
+  character(len=2)                :: number
+  class(profile_t),       pointer :: SZAngles => null( )
   class(base_radiator_t), pointer :: aRadiator => null()
-  class(radField_t), allocatable :: radiationFld
-  type(string_t)                 :: Handle
+  class(radField_t),      pointer :: radiationFld => null( )
+  type(string_t)                  :: Handle
 
   write(*,*) ' '
   write(*,*) Iam // 'entering'
@@ -194,6 +197,7 @@ sza_loop: &
                                               this%GridWareHouse_, this%ProfileWareHouse_, &
                                               radiationFld, photoRates, number )
     endif
+    deallocate( radiationFld )
   enddo sza_loop
 
   ! diagnostic output
@@ -212,6 +216,8 @@ sza_loop: &
       endif
     end associate
   end do
+
+  deallocate( SZAngles )
 
   write(*,*) ' '
   write(*,*) Iam // 'exiting'
@@ -238,6 +244,20 @@ sza_loop: &
       deallocate( this%sphericalGeom_ )
     end if
 
+    if( associated( this%la_srb_ ) ) then
+      deallocate( this%la_srb_ )
+    end if
+
+    if( associated( this%radXfer_component_ ) ) then
+      deallocate( this%radXfer_component_ )
+    end if
+
+    if( associated( this%photorates_component_ ) ) then
+      deallocate( this%photorates_component_ )
+    end if
+
   end subroutine finalize
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_core

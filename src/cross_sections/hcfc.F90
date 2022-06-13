@@ -105,10 +105,10 @@ contains
     integer                   :: nzdim, vertNdx
     integer                   :: lambdaNdx, polyNdx
     real(dk)                      :: Tadj, sigma, uLambda
-    real(dk), allocatable         :: modelTemp(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
@@ -161,6 +161,10 @@ lambda_loop:                                                                  &
     enddo vert_loop
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

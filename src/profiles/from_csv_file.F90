@@ -1,7 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!from csv file type
+!> Profile from csv file type
 module tuvx_profile_from_csv_file
 
   use musica_constants,  only : &
@@ -27,8 +27,8 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Initialize grid
-  function constructor(  profile_config, grid_warehouse ) result( this )
-      
+  function constructor( profile_config, grid_warehouse ) result( this )
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
@@ -36,19 +36,18 @@ contains
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_interpolate
 
-    !> arguments
     type(config_t), intent(inout)         :: profile_config
     type(from_csv_file_t), pointer        :: this
     type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
-    !> local variables
+    ! local variables
     character(len=*), parameter :: Iam = 'From_csv_file profile initialize: '
 
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
     real(dk), parameter    :: km2cm = 1.e5_dk
     class(grid_t), pointer :: zGrid
- 
+
     integer(ik) :: istat
     real(dk)    :: zd, Value
     logical(lk) :: found
@@ -61,7 +60,7 @@ contains
 
     allocate( this )
 
-    !> Get the configuration settings
+    ! Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
     call profile_config%get( 'Handle', this%handle_, Iam, &
       default = 'None' )
@@ -70,7 +69,7 @@ contains
     call profile_config%get( 'Scale heigth', this%hscale_, Iam, &
       default = 0._dk )
 
-    !> Does input grid file exist?
+    ! Does input grid file exist?
     inquire( file=Filespec%to_char(), exist=found )
     if( .not. found ) then
       call die_msg( 560768215, "File " // Filespec%to_char() // " not found" )
@@ -81,7 +80,7 @@ contains
       call die_msg( 560768231, "Error opening " // Filespec%to_char() )
     endif
 
-    !> Skip the header
+    ! Skip the header
     do
       read(inUnit,'(a)',iostat=istat) InputLine
       if( istat /= Ok ) then
@@ -93,7 +92,7 @@ contains
 
     allocate( profile(0) )
     allocate( zdata(0) )
-    !> Read the data
+    ! Read the data
     do
       read(InputLine,*,iostat=istat) zd, Value
       if( istat /= Ok ) then
@@ -114,7 +113,7 @@ contains
     zGrid => grid_warehouse%get_grid( Handle )
     this%ncells_ = zGrid%ncells_
 
-    !> assign actual interpolator for this profile
+    ! assign actual interpolator for this profile
     select case( Interpolator%to_char() )
       case( 'interp1' )
         allocate( interp1_t :: theInterpolator )
@@ -131,7 +130,7 @@ contains
 
     this%edge_val_ = theInterpolator%interpolate( zGrid%edge_, zdata,profile )
 
-    this%mid_val_ = .5_dk * ( & 
+    this%mid_val_ = .5_dk * ( &
       this%edge_val_(1_ik:this%ncells_) + &
       this%edge_val_(2_ik:this%ncells_+1_ik) &
     )
@@ -145,6 +144,9 @@ contains
 
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
       this%edge_val_(this%ncells_+1_ik) * this%hscale_ * km2cm
+
+    deallocate( zGrid )
+    deallocate( theInterpolator )
 
   end function constructor
 

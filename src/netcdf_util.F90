@@ -43,7 +43,7 @@ module tuvx_netcdf_util
    call ncObj%initialize(filespec, ierr=stat, action='r')
    if( stat /= noErr ) then
      write(*,*) Iam,'retcode from initialize = ',stat
-     stop 'FileOpenError'
+     stop 3
    endif
 
 !-----------------------------------------------------
@@ -58,7 +58,7 @@ module tuvx_netcdf_util
      call ncObj%read( varName, this%parameters )
    else
      write(*,*) Iam,' variable ',trim(varName),' not in netcdf file'
-     stop 'FileVarError'
+     stop 3
    endif
 
 !-----------------------------------------------------
@@ -68,7 +68,7 @@ module tuvx_netcdf_util
      call ncObj%shape( 'wavelength', dims )
      if( dims(1) /= nLambda ) then
        write(*,*) Iam,' wavelength, parameters array size mismatch'
-       stop 'DataError'
+       stop 3
      endif
      allocate(this%wavelength(dims(1)))
      call ncObj%read( 'wavelength', this%wavelength )

@@ -59,6 +59,7 @@ module tuvx_spherical_geometry
           allocate( this%nid_(0:zGrid%ncells_) )
           allocate( this%dsdh_(0:zGrid%ncells_,zGrid%ncells_) )
 
+          deallocate( zGrid )
           write(*,*) ' '
           write(*,*) Iam // 'exiting'
       end function constructor
@@ -123,8 +124,8 @@ module tuvx_spherical_geometry
       real(dk)    :: sinrad, zenrad, rpsinz, rj, rjp1, dsj, dhj, ga, gb, sm
       real(dk), allocatable    :: zd(:)
 
-      type(string_t)                 :: Handle
-      class(grid_t), pointer  :: zGrid
+      type(string_t)         :: Handle
+      class(grid_t), pointer :: zGrid => null( )
 
       write(*,*) ' '
       write(*,*) Iam // 'entering'
@@ -193,6 +194,8 @@ module tuvx_spherical_geometry
       enddo layer_loop
 
       this%SolarZenithAngle_ = zen
+
+      deallocate( zGrid )
 
       write(*,*) ' '
       write(*,*) Iam // 'exiting'

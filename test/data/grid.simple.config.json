@@ -1,0 +1,18 @@
+{
+   "Grids": {
+      "Vertical Z": {
+         "Grid type": "Equal interval",
+         "Grid begins at" : 0.0,
+         "Grid ends at" : 5.0,
+         "Grid cell delta" : 1.0
+      },
+      "Photolysis, wavelength": {
+         "Grid type": "From csv file",
+         "Filespec": "test/data/grid.photo.simple.csv"
+      },
+      "Time, hrs": {
+         "Grid type": "From config file",
+         "Values": [ 5.0, 10.0, 15.0 ]
+      }
+   }
+}

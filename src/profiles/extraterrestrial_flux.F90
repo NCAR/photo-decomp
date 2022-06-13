@@ -1,9 +1,10 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
+!> Extraterrestrial flux profile type
 module tuvx_profile_extraterrestrial_flux
 
-  use musica_constants,  only : & 
+  use musica_constants,  only : &
     dk => musica_dk, ik => musica_ik, lk => musica_lk
   use tuvx_Profile,      only : profile_t
 
@@ -27,7 +28,7 @@ contains
 
   !> Initialize grid
   function constructor( profile_config, grid_warehouse ) result ( this )
-      
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
@@ -44,7 +45,7 @@ contains
     type(grid_warehouse_t),   intent(inout) :: grid_warehouse
 
     !> Local variables
-    character(len=*), parameter :: Iam = & 
+    character(len=*), parameter :: Iam = &
       'extraterrestrial flux Profile initialize: '
 
     integer(ik), parameter :: Ok = 0_ik
@@ -56,7 +57,7 @@ contains
     /)
     character(len=*), parameter :: comment = '#!$%*'
     class(grid_t), pointer :: lambdaGrid
- 
+
     integer(ik) :: istat
     integer(ik) :: fileNdx, nFiles, ndx, nBins, nLines, Line
     real(dk)    :: zd, Value
@@ -74,7 +75,7 @@ contains
 
     defaultInterpolator = 'interp2'
 
-    !> Get the configuration settings
+    ! Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
     call profile_config%get( 'Handle', this%handle_, Iam, default = 'None' )
     call profile_config%get( 'Interpolator', Interpolator, Iam, found=found )
@@ -94,14 +95,14 @@ contains
         Interpolator(fileNdx) = defaultInterpolator
       endif
 
-      !> Does input grid file exist?
+      ! Does input grid file exist?
       inquire( file=Filespec(fileNdx)%to_char(), exist=found )
       if( .not. found ) then
-        call die_msg( 560768215, "File " & 
+        call die_msg( 560768215, "File " &
           // Filespec(fileNdx)%to_char() // " not found" )
       endif
 
-      open(unit=inUnit, file=Filespec(fileNdx)%to_char(), & 
+      open(unit=inUnit, file=Filespec(fileNdx)%to_char(), &
         iostat=istat,iomsg=IoMsg)
 
       if( istat /= Ok ) then
@@ -109,7 +110,7 @@ contains
           Filespec(fileNdx)%to_char() )
       endif
 
-      !> Determine number of lines in file
+      ! Determine number of lines in file
       nLines = iZERO
       do
         read(inUnit,'(a)',iostat=istat) InputLine
@@ -125,11 +126,11 @@ contains
         endif
       enddo
 
-      !> Skip the header
+      ! Skip the header
       do
         read(inUnit,'(a)',iostat=istat) InputLine
         if( istat /= Ok ) then
-          call die_msg( 560768227, "Error reading " // & 
+          call die_msg( 560768227, "Error reading " // &
             Filespec(fileNdx)%to_char() )
         else
           trimInputLine = adjustl(InputLine)
@@ -146,11 +147,11 @@ contains
       do
         trimInputLine = adjustl(InputLine)
         if( verify( trimInputLine(1:1),comment ) /= 0 ) then
-          read(InputLine,*,iostat=istat,iomsg=IoMsg) & 
+          read(InputLine,*,iostat=istat,iomsg=IoMsg) &
             inputGrid(Line),inputData(Line)
 
           if( istat /= Ok ) then
-            call die_msg( 560768229, "Invalid data format in " // & 
+            call die_msg( 560768229, "Invalid data format in " // &
               Filespec(fileNdx)%to_char() )
           endif
           Line = Line + iONE
@@ -163,8 +164,7 @@ contains
 
       close(unit=inUnit)
 
-
-    !> special handling for neckel.flx
+      ! special handling for neckel.flx
       if( index(Filespec(fileNdx)%to_char(),'neckel.flx') /= 0 ) then
         allocate( tmpinputGrid,source=inputGrid )
         where( inputGrid < 630._dk )
@@ -180,17 +180,17 @@ contains
         inputData = [inputData,rZERO]
         deallocate( tmpinputGrid )
       else
-    !> extend inputGrid,inputData to cover model photolysis grid
-        call addpnt( x=inputGrid,y=inputData, & 
+        ! extend inputGrid,inputData to cover model photolysis grid
+        call addpnt( x=inputGrid,y=inputData, &
           xnew=(rONE-deltax)*inputGrid(1),ynew=rZERO )
-        call addpnt( x=inputGrid,y=inputData, & 
+        call addpnt( x=inputGrid,y=inputData, &
           xnew=rZERO,ynew=rZERO )
-        call addpnt( x=inputGrid,y=inputData, & 
+        call addpnt( x=inputGrid,y=inputData, &
           xnew=(rONE+deltax)*inputGrid(size(inputGrid)),ynew=rZERO )
-        call addpnt( x=inputGrid,y=inputData, & 
+        call addpnt( x=inputGrid,y=inputData, &
           xnew=1.e38_dk,ynew=rZERO )
       endif
-    !> assign interpolator for this dataset
+      ! assign interpolator for this dataset
       select case( Interpolator(fileNdx)%to_char() )
         case( 'interp1' )
           allocate( interp1_t :: theInterpolator )
@@ -205,17 +205,16 @@ contains
             Interpolator(fileNdx)%to_char() // " not a valid selection" )
       end select
 
-    !> interpolate from source to model wavelength grid
+      ! interpolate from source to model wavelength grid
       interpolatedEtfl = theInterpolator%interpolate( &
         lambdaGrid%edge_, inputGrid, inputData, FoldIn=0 &
       )
-      deallocate( theInterpolator )
       if( .not. allocated( this%mid_val_ ) ) then
         allocate( this%mid_val_,mold=interpolatedEtfl )
         this%mid_val_ = rZERO
       endif
 
-    !> assign interpolated source to model etfl
+      ! assign interpolated source to model etfl
       where( &
         bin_edge(fileNdx-1) <= lambdaGrid%edge_(:nBins) .and. &
         lambdaGrid%edge_(:nBins) < bin_edge(fileNdx) &
@@ -223,7 +222,7 @@ contains
          this%mid_val_ = interpolatedEtfl
       endwhere
 
-    !> test diagnostics
+      ! test diagnostics
       if( index(Filespec(fileNdx)%to_char(),'susim') /= 0 ) then
         call diagout( 'susim.inputGrid.new', inputGrid )
         call diagout( 'susim.inputData.new', inputData )
@@ -247,10 +246,13 @@ contains
       endif
 
       deallocate( inputGrid,inputData )
+      deallocate( theInterpolator )
 
     enddo file_loop
 
-    !> test diagnostics
+    deallocate( lambdaGrid )
+
+    ! test diagnostics
     call diagout( 'etfl.new', this%mid_val_ )
 
   end function constructor

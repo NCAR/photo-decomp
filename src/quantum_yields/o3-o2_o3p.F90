@@ -89,9 +89,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     integer     :: wNdx, vertNdx
     real(dk)    :: kt, q1, q2, T300, lambda
     real(dk)    :: qfac1, qfac2
-    type(string_t)                :: Handle
-    class(grid_t), pointer :: lambdaGrid, zGrid
-    class(profile_t), pointer :: Temperature
+    type(string_t)            :: Handle
+    class(grid_t),    pointer :: lambdaGrid => null( )
+    class(grid_t),    pointer :: zGrid => null( )
+    class(profile_t), pointer :: Temperature => null( )
 
     Handle = 'Photolysis, wavelength'
     lambdaGrid => grid_warehouse%get_grid( Handle )
@@ -133,6 +134,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     end associate
 
     quantum_yield = transpose( rONE - quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( Temperature )
 
   end function run
 

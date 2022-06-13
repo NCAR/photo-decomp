@@ -1,7 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-! solar zenith angle from time type
+!> Solar zenith angle from time type
 module tuvx_profile_solar_zenith_angle
 
   use musica_constants,   only : &
@@ -30,7 +30,7 @@ contains
 
   !> Initialize solar zenith angle profile from time
   function constructor( profile_config, grid_warehouse ) result( this )
-      
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use tuvx_grid,  only : grid_t
@@ -62,7 +62,7 @@ contains
 
     allocate( this%edge_val_(0) )
 
-    !> Map solar zenith angle as function of time
+    ! Map solar zenith angle as function of time
     call profile_config%get( 'Year', Year, Iam, default=2002 )
     call profile_config%get( 'Month', Month, Iam, default=3 )
     call profile_config%get( 'Day', Day, Iam, default=21 )
@@ -86,22 +86,25 @@ contains
     this%delta_val_ = this%edge_val_(2_ik:this%ncells_+1_ik) - &
       this%edge_val_(1_ik:this%ncells_)
 
+    deallocate( timeGrid )
+
   end function constructor
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine finalize( this )
 
-      type(sza_from_time_t), intent(inout) :: this
+    type(sza_from_time_t), intent(inout) :: this
 
-      if( allocated( this%edge_val_ ) ) then
-        deallocate( this%edge_val_ )
-      endif
-      if( allocated( this%mid_val_ ) ) then
-        deallocate( this%mid_val_ )
-      endif
-      if( allocated( this%delta_val_ ) ) then
-        deallocate( this%delta_val_ )
-      endif
+    if( allocated( this%edge_val_ ) ) then
+      deallocate( this%edge_val_ )
+    endif
+    if( allocated( this%mid_val_ ) ) then
+      deallocate( this%mid_val_ )
+    endif
+    if( allocated( this%delta_val_ ) ) then
+      deallocate( this%delta_val_ )
+    endif
 
   end subroutine finalize
 

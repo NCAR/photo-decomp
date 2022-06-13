@@ -52,7 +52,7 @@ module tuvx_delta_eddington
    type(radiator_warehouse_t), intent(inout) :: radiatorWareHouse
    type(spherical_geom_t), intent(inout)     :: sphericalGeom
 
-   class(radField_t), allocatable            :: radField
+   class(radField_t), pointer                :: radField
 
    !> Local variables
    character(len=*), parameter :: Iam = 'upDateRadField: '
@@ -96,12 +96,12 @@ module tuvx_delta_eddington
     real(dk), allocatable                :: dabs_accum(:,:)
     real(dk), allocatable                :: asym_accum(:,:)
     type(string_t)                       :: Handle
-    type(warehouse_iterator_t), pointer  :: iter
-    class(base_radiator_t), allocatable   :: aRadiator
+    type(warehouse_iterator_t), pointer  :: iter => null( )
+    class(base_radiator_t), allocatable  :: aRadiator
     type(radiator_state_t)               :: atmRadiatorState
-    class(grid_t), pointer        :: zGrid
-    class(grid_t), pointer        :: lambdaGrid
-    class(profile_t), pointer        :: surfaceAlbedo
+    class(grid_t),    pointer            :: zGrid => null( )
+    class(grid_t),    pointer            :: lambdaGrid => null( )
+    class(profile_t), pointer            :: surfaceAlbedo => null( )
 
     write(*,*) ' '
     write(*,*) Iam // 'entering'
@@ -428,6 +428,10 @@ wavelength_loop: &
    enddo wavelength_loop
 
    end associate
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( surfaceAlbedo )
 
     write(*,*) ' '
     write(*,*) Iam // 'exiting'

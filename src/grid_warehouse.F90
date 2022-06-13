@@ -78,7 +78,7 @@ contains
 !-----------------------------------------------------------------------------
 !> Build grid objects
 !-----------------------------------------------------------------------------
-      grid_obj%ptr_ => grid_builder( grid_config )
+      grid_obj%val_ => grid_builder( grid_config )
       new_obj%grid_objs_ = [new_obj%grid_objs_,grid_obj]
     end do
 
@@ -110,14 +110,14 @@ contains
 
     found = .false._lk
     do ndx = 1,size(this%grid_objs_)
-      if( grid_handle .eq. this%grid_objs_(ndx)%ptr_%handle_ ) then
+      if( grid_handle .eq. this%grid_objs_(ndx)%val_%handle_ ) then
         found = .true._lk
         exit
       endif
     end do
 
     if( found ) then
-      allocate( grid_ptr, source = this%grid_objs_(ndx)%ptr_ )
+      allocate( grid_ptr, source = this%grid_objs_(ndx)%val_ )
     else
       call die_msg( 460768214, "Invalid grid handle: '"// &
         grid_handle%to_char()//"'" )
@@ -135,10 +135,14 @@ contains
     !> Arguments
     type(grid_warehouse_t), intent(inout) :: this
 
-    !> Local variables
     integer(kind=ik) :: ndx
 
     if( allocated( this%grid_objs_ ) ) then
+      do ndx = 1, size( this%grid_objs_ )
+        if( associated( this%grid_objs_( ndx )%val_ ) ) then
+          deallocate( this%grid_objs_( ndx )%val_ )
+        end if
+      end do
       deallocate( this%grid_objs_ )
     endif
 

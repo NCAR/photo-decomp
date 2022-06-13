@@ -1,6 +1,6 @@
-**/.dSYM
-**/.DS_Store
-**/.swp
+**/*.dSYM
+**/*.DS_Store
+**/*.swp
 build/
 CMakeCache.txt
 CMakeFiles/

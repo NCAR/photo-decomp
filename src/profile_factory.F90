@@ -34,7 +34,6 @@ contains
     use tuvx_profile_surface_albedo,     only : surface_albedo_t
     use tuvx_profile_extraterrestrial_flux, only : extraterrestrial_flux_t
 
-    !> Arguments
     !> Grid configuration data
     type(config_t), intent(inout)         :: config
     type(grid_warehouse_t), intent(inout) :: grid_warehouse
@@ -42,7 +41,7 @@ contains
     !> New profile object
     class(profile_t), pointer :: new_profile_t
 
-    !> Local variables
+    ! Local variables
     character(len=*), parameter :: Iam = 'profile builder: '
     type(string_t) :: profile_type
 
@@ -69,7 +68,7 @@ contains
       case( 'Earth sun distance' )
         new_profile_t => earth_sun_distance_t( config, grid_warehouse )
       case default
-        call die_msg( 460768215, "Invalid profile type: '" // & 
+        call die_msg( 460768215, "Invalid profile type: '" // &
           profile_type%to_char()//"'" )
     end select
 

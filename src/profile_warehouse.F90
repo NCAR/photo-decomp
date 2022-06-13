@@ -7,7 +7,7 @@
 !> The profile warehouse type and related functions
 module tuvx_profile_warehouse
 
-  use tuvx_profile, only : grid_ptr
+  use tuvx_profile, only : profile_ptr
 
   implicit none
 
@@ -18,7 +18,7 @@ module tuvx_profile_warehouse
   type :: profile_warehouse_t
     private
     !> profile objects
-    type(grid_ptr), allocatable :: profile_objs_(:)
+    type(profile_ptr), allocatable :: profile_objs_(:)
   contains
     !> get a copy of a profile object
     procedure :: get_profile
@@ -36,8 +36,8 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> profile warehouse constructor
-  function constructor( config, grid_warehouse) & 
-    result( profile_warehouse_obj )
+  function constructor( config, grid_warehouse) &
+    result( profile_warehouse )
 
     use musica_config,        only : config_t
     use musica_iterator,      only : iterator_t
@@ -45,44 +45,40 @@ contains
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_profile_factory, only : profile_builder
 
-    !> Arguments
     !> profile configuration data
-    type(config_t), intent(inout) :: config
-    type(grid_warehouse_t), intent(inout) :: grid_warehouse
-
+    type(config_t),             intent(inout) :: config
+    type(grid_warehouse_t),     intent(inout) :: grid_warehouse
     !> New profile_warehouse_obj
-    class(profile_warehouse_t), pointer :: profile_warehouse_obj
+    class(profile_warehouse_t), pointer       :: profile_warehouse
 
-    !> local variables
+    ! local variables
     type(config_t)              :: profile_set, profile_config
     class(iterator_t), pointer  :: iter
-    type(grid_ptr)              :: profile_obj
+    type(profile_ptr)           :: profile_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
     character(len=*), parameter :: Iam = "profile warehouse constructor: "
     class(profile_warehouse_t), pointer :: profile_warehouse_ptr
 
-    allocate( profile_warehouse_obj )
+    allocate( profile_warehouse )
 
-    associate(new_obj=>profile_warehouse_obj)
+    associate( new_obj => profile_warehouse )
 
     allocate( new_obj%profile_objs_(0) )
 
     call config%get( 'Profiles', profile_set, Iam )
-    iter => profile_set%get_iterator()
-!-----------------------------------------------------------------------------
-!> iterate over profiles
-!-----------------------------------------------------------------------------
-    do while( iter%next() )
-      keychar = profile_set%key(iter)
-      aswkey  = keychar 
+    iter => profile_set%get_iterator( )
+
+    ! iterate over profiles
+    do while( iter%next( ) )
+      keychar = profile_set%key( iter )
+      aswkey  = keychar
       call profile_set%get( iter, profile_config, Iam )
       call profile_config%add( 'Handle', aswkey, Iam )
-!-----------------------------------------------------------------------------
-!> Build profile objects
-!-----------------------------------------------------------------------------
-      profile_obj%ptr_ => profile_builder( profile_config, grid_warehouse)
-      new_obj%profile_objs_ = [new_obj%profile_objs_,profile_obj]
+
+      ! Build profile objects
+      profile_obj%val_ => profile_builder( profile_config, grid_warehouse )
+      new_obj%profile_objs_ = [ new_obj%profile_objs_, profile_obj ]
     end do
 
     deallocate( iter )
@@ -99,33 +95,31 @@ contains
     use musica_string,     only : string_t
     use musica_constants,  only : lk => musica_lk, ik => musica_ik
     use musica_assert,     only : die_msg
-    use tuvx_profile, only : profile_t
+    use tuvx_profile,      only : profile_t
 
-    !> Arguments
     class(profile_warehouse_t), intent(inout) :: this
-    type(string_t), intent(in)                     :: profile_handle
+    type(string_t),             intent(in)    :: profile_handle
+    class(profile_t),           pointer       :: profile_ptr
 
-    class(profile_t), pointer          :: profile_ptr
-
-    !> Local variables
+    ! Local variables
     character(len=*), parameter :: Iam = 'profile warehouse get_profile: '
     integer(ik) :: ndx
     logical(lk) :: found
 
     found = .false._lk
-    do ndx = 1,size(this%profile_objs_)
-      if( profile_handle .eq. this%profile_objs_(ndx)%ptr_%handle_ ) then
+    do ndx = 1, size( this%profile_objs_ )
+      if( profile_handle .eq. this%profile_objs_(ndx)%val_%handle_ ) then
         found = .true._lk
         exit
       endif
     end do
 
     if( .not. found ) then
-      call die_msg( 460768214, "Invalid profile handle: '"// & 
+      call die_msg( 460768214, "Invalid profile handle: '"// &
         profile_handle%to_char()//"'" )
     endif
 
-    allocate( profile_ptr, source = this%profile_objs_(ndx)%ptr_ )
+    allocate( profile_ptr, source = this%profile_objs_(ndx)%val_ )
 
   end function get_profile
 
@@ -136,14 +130,18 @@ contains
 
     use musica_constants, only : ik => musica_ik
 
-    !> Arguments
     type(profile_warehouse_t), intent(inout) :: this
 
-    !> Local variables
+    ! Local variables
     integer(kind=ik) :: ndx
     character(len=*), parameter :: Iam = 'profile warehouse finalize: '
 
     if( allocated( this%profile_objs_ ) ) then
+      do ndx = 1, size( this%profile_objs_ )
+        if( associated( this%profile_objs_( ndx )%val_ ) ) then
+          deallocate( this%profile_objs_( ndx )%val_ )
+        end if
+      end do
       deallocate( this%profile_objs_ )
     endif
 

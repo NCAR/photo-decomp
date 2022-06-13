@@ -63,12 +63,11 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     character(len=:), allocatable :: addpntKey
-    type(netcdf_t), allocatable :: netcdf_obj
-    type(string_t), allocatable :: netcdfFiles(:)
-    type(config_t)              :: tmp_config
-    type(string_t)              :: addpntVal
-    type(string_t)              :: Handle
-    class(grid_t), pointer :: lambdaGrid
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t),   allocatable :: netcdfFiles(:)
+    type(config_t)                :: tmp_config, extrap_config
+    type(string_t)                :: Handle
+    class(grid_t),    pointer     :: lambdaGrid => null( )
     type(string_t) :: required_keys(2), optional_keys(3)
 
     required_keys(1) = "type"
@@ -121,11 +120,11 @@ file_loop: &
             elseif( parmNdx == 2 ) then
               tmp_config = config
               addpntKey = 'lower extrapolation'
-              addpntVal = 'boundary'
-              call tmp_config%add( addpntKey, addpntVal, Iam )
+              call extrap_config%empty( )
+              call extrap_config%add( 'type', 'boundary', Iam )
+              call tmp_config%add( addpntKey, extrap_config, Iam )
               addpntKey = 'upper extrapolation'
-              addpntVal = 'boundary'
-              call tmp_config%add( addpntKey, addpntVal, Iam )
+              call tmp_config%add( addpntKey, extrap_config, Iam )
               call this%add_points( tmp_config, data_lambda, data_parameter )
             endif
             call inter2( xto = lambdaGrid%edge_,                              &
@@ -144,6 +143,8 @@ file_loop: &
         deallocate( netcdf_obj )
       enddo file_loop
     endif has_netcdf_file
+
+    deallocate( lambdaGrid )
 
   end function constructor
 
@@ -180,11 +181,11 @@ file_loop: &
         'hno3->oh+no2 cross section calculate'
     real(dk), parameter         :: T0 = 298._dk
     integer           :: vertNdx
-    real(dk), allocatable :: Temp(:)
+    real(dk),         allocatable :: Temp(:)
     type(string_t)                :: Handle
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
-    class(profile_t), pointer :: temperature
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(profile_t), pointer     :: temperature => null( )
 
     write(*,*) Iam,'entering'
 
@@ -205,6 +206,10 @@ file_loop: &
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( temperature )
 
   end function run
 

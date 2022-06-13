@@ -154,7 +154,7 @@ contains
     !> Lyman Alpha, SRB
     type(la_srb_t), intent(inout)                  :: la_srb
 
-    class(radField_t), allocatable                 :: radiationFld
+    class(radField_t), pointer, intent(out)        :: radiationFld
 
     !> Local variables
     character(len=*), parameter          :: Iam = 'radXfer component upDate: '
@@ -164,9 +164,9 @@ contains
     real(dk)                             :: zenithAngle
     real(dk), allocatable                :: airVcol(:), airScol(:)
     type(string_t)                       :: Handle
-    type(warehouse_iterator_t), pointer  :: iter
-    class(base_radiator_t), pointer       :: aRadiator => null()
-    class(profile_t), pointer        :: airProfile => null()
+    type(warehouse_iterator_t), pointer  :: iter => null( )
+    class(base_radiator_t),     pointer  :: aRadiator => null()
+    class(profile_t),           pointer  :: airProfile => null()
 
     write(*,*) ' '
     write(*,*) Iam // 'entering'
@@ -191,15 +191,16 @@ contains
       call SphericalGeom%airmas( airProfile%exo_layer_dens_, airVcol, airScol )
       call la_srb%calculate_OD( gridWareHouse, ProfileWareHouse, airVcol, airScol, aRadiator%state_%layer_OD_ )
       deallocate( airVcol,airScol )
+      deallocate( airProfile )
     endif
 
     nlyr = size( aRadiator%state_%layer_OD_,dim=1 )
 
     zenithAngle = SphericalGeom%SolarZenithAngle_ 
     associate( theSolver => this%radXferSolver_ )
-    radiationFld = theSolver%upDateRadField( &
-                    zenithAngle, this%nStreams_, nlyr, SphericalGeom, &
-                    GridWareHouse, ProfileWareHouse, this%RadiatorWareHouse_ )
+    radiationFld => theSolver%upDateRadField( &
+                     zenithAngle, this%nStreams_, nlyr, SphericalGeom, &
+                     GridWareHouse, ProfileWareHouse, this%RadiatorWareHouse_ )
     end associate
 
     write(*,*) ' '

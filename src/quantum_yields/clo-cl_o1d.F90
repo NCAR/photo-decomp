@@ -75,10 +75,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     character(len=*), parameter :: Iam = 'clo+hv->cl+o1d calculate'
     real(dk), parameter ::    rZERO = 0.0_dk
     real(dk), parameter ::    rONE  = 1.0_dk
-    integer                       :: nzdim, vertNdx
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    type(string_t)                :: Handle
+    integer                :: nzdim, vertNdx
+    class(grid_t), pointer :: zGrid => null( )
+    class(grid_t), pointer :: lambdaGrid => null( )
+    type(string_t)         :: Handle
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -99,6 +99,9 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     enddo
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function run
 

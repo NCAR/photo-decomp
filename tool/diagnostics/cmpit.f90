@@ -35,7 +35,7 @@
    nOpts = command_argument_count()
    if( nOpts < 2 ) then
      write(*,*) 'cmpit: must have two files to compare'
-     stop 'Use error'
+     stop 3
    endif
 
    allocate( command_tokens(nOpts), command_keys(nOpts), command_vals(nOpts) )
@@ -46,7 +46,7 @@ option_loop: &
      delimNdx = index( trim(command_tokens(m)),'=' )
      if( delimNdx == 0 ) then
        write(*,*) 'cmpit: command option must be key=val form'
-       stop 'Use error'
+       stop 3
      endif
      command_keys(m) = command_tokens(m)(:delimNdx-1)
      command_vals(m) = command_tokens(m)(delimNdx+1:)
@@ -69,15 +69,15 @@ option_loop: &
          endif
          if( any(arrayDims < 1) .or. any(arrayDims > 9999) ) then
            write(*,*) 'cmpit: array dimensions must be > 0 and < 10000'
-           stop 'Use error'
+           stop 3
          endif
          if( nArrays < 1 .or. nArrays > 999 ) then
            write(*,*) 'cmpit: 0 < number arrys < 999'
-           stop 'Use error'
+           stop 3
          endif
        case default
          write(*,*) 'cmpit: command option keys must be file1,file2,dims'
-         stop 'Use error'
+         stop 3
      end select
    enddo option_loop
 
@@ -97,25 +97,23 @@ option_loop: &
    allocate( masklasrb(arrayDims(1),arrayDims(2)) )
    allocate( combomask(arrayDims(1),arrayDims(2)) )
 
-!  stop 'DEV'
-
    file_loop: do filndx = 1,2
 
      open(unit=33,file=trim(filespec(filndx)),form='unformatted',iostat=ios)
      if( ios /= 0 ) then
        write(*,*) 'cmpit: can not locate ',trim(filespec(filndx))
-       stop 'File error'
+       stop 3
      endif
      do arrNdx = 1,nArrays
        read(unit=33,iostat=ios) header(arrNdx,filndx)
        if( ios /= 0 ) then
          write(*,*) 'cmpit: can not read ',trim(filespec(filndx))
-         stop 'Read error'
+         stop 3
        endif
        read(unit=33,iostat=ios) array(:,:,filndx,arrNdx)
        if( ios /= 0 ) then
          write(*,*) 'cmpit: can not read ',trim(filespec(filndx))
-         stop 'Read error'
+         stop 3
        endif
      enddo
      close(unit=33)
@@ -126,8 +124,6 @@ option_loop: &
    write(*,'(1p10g15.7)') array(:,:,1,1)
    write(*,*) 'cmpit: input array #2'
    write(*,'(1p10g15.7)') array(:,:,2,1)
-
-!  stop 'DEV'
 
    array_loop: do arrNdx = 1,nArrays
      write(*,*) '--------------------------------------------------'

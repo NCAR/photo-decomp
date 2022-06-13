@@ -10,7 +10,7 @@
          "cross section": {
             "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
             "cross section type": "base cross section",
-            "lower extrapolation": "boundary"
+            "lower extrapolation": { "type": "boundary" }
          }
       },
       "NO2": {

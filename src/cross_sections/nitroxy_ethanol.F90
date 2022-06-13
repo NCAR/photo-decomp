@@ -97,10 +97,10 @@ contains
 
     integer            :: nzdim
     integer            :: vertNdx
-    real(dk), allocatable  :: wrkCrossSection(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    type(string_t) :: Handle
+    real(dk),      allocatable :: wrkCrossSection(:)
+    class(grid_t), pointer     :: zGrid => null( )
+    class(grid_t), pointer     :: lambdaGrid => null( )
+    type(string_t)             :: Handle
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -129,6 +129,9 @@ contains
     enddo
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function run
 

@@ -75,11 +75,11 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     real(dk), parameter ::    rZERO = 0.0_dk
     real(dk), parameter ::    rONE  = 1.0_dk
 
-    integer               :: nzdim, vertNdx
-    real(dk), allocatable :: modelTemp(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
+    integer                       :: nzdim, vertNdx
+    real(dk),         allocatable :: modelTemp(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
@@ -101,6 +101,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     enddo
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

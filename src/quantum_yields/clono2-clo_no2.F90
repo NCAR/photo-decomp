@@ -75,11 +75,11 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     real(dk), parameter :: rZERO = 0.0_dk
     real(dk), parameter :: rONE  = 1.0_dk
 
-    integer     :: vertNdx, lambdaNdx
-    real(dk)    :: lambda, qyield
-    real(dk), allocatable :: wrkQuantumYield(:)
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
+    integer                    :: vertNdx, lambdaNdx
+    real(dk)                   :: lambda, qyield
+    real(dk),      allocatable :: wrkQuantumYield(:)
+    class(grid_t), pointer     :: lambdaGrid => null( )
+    class(grid_t), pointer     :: zGrid => null( )
     type(string_t) :: Handle
 
     !> Get model wavelength grid
@@ -107,6 +107,9 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     enddo
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function run
 

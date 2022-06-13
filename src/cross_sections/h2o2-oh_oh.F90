@@ -114,8 +114,9 @@ contains
     integer    :: vertNdx, wNdx
     real(dk)       :: lambda, sumA, sumB, t, chi, xs
     type(string_t) :: Handle
-    class(grid_t), pointer     :: zGrid, lambdaGrid
-    class(profile_t), pointer  :: temperature
+    class(grid_t),    pointer :: zGrid => null( )
+    class(grid_t),    pointer :: lambdaGrid => null( )
+    class(profile_t), pointer :: temperature => null( )
 
     write(*,*) Iam,'entering'
 
@@ -153,6 +154,10 @@ contains
     end associate
 
     cross_section = transpose( cross_section )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( temperature )
 
   end function run
 

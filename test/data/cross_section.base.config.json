@@ -1,0 +1,22 @@
+{
+  "cross sections" : [
+    {
+      "name": "no extrapolation",
+      "type": "base",
+      "netcdf files": [ "test/data/cross_section.base.nc" ]
+    },
+    {
+      "name": "fix-zero",
+      "type": "base",
+      "netcdf files": [ "test/data/cross_section.base.nc" ],
+      "lower extrapolation": { "type": "constant", "value" : 12.5 }
+    },
+    {
+      "name": "extend-fix",
+      "type": "base",
+      "netcdf files": [ "test/data/cross_section.base.nc" ],
+      "lower extrapolation": { "type": "boundary" },
+      "upper extrapolation": { "type": "constant", "value": 32.3 }
+    }
+  ]
+}

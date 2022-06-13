@@ -78,13 +78,13 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     real(dk), parameter ::    largest=1.E+36_dk
     real(dk), parameter ::    pzero = 10._dk/largest
 
-    integer               :: nzdim, vertNdx
-    real(dk)              :: air_dens_fac
-    real(dk), allocatable :: quantum_yield_wrk(:)
-    real(dk), allocatable         :: modelDens(:)
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlDensity
+    integer                       :: nzdim, vertNdx
+    real(dk)                      :: air_dens_fac
+    real(dk),         allocatable :: quantum_yield_wrk(:)
+    real(dk),         allocatable :: modelDens(:)
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlDensity => null( )
     type(string_t)                :: Handle
 
     Handle = 'Vertical Z'
@@ -117,6 +117,10 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     enddo
 
     quantum_yield = transpose( quantum_yield )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlDensity )
 
   end function run
 

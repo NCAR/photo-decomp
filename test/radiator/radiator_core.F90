@@ -98,8 +98,8 @@ contains
   class(grid_t), pointer       :: zGrid, lambdaGrid
   class(profile_t), pointer       :: AirProfile, TemperatureProfile
   class(cross_section_t), pointer :: RaylieghCrossSection
-  class(base_radiator_t), allocatable  :: RaylieghRadiator
-  class(base_radiator_t), allocatable  :: aRadiator
+  class(base_radiator_t), pointer     :: RaylieghRadiator
+  class(base_radiator_t), pointer     :: aRadiator
   type(warehouse_iterator_t), pointer :: iter
   type(string_t)                      :: Handle
   type(radiator_state_t), allocatable :: RadiatorState
@@ -144,6 +144,7 @@ contains
     aCrossSection = RaylieghCrossSection%calculate( this%theGridWareHouse_, this%theProfileWareHouse_ )
     call assert( 412238776, all( aCrossSection >= 0._dk ) )
     call assert( 412238776, all( aCrossSection < 1._dk ) )
+    deallocate( RaylieghCrossSection )
 
     write(*,*) ' '
     write(*,*) Iam // 'aCrossSection is (',size(aCrossSection,dim=1),' x ',size(aCrossSection,dim=2),')'
@@ -158,7 +159,7 @@ contains
 
     !> Get copy of the rayliegh radiator
     Handle = 'air'
-    RaylieghRadiator = this%theRadiatorWarehouse_%get_radiator( Handle )
+    RaylieghRadiator => this%theRadiatorWarehouse_%get_radiator( Handle )
     call RaylieghRadiator%upDateState( this%theGridWareHouse_, this%theProfileWareHouse_, &
                                        this%theradXferXsectWareHouse_ )
     call assert( 312238775, all( RaylieghRadiator%state_%layer_OD_ >= 0._dk ) )
@@ -182,10 +183,15 @@ contains
     !> Test warehouse iterator
     iter => this%theRadiatorWareHouse_%get_iterator()
     do while( iter%next() )
-      aRadiator = this%theRadiatorWareHouse_%get_radiator( iter )
+      aRadiator => this%theRadiatorWareHouse_%get_radiator( iter )
       write(*,*) Iam // 'radiator = ',aRadiator%handle_%to_char()
     enddo
+    deallocate(iter)
 
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( AirProfile )
+    deallocate( TemperatureProfile )
     write(*,*) Iam // 'exiting'
 
   end subroutine run

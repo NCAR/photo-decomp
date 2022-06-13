@@ -71,9 +71,9 @@ function constructor( config, grid_warehouse, profile_warehouse ) result( this )
     logical     :: found, monopos
     character(len=:), allocatable :: msg
     type(string_t)                :: Handle
-    type(netcdf_t), allocatable   :: netcdf_obj
-    type(string_t), allocatable   :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t),   allocatable :: netcdfFiles(:)
+    class(grid_t),    pointer     :: lambdaGrid => null( )
 
     allocate( this )
 
@@ -171,6 +171,8 @@ file_loop: &
       call die_msg( 553399160, msg )
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -196,11 +198,11 @@ file_loop: &
     integer     :: nTemp
     integer     :: fileNdx, tNdx, vertNdx
     real(dk)    :: Tadj, Tstar
-    real(dk), allocatable :: WrkQuantumYield(:,:)
+    real(dk),         allocatable :: WrkQuantumYield(:,:)
     type(string_t)                :: Handle
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer :: mdlTemperature
+    class(grid_t),    pointer     :: zGrid => null( )
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(profile_t), pointer     :: mdlTemperature => null( )
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -234,6 +236,10 @@ file_loop: &
     enddo
 
     quantum_yield = transpose( max( WrkQuantumYield, 0.0_dk ) )
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( mdlTemperature )
 
   end function run
 

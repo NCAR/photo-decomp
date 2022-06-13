@@ -21,7 +21,7 @@ program test_Profile
 ! if( command_argument_count( ) /= 1 ) call fail_run( )
 ! call get_command_argument( command_argument_count( ), argument )
 ! argument = 'data/Profile.tst.org.config.json'
-  argument = 'data/Profile.tst.config.json'
+  argument = 'test/data/Profile.tst.config.json'
 
   configFileSpec = argument
   call test_Profile_t( configFileSpec )
@@ -120,6 +120,12 @@ contains
 !   aProfile => theProfileWarehouse%get_Profile( Handle )
 !   write(*,*) Iam // 'Handle = ',aProfile%handle_
 
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
+    deallocate( AirProfile )
+    deallocate( TemperatureProfile )
+    deallocate( theGridWarehouse )
+    deallocate( theProfileWarehouse )
     write(*,*) Iam // 'leaving'
 
   end subroutine test_Profile_t
@@ -130,7 +136,7 @@ contains
   subroutine fail_run( )
 
     write(*,*) "Usage: ./Profile_test configuration_file.json"
-    stop 'Improper arguments'
+    stop 3
 
   end subroutine fail_run
 

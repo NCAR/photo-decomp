@@ -1,7 +1,7 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!from csv file type
+!> O3 profile type
 module tuvx_profile_o3
 
   use musica_constants,  only : &
@@ -28,7 +28,7 @@ contains
 
   !> Initialize grid
   function constructor( profile_config, grid_warehouse ) result( this )
-      
+
     use musica_config, only : config_t
     use musica_string, only : string_t
     use musica_assert, only : die_msg
@@ -36,12 +36,11 @@ contains
     use tuvx_grid_warehouse,  only : grid_warehouse_t
     use tuvx_interpolate
 
-    !> arguments
     type(config_t), intent(inout)         :: profile_config
     type(o3_from_csv_file_t), pointer     :: this
     type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
-    !> local variables
+    ! local variables
     integer(ik), parameter :: iTWO = 2_ik
     real(dk),    parameter :: rONE = 1._dk
     integer(ik), parameter :: Ok = 0_ik
@@ -49,7 +48,7 @@ contains
     real(dk), parameter    :: km2cm = 1.e5_dk
     character(len=*), parameter :: Iam = &
       'O3_from_csv_file profile initialize: '
- 
+
     integer(ik) :: istat, m
     real(dk)    :: zd, Value, zTop
     real(dk)    :: rfact
@@ -65,7 +64,7 @@ contains
 
     allocate( this )
 
-    !> Get the configuration settings
+    ! Get the configuration settings
     call profile_config%get( 'Filespec', Filespec, Iam )
     call profile_config%get( 'Handle', this%handle_, Iam, &
       default = 'None' )
@@ -76,7 +75,7 @@ contains
     call profile_config%get( 'Reference column', Scale2DU, Iam, &
       default = 300._dk )
 
-    !> Does input grid file exist?
+    ! Does input grid file exist?
     inquire( file=Filespec%to_char(), exist=found )
     if( .not. found ) then
       call die_msg( 560768215, "File " // Filespec%to_char() // " not found" )
@@ -87,7 +86,7 @@ contains
       call die_msg( 560768231, "Error opening " // Filespec%to_char() )
     endif
 
-    !> Skip the header
+    ! Skip the header
     do
       read(inUnit,'(a)',iostat=istat) InputLine
       if( istat /= Ok ) then
@@ -120,7 +119,7 @@ contains
     zGrid => grid_warehouse%get_grid( Handle )
     this%ncells_ = zGrid%ncells_
 
-    !> Set o3 concentration if data ztop < mdl top
+    ! Set o3 concentration if data ztop < mdl top
     ztop = zGrid%edge_(this%ncells_+iONE)
     if( this%hscale_ /= rZERO ) then
       rfact = exp( -rONE/this%hscale_ )
@@ -137,7 +136,7 @@ contains
       endif
     enddo
 
-    !> assign actual interpolator for this profile
+    ! assign actual interpolator for this profile
     select case( Interpolator%to_char() )
       case( 'interp1' )
         allocate( interp1_t :: theInterpolator )
@@ -163,7 +162,7 @@ contains
      this%edge_val_(iONE:this%ncells_)
 
     this%layer_dens_ = zGrid%delta_ * this%mid_val_ * km2cm
-    
+
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
       this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
 
@@ -188,8 +187,10 @@ contains
           this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
 
       endif
-
     endif
+
+    deallocate( zGrid )
+    deallocate( theInterpolator )
 
   end function constructor
 

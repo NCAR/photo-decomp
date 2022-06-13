@@ -28,7 +28,7 @@ module tuvx_grid
 
   !> Pointer type for building sets of spectral wght objects
   type :: grid_ptr
-    class(grid_t), pointer :: ptr_ => null( )
+    class(grid_t), pointer :: val_ => null( )
   end type grid_ptr
 
 interface
@@ -37,7 +37,7 @@ interface
 
     !> construct the grid
     subroutine base_constructor( this, grid_config )
-      
+
       use musica_config, only : config_t
 
       import grid_t

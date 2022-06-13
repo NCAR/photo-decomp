@@ -60,11 +60,11 @@ contains
     real(dk), allocatable :: data_parameter(:)
     logical :: found
     character(len=:), allocatable :: msg
-    type(netcdf_t), allocatable :: netcdf_obj
-    type(string_t)              :: Handle
-    type(string_t), allocatable :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
-    class(grid_t), pointer :: zGrid
+    type(netcdf_t),   allocatable :: netcdf_obj
+    type(string_t)                :: Handle
+    type(string_t),   allocatable :: netcdfFiles(:)
+    class(grid_t),    pointer     :: lambdaGrid => null( )
+    class(grid_t),    pointer     :: zGrid => null( )
     type(string_t) :: required_keys(2), optional_keys(1)
 
     required_keys(1) = "type"
@@ -130,6 +130,9 @@ file_loop: &
         deallocate( netcdf_obj )
       enddo file_loop
     endif has_netcdf_file
+
+    deallocate( zGrid )
+    deallocate( lambdaGrid )
 
   end function constructor
 

@@ -72,7 +72,7 @@ contains
     type(netcdf_t), allocatable   :: netcdf_obj
     type(string_t)                :: Handle
     type(string_t), allocatable   :: netcdfFiles(:)
-    class(grid_t), pointer :: lambdaGrid
+    class(grid_t),  pointer       :: lambdaGrid => null( )
 
     ! Get model wavelength grid
     Handle = 'Photolysis, wavelength'
@@ -131,6 +131,8 @@ file_loop: &
       endif
     endif has_netcdf_file
 
+    deallocate( lambdaGrid )
+
   end subroutine base_constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -152,10 +154,10 @@ file_loop: &
 
     ! Local variables
     character(len=*), parameter :: Iam = 'base quantum yield calculate'
-    integer                 :: vertNdx
-    class(grid_t), pointer :: zGrid
+    integer                     :: vertNdx
+    class(grid_t),  pointer     :: zGrid => null( )
     type(string_t)              :: Handle
-    real(dk), allocatable       :: wrkQuantumYield(:,:)
+    real(dk),       allocatable :: wrkQuantumYield(:,:)
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -171,6 +173,8 @@ file_loop: &
 
     quantum_yield = transpose( wrkQuantumYield )
 
+    deallocate( zGrid )
+
   end function run
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -179,6 +183,7 @@ file_loop: &
   !! options
   subroutine add_points( this, config, data_lambda, data_parameter )
 
+    use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use tuvx_util,                     only : addpnt
@@ -197,37 +202,56 @@ file_loop: &
     real(dk) :: lowerLambda, upperLambda
     real(dk) :: addpnt_val
     type(string_t)  :: addpnt_type
+    type(config_t)  :: extrap_config
     logical         :: found
     character(len=:), allocatable :: number
+    type(string_t) :: required_keys(1), optional_keys(1)
 
-    ! add endpoints to data arrays; first the lower bound
+    required_keys(1) = "type"
+    optional_keys(1) = "value"
+
     nRows = size( data_lambda )
     lowerLambda = data_lambda(1) ; upperLambda = data_lambda( nRows )
-    call config%get( 'lower extrapolation', addpnt_type, Iam, found = found )
-    if( .not. found ) then
-      addpnt_val = rZERO
-    elseif( addpnt_type == 'boundary' ) then
-      addpnt_val = data_parameter(1)
-    else
-      number = addpnt_type%to_char()
-      read( number, '(g30.20)' ) addpnt_val
-    endif
 
+    ! add endpoints to data arrays; first the lower bound
+    addpnt_val = rZERO
+    call config%get( 'lower extrapolation', extrap_config, Iam, found = found )
+    if( found ) then
+      call assert_msg( 231583250,                                             &
+                       extrap_config%validate( required_keys, optional_keys ),&
+                       "Bad format for extrapolation in base quantum yield." )
+      call extrap_config%get( "type", addpnt_type, Iam )
+      if( addpnt_type == 'boundary' ) then
+        addpnt_val = data_parameter(1)
+      elseif( addpnt_type == 'constant' ) then
+        call extrap_config%get( "value", addpnt_val, Iam )
+      else
+        call die_msg( 163668372,                                              &
+                      "Bad extrapolation type: '"//addpnt_type//"'" )
+      endif
+    endif
     call addpnt( x = data_lambda, y = data_parameter, xnew = rZERO,           &
                  ynew = addpnt_val )
     call addpnt( x = data_lambda, y = data_parameter,                         &
                  xnew = ( rONE - deltax ) * lowerLambda, ynew = addpnt_val )
-    ! add endpoints to data arrays; now the upper bound
-    call config%get( 'upper extrapolation', addpnt_type, Iam, found = found )
-    if( .not. found ) then
-      addpnt_val = rZERO
-    elseif( addpnt_type == 'boundary' ) then
-      addpnt_val = data_parameter( nRows )
-    else
-      number = addpnt_type%to_char()
-      read( number, '(g30.20)' ) addpnt_val
-    endif
 
+    ! add endpoints to data arrays; now the upper bound
+    addpnt_val = rZERO
+    call config%get( 'upper extrapolation', extrap_config, Iam, found = found )
+    if( found ) then
+      call assert_msg( 104376574,                                             &
+                       extrap_config%validate( required_keys, optional_keys ),&
+                       "Bad format for extrapolation in base quantum yield." )
+      call extrap_config%get( "type", addpnt_type, Iam )
+      if( addpnt_type == 'boundary' ) then
+        addpnt_val = data_parameter( nRows )
+      elseif( addpnt_type == 'constant' ) then
+        call extrap_config%get( "value", addpnt_val, Iam )
+      else
+        call die_msg( 216694919,                                              &
+                      "Bad extrapolation type: '"//addpnt_type//"'" )
+      endif
+    endif
     call addpnt( x = data_lambda, y = data_parameter,                         &
                  xnew = ( rONE + deltax ) * upperLambda, ynew = addpnt_val )
     call addpnt( x = data_lambda, y = data_parameter, xnew = 1.e38_dk, &
