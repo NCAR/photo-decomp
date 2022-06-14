@@ -66,15 +66,15 @@ contains
     type(string_t)              :: Handle
     class(iterator_t), pointer  :: iter
     class(profile_t),  pointer  :: aProfile
-    type(string_t)              :: required_keys(1), optional_keys(3)
+    type(string_t)              :: required_keys(3), optional_keys(1)
 
     call core_config%from_file( config_flsp%to_char() )
 
     ! Check json configuration file for basic structure, integrity
     required_keys(1) = "radiative transfer"
-    optional_keys(1) = "grids"
-    optional_keys(2) = "profiles"
-    optional_keys(3) = "photolysis reactions"
+    required_keys(2) = "grids"
+    required_keys(3) = "profiles"
+    optional_keys(1) = "photolysis reactions"
     call assert_msg( 255400232,                                               &
                      core_config%validate( required_keys, optional_keys ),    &
                      "Bad configuration data format for tuv-x core." )
