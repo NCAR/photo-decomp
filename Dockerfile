@@ -5,6 +5,7 @@ RUN dnf -y update \
         gcc-fortran \
         gcc-c++ \
         gcc \
+        gdb \
         netcdf-fortran-devel \
         cmake \
         make \
