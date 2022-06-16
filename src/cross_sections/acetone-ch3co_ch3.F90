@@ -75,7 +75,7 @@ contains
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
 
-    use musica_assert,                 only : die_msg
+    use musica_assert,                 only : die_msg, assert_msg
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : grid_t
@@ -110,7 +110,6 @@ contains
     class(grid_t),    pointer     :: lambdaGrid => null( )
     class(profile_t), pointer     :: mdlTemperature => null( )
     type(string_t)                :: Handle
-    character(len=:), allocatable :: msg
 
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
@@ -134,20 +133,19 @@ contains
     allocate( cross_section( lambdaGrid%ncells_, nzdim ) )
     cross_section = rZERO
 
-    if( size( this%cross_section_parms(1)%array, dim = 2 ) == 4 ) then
-      associate( coefficient => this%cross_section_parms(1)%array )
+    call assert_msg(811958314, &
+      size( this%cross_section_parms(1)%array, dim = 2 ) == 4, &
+      Iam//' array must have 4 parameters')
+
+    associate( coefficient => this%cross_section_parms(1)%array )
       do vertNdx = 1, nzdim
         Tadj = min( 298._dk, max( 235._dk, modelTemp( vertNdx ) ) )
         cross_section(:,vertNdx) = coefficient(:,1)                           &
-                         * ( rONE + Tadj * ( coefficient(:,2)                 &
-                                             + Tadj*(coefficient(:,3)         &
-                                             + Tadj*coefficient(:,4) ) ) )
+                          * ( rONE + Tadj * ( coefficient(:,2)                &
+                                              + Tadj*(coefficient(:,3)        &
+                                              + Tadj*coefficient(:,4) ) ) )
       enddo
-      end associate
-    else
-      write(msg,*) Iam//'array must have 4 parameters'
-      call die_msg( 811958314, msg )
-    endif
+    end associate
 
     cross_section = transpose( cross_section )
 
