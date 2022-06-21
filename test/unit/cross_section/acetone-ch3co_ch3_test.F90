@@ -33,11 +33,15 @@ contains
     type(config_t) :: config, cs_set, cs_config
     class(iterator_t), pointer :: iter
     real(kind=dk), allocatable :: results(:,:)
-    real(kind=dk), allocatable :: input(:), input_grid(:)
-    real(kind=dk) :: input_base(4) =                                          &
-      (/ 5.0_dk, 10.0_dk, 40.0_dk, 50.0_dk /)
-    real(kind=dk) :: input_grid_base(4) =                                     &
-      (/ 101.0_dk, 102.0_dk, 103.0_dk, 104.0_dk /)
+    ! real(dk), dimension(4:6) :: acetone_no_extrap
+    real(dk) :: acetone_no_extrap(:,:)
+
+    acetone_no_extrap = reshape([ &
+      7.0301862E+08,6.5655223E+08,6.1219315E+08,5.6989122E+08,5.2959639E+08,4.9126447E+08, &
+      1.1707670E+09,1.0933860E+09,1.0195143E+09,9.4906831E+08,8.8196471E+08,8.1812988E+08, &
+      1.5530895E+09,1.4504406E+09,1.3524467E+09,1.2589971E+09,1.1699813E+09,1.0853017E+09, &
+      9.3653653E+08,8.7463863E+08,8.1554773E+08,7.5919704E+08,7.0551989E+08,6.5445740E+08],&
+      (/ 4, 6 /))
 
     ! load test grids
     call config%from_file( "test/data/grid.simple.config.json" )
@@ -57,44 +61,36 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    write(*, *) 'acetone results'
-    write(*,'(1p10g15.7)') results
-    write(*, *) ''
-    input = input_base
-    input_grid = input_grid_base
-    call add_points( input, input_grid, 0.0_dk, 0.0_dk )
-    call check_values( results, input, input_grid, 6 )
-    deallocate( input )
-    deallocate( input_grid )
+    call check_values( results, acetone_no_extrap )
     deallocate( cross_section )
 
-    ! load and test cross section w/ fixed lower extrapolation and no upper
-    ! extrapolation
-    call assert( 102622205, iter%next( ) )
-    call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
-    results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
-    input = input_base
-    input_grid = input_grid_base
-    call add_points( input, input_grid, 12.5_dk, 0.0_dk )
-    call check_values( results, input, input_grid, 5 )
-    deallocate( input )
-    deallocate( input_grid )
-    deallocate( cross_section )
+    ! ! load and test cross section w/ fixed lower extrapolation and no upper
+    ! ! extrapolation
+    ! call assert( 102622205, iter%next( ) )
+    ! call cs_set%get( iter, cs_config, Iam )
+    ! cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
+    ! results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
+    ! input = input_base
+    ! input_grid = input_grid_base
+    ! call add_points( input, input_grid, 12.5_dk, 0.0_dk )
+    ! call check_values( results, acetone_no_extrap )
+    ! deallocate( input )
+    ! deallocate( input_grid )
+    ! deallocate( cross_section )
 
-    ! load and test cross section w/ extrpolation from lower boundary and
-    ! fixed upper extrpolation
-    call assert( 101168966, iter%next( ) )
-    call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
-    results = cross_section%calculate( grids, profiles, at_mid_point = .false. )
-    input = input_base
-    input_grid = input_grid_base
-    call add_points( input, input_grid, 5.0_dk, 32.3_dk )
-    call check_values( results, input, input_grid, 6 )
-    deallocate( input )
-    deallocate( input_grid )
-    deallocate( cross_section )
+    ! ! load and test cross section w/ extrpolation from lower boundary and
+    ! ! fixed upper extrpolation
+    ! call assert( 101168966, iter%next( ) )
+    ! call cs_set%get( iter, cs_config, Iam )
+    ! cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
+    ! results = cross_section%calculate( grids, profiles, at_mid_point = .false. )
+    ! input = input_base
+    ! input_grid = input_grid_base
+    ! call add_points( input, input_grid, 5.0_dk, 32.3_dk )
+    ! call check_values( results, input, input_grid, 6 )
+    ! deallocate( input )
+    ! deallocate( input_grid )
+    ! deallocate( cross_section )
 
     ! clean up
     deallocate( iter )
@@ -131,40 +127,29 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Checks results against expectations
-  subroutine check_values( results, input, input_grid, n_levels )
+  subroutine check_values( results, expected_results )
 
     use musica_assert,                 only : assert, almost_equal
     use musica_constants,              only : dk => musica_dk
     use tuvx_util,                     only : inter2
 
     real(kind=dk), intent(in) :: results(:,:)
-    real(kind=dk), intent(in) :: input(:)
-    real(kind=dk), intent(in) :: input_grid(:)
-    integer,       intent(in) :: n_levels
+    real(kind=dk), intent(in) :: expected_results(:,:)
 
     integer :: i_level, i_wavelength
-    real(kind=dk) :: output_grid(5) =                                         &
-      (/ 100.0_dk, 101.5_dk, 102.0_dk, 103.0_dk, 104.5_dk /)
-    integer :: i_error
-    real(kind=dk) :: output(4)
 
-    call assert( 577098581, size( results, dim = 1 ) == n_levels )
-    call assert( 696108875, size( results, dim = 2 ) == size( output ) )
+    call assert( 577098581, &
+      size( results, dim = 1 ) == size( expected_results, dim = 1) )
+    call assert( 696108875, &
+      size( results, dim = 2 ) == size( expected_results, dim = 2) )
     do i_wavelength = 1, size( results, dim = 2 )
       do i_level = 2, size( results, dim = 1 )
-        call assert( 179372912, results( i_level, i_wavelength ) ==           &
-                                results( 1,       i_wavelength ) )
+        call assert( 179372912, almost_equal( &
+          results( i_level, i_wavelength ), &
+          expected_results( i_level, i_wavelength ), &
+          0.005_dk+8))
       end do
     end do
-
-    ! x data are assumed to be at interfaces and y data at midpoints
-    call inter2( xto   = output_grid, yto   = output,                         &
-                 xfrom = input_grid,  yfrom = input,  ierr = i_error )
-    call assert( 271086324, i_error == 0 )
-    call assert( 992044813, almost_equal( results( 1, 1 ), output( 1 ) ) )
-    call assert( 871103388, almost_equal( results( 1, 2 ), output( 2 ) ) )
-    call assert( 418471235, almost_equal( results( 1, 3 ), output( 3 ) ) )
-    call assert( 313322731, almost_equal( results( 1, 4 ), output( 4 ) ) )
 
   end subroutine check_values
 

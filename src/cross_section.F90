@@ -145,8 +145,7 @@ file_loop: &
                                 netcdfFiles( fileNdx )%to_char( ), Hdr = Hdr )
         nParms = size( netcdf_obj%parameters, dim = 2 )
         if( nParms < 1 ) then
-          write(msg,*) Iam//'File: ',                                         &
-                       trim( netcdfFiles( fileNdx )%to_char( ) ),             &
+          msg = Iam//'File: '//trim( netcdfFiles( fileNdx )%to_char( ) )//    &
                        '  parameters array has < 1 column'
           call die_msg( 520647236, msg )
         endif
