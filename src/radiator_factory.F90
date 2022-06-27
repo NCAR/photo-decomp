@@ -7,8 +7,8 @@
 !> Build radiator objects
 module tuvx_radiator_factory
 
-  use tuvx_radiator,       only : base_radiator_t, base_constructor
-  use tuvx_radiator_aerosol,    only : aerosol_radiator_t
+  use tuvx_radiator,                   only : radiator_t
+  use tuvx_radiator_aerosol,           only : radiator_aerosol_t
 
   implicit none
 
@@ -19,40 +19,37 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function radiator_builder( config, gridWareHouse ) result( new_radiator_t )
+  !> Builder of radiator_t objects
+  function radiator_builder( config, gridWareHouse ) result( new_radiator )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
     use tuvx_grid_warehouse,           only : grid_warehouse_t
 
-    !> Arguments
     !> Radiator configuration data
-    type(config_t), intent(inout)         :: config
+    type(config_t),         intent(inout) :: config
+    !> Grid warehouse
     type(grid_warehouse_t), intent(inout) :: gridWareHouse
-
     !> New radiator object
-    class(base_radiator_t), pointer :: new_radiator_t
+    class(radiator_t),      pointer       :: new_radiator
 
-    !> Local variables
+    ! Local variables
     type(string_t) :: radiator_type
-    character(len=*), parameter :: Iam = 'Radiator builder: '
+    character(len=*), parameter :: Iam = 'Radiator builder'
 
-    write(*,*) Iam,'entering'
-    new_radiator_t => null()
+    new_radiator => null()
     call config%get( 'type', radiator_type, Iam )
 
     select case( radiator_type%to_char() )
       case( 'base' )
-        allocate( new_radiator_t )
-        call base_constructor( new_radiator_t, config, gridWareHouse )
+        new_radiator => radiator_t( config, gridWareHouse )
       case( 'aerosol' )
-        new_radiator_t => aerosol_radiator_t( config, gridWareHouse )
+        new_radiator => radiator_aerosol_t( config, gridWareHouse )
       case default
-        call die_msg( 460768245, "Invalid radiator type: '" // radiator_type%to_char()//"'" )
+        call die_msg( 460768245, "Invalid radiator type: '"//                 &
+                                 radiator_type%to_char()//"'" )
     end select
-
-    write(*,*) Iam,'exiting'
 
   end function radiator_builder
 

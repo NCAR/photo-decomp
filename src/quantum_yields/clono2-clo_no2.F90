@@ -28,7 +28,10 @@ module tuvx_quantum_yield_clono2_clo_no2
 
 contains
 
-function constructor( config, grid_warehouse, profile_warehouse ) result( this )
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function constructor( config, grid_warehouse, profile_warehouse )           &
+      result( this )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t

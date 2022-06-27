@@ -141,7 +141,7 @@ contains
 
   use tuvx_profile,                 only : profile_t
   use tuvx_radiator_warehouse,      only : radiator_warehouse_t
-  use tuvx_radiator,       only : base_radiator_t
+  use tuvx_radiator,                only : radiator_t
   use tuvx_radiative_transfer_solver,        only : radField_t
   use tuvx_diagnostic_util,                        only : diagout
 
@@ -155,7 +155,7 @@ contains
   real(dk), allocatable           :: photoRates(:,:)
   character(len=2)                :: number
   class(profile_t),       pointer :: SZAngles => null( )
-  class(base_radiator_t), pointer :: aRadiator => null()
+  class(radiator_t),      pointer :: aRadiator => null()
   class(radField_t),      pointer :: radiationFld => null( )
   type(string_t)                  :: Handle
 

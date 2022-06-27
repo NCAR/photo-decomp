@@ -37,7 +37,7 @@ module tuvx_delta_eddington
    use tuvx_spherical_geometry,             only : spherical_geom_t
    use tuvx_grid,                    only : grid_t
    use tuvx_profile,                    only : profile_t
-   use tuvx_radiator,          only : base_radiator_t
+   use tuvx_radiator,          only : radiator_t
    use tuvx_linear_algebra_linpack,                 only : linalgebra_t
    use tuvx_diagnostic_util,                           only : diagout
 
@@ -97,7 +97,7 @@ module tuvx_delta_eddington
     real(dk), allocatable                :: asym_accum(:,:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter => null( )
-    class(base_radiator_t),     pointer  :: aRadiator
+    class(radiator_t),          pointer  :: aRadiator
     type(radiator_state_t)               :: atmRadiatorState
     class(grid_t),    pointer            :: zGrid => null( )
     class(grid_t),    pointer            :: lambdaGrid => null( )

@@ -41,8 +41,6 @@ contains
     type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
     ! local variables
-    integer(ik), parameter :: iTWO = 2_ik
-    real(dk),    parameter :: rONE = 1._dk
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
     real(dk), parameter    :: km2cm = 1.e5_dk
@@ -120,17 +118,17 @@ contains
     this%ncells_ = zGrid%ncells_
 
     ! Set o3 concentration if data ztop < mdl top
-    ztop = zGrid%edge_(this%ncells_+iONE)
-    if( this%hscale_ /= rZERO ) then
-      rfact = exp( -rONE/this%hscale_ )
+    ztop = zGrid%edge_(this%ncells_+1)
+    if( this%hscale_ /= 0.0_dk ) then
+      rfact = exp( -1.0_dk/this%hscale_ )
     else
-      rfact = rZERO
+      rfact = 0.0_dk
     endif
     m = size(profile)
     do
-      zdata   = [zdata,zdata(m) + rONE]
+      zdata   = [zdata,zdata(m) + 1.0_dk]
       profile = [profile,profile(m) * rfact]
-      m = m + iONE
+      m = m + 1
       if(zdata(m) > zTop ) then
         exit
       endif
@@ -154,37 +152,37 @@ contains
     this%edge_val_ = theInterpolator%interpolate( zGrid%edge_, zdata,profile )
 
     this%mid_val_ = .5_dk * ( &
-      this%edge_val_(iONE:this%ncells_) + &
-      this%edge_val_(iTWO:this%ncells_+iONE) &
+      this%edge_val_(1:this%ncells_) + &
+      this%edge_val_(2:this%ncells_+1) &
     )
 
-    this%delta_val_ = this%edge_val_(iTWO:this%ncells_+iONE) - &
-     this%edge_val_(iONE:this%ncells_)
+    this%delta_val_ = this%edge_val_(2:this%ncells_+1) - &
+     this%edge_val_(1:this%ncells_)
 
     this%layer_dens_ = zGrid%delta_ * this%mid_val_ * km2cm
 
     this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
-      this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
+      this%edge_val_(this%ncells_+1) * this%hscale_ * km2cm
 
-    if( Scale2DU /= rONE ) then
+    if( Scale2DU /= 1.0_dk ) then
       InputDU = sum( this%layer_dens_ ) / 2.687e16_dk
       O3ScaleFactor = Scale2DU/InputDU
 
-      if( O3ScaleFactor /= rONE ) then
+      if( O3ScaleFactor /= 1.0_dk ) then
         this%edge_val_ = O3ScaleFactor * this%edge_val_
 
         this%mid_val_ = .5_dk * ( &
-          this%edge_val_(iONE:this%ncells_) + &
-          this%edge_val_(iTWO:this%ncells_+iONE) &
+          this%edge_val_(1:this%ncells_) + &
+          this%edge_val_(2:this%ncells_+1) &
         )
 
-        this%delta_val_ = this%edge_val_(iTWO:this%ncells_+iONE) - &
-          this%edge_val_(iONE:this%ncells_)
+        this%delta_val_ = this%edge_val_(2:this%ncells_+1) - &
+          this%edge_val_(1:this%ncells_)
 
         this%layer_dens_ = zGrid%delta_ * this%mid_val_ * km2cm
 
         this%layer_dens_(this%ncells_) = this%layer_dens_(this%ncells_) + &
-          this%edge_val_(this%ncells_+iONE) * this%hscale_ * km2cm
+          this%edge_val_(this%ncells_+1) * this%hscale_ * km2cm
 
       endif
     endif

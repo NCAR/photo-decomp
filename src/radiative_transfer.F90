@@ -136,7 +136,7 @@ contains
     use musica_string,                 only : to_char
     use tuvx_grid,                  only : grid_t
     use tuvx_radiator_warehouse,       only : warehouse_iterator_t
-    use tuvx_radiator,        only : base_radiator_t
+    use tuvx_radiator,        only : radiator_t
     use tuvx_radiator,        only : radiator_state_t
     use tuvx_profile,                  only : profile_t
     use tuvx_spherical_geometry,           only : spherical_geom_t
@@ -166,7 +166,7 @@ contains
     real(dk), allocatable                :: airVcol(:), airScol(:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter => null( )
-    class(base_radiator_t),     pointer  :: aRadiator => null()
+    class(radiator_t),          pointer  :: aRadiator => null()
     class(profile_t),           pointer  :: airProfile => null()
 
     write(*,*) ' '
@@ -177,7 +177,7 @@ contains
     do while( iter%next() )
       aRadiator => this%RadiatorWareHouse_%get_radiator( iter )
       write(*,*) Iam // 'radiator handle = ',aRadiator%handle_%to_char()
-      call aRadiator%upDateState( GridWareHouse, ProfileWareHouse, this%radXferXsectWareHouse_ )
+      call aRadiator%update_state( GridWareHouse, ProfileWareHouse, this%radXferXsectWareHouse_ )
     enddo
     deallocate( iter )
 

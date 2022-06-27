@@ -116,8 +116,8 @@
             "lower extrapolation": { "type": "boundary" }
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HNO4+hv->HO2+NO2": {
@@ -126,8 +126,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "O3+hv->O2+O(1D)": {
@@ -136,7 +136,7 @@
             "type": "O3"
          },
          "quantum yield": {
-            "quantum yield type": "O3+hv->O2+O(1D) quantum yield"
+            "type": "O3+hv->O2+O(1D)"
          }
       },
       "O3+hv->O2+O(3P)": {
@@ -145,7 +145,7 @@
             "type": "O3"
          },
          "quantum yield": {
-            "quantum yield type": "O3+hv->O2+O(3P) quantum yield"
+            "type": "O3+hv->O2+O(3P)"
          }
       },
       "NO3-(aq)+hv->NO2(aq)+O-": {
@@ -154,7 +154,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "NO3-_(aq)+hv->NO2(aq)+O- quantum yield"
+            "type": "NO3-_(aq)+hv->NO2(aq)+O-"
          }
       },
       "NO3-(aq)+hv->NO2-(aq)+O(3P)": {
@@ -163,8 +163,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.1e-3
+            "type": "base",
+            "constant value": 1.1e-3
          }
       },
       "NOCl+hv->NO+Cl": {
@@ -173,8 +173,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3Cl+hv->Products": {
@@ -183,8 +183,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3CCl3+hv->Products": {
@@ -193,8 +193,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CCl2O+hv->Products": {
@@ -203,8 +203,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CClFO+hv->Products": {
@@ -213,8 +213,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3OOH+hv->CH3O+OH": {
@@ -223,8 +223,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HOCH2OOH+hv->CH2(OH)O+OH": {
@@ -233,8 +233,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HO2+hv->OH+O": {
@@ -243,7 +243,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "HO2 quantum yield"
+            "type": "HO2"
          }
       },
       "H2O2+hv->OH+OH": {
@@ -252,8 +252,8 @@
             "type": "H2O2+hv->OH+OH"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "NO3+hv->NO+O2": {
@@ -263,7 +263,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/NO3-NO+O2_quantum_yield_1.nc"],
-            "quantum yield type": "tint quantum yield"
+            "type": "tint"
          }
       },
       "NO3+hv->NO2+O(3P)": {
@@ -273,7 +273,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/NO3-NO2+O(3P)_quantum_yield_1.nc"],
-            "quantum yield type": "tint quantum yield",
+            "type": "tint",
             "lower extrapolation": { "type": "constant", "value": 1.0 }
          }
       },
@@ -283,8 +283,8 @@
             "type": "HNO3+hv->OH+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "N2O+hv->N2+O(1D)": {
@@ -292,8 +292,8 @@
             "type": "N2O+hv->N2+O(1D)"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "N2O5+hv->NO2+NO3": {
@@ -302,8 +302,8 @@
             "type": "N2O5+hv->NO2+NO3"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "NO2+hv->NO+O(3P)": {
@@ -313,7 +313,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/NO2_quantum_yield_1.nc"],
-            "quantum yield type": "NO2 tint quantum yield",
+            "type": "NO2 tint",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -324,7 +324,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/C2H5CHO_quantum_yield_1.nc"],
-            "quantum yield type": "C2H5CHO quantum yield"
+            "type": "C2H5CHO"
          }
       },
       "CH2CHCHO+hv->Products": {
@@ -333,7 +333,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "CH2CHCHO+hv->Products quantum yield"
+            "type": "CH2CHCHO+hv->Products"
          }
       },
       "CH3CHO+hv->CH3+HCO": {
@@ -343,7 +343,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CH3CHO_quantum_yield_1.nc"],
-            "quantum yield type": "CH3CHO+hv->CH3+HCO quantum yield"
+            "type": "CH3CHO+hv->CH3+HCO"
          }
       },
       "CH2O+hv->H+HCO": {
@@ -353,7 +353,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CH2O_quantum_yield_1.nc"],
-            "quantum yield type": "base quantum yield",
+            "type": "base",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -364,7 +364,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CH2O_quantum_yield_1.nc"],
-            "quantum yield type": "CH2O quantum yield",
+            "type": "CH2O",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -374,7 +374,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "CH3COCH2CH3+hv->CH3CO+CH2CH3 quantum yield"
+            "type": "CH3COCH2CH3+hv->CH3CO+CH2CH3"
          }
       },
       "HNO2+hv->OH+NO": {
@@ -383,8 +383,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CHBr3+hv->Products": {
@@ -394,8 +394,8 @@
             "lower extrapolation": { "type": "boundary" }
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF2Br2+hv->Products": {
@@ -404,8 +404,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF2BrCl+hv->Products": {
@@ -414,8 +414,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF3Br+hv->Products": {
@@ -424,8 +424,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF2BrCF2Br+hv->Products": {
@@ -434,8 +434,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "I2+hv->I+I": {
@@ -445,7 +445,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/I2_quantum_yield_1.nc"],
-            "quantum yield type": "base quantum yield",
+            "type": "base",
             "lower extrapolation": { "type": "constant", "value": 1.0 }
          }
       },
@@ -455,8 +455,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "IOH+hv->I+OH": {
@@ -465,8 +465,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "perfluoro-1-iodopropane+hv->Products": {
@@ -475,8 +475,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3OCl+hv->CH3O+Cl": {
@@ -485,8 +485,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CHCl3+hv->Products": {
@@ -495,8 +495,8 @@
             "type": "CHCl3+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "Cl2+hv->Cl+Cl": {
@@ -504,8 +504,8 @@
             "type": "Cl2+hv->Cl+Cl"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CCl4+hv->Products": {
@@ -514,8 +514,8 @@
             "type": "CCl4+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "ClO+hv->Cl+O(1D)": {
@@ -524,7 +524,7 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "ClO+hv->Cl+O(1D) quantum yield"
+            "type": "ClO+hv->Cl+O(1D)"
          }
       },
       "ClO+hv->Cl+O(3P)": {
@@ -533,7 +533,7 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "ClO+hv->Cl+O(3P) quantum yield"
+            "type": "ClO+hv->Cl+O(3P)"
          }
       },
       "ClOO+hv->Products": {
@@ -542,8 +542,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "ClOOCl+hv->Cl+ClOO": {
@@ -552,8 +552,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCl+hv->H+Cl": {
@@ -562,8 +562,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HOCl+hv->HO+Cl": {
@@ -572,8 +572,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "ClNO2+hv->Cl+NO2": {
@@ -582,8 +582,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "ClONO+hv->Cl+NO2": {
@@ -592,8 +592,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "ClONO2+hv->Cl+NO3": {
@@ -602,7 +602,7 @@
             "type": "ClONO2"
          },
          "quantum yield": {
-            "quantum yield type": "ClONO2+hv->Cl+NO3 quantum yield"
+            "type": "ClONO2+hv->Cl+NO3"
          }
       },
       "ClONO2+hv->ClO+NO2": {
@@ -611,7 +611,7 @@
             "type": "ClONO2"
          },
          "quantum yield": {
-            "quantum yield type": "ClONO2+hv->ClO+NO2 quantum yield"
+            "type": "ClONO2+hv->ClO+NO2"
          }
       },
       "OClO+hv->Products": {
@@ -620,8 +620,8 @@
             "type": "OClO+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "Br2+hv->Br+Br": {
@@ -630,8 +630,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "BrO+hv->Br+O": {
@@ -640,8 +640,8 @@
             "type": "BrO+hv->Br+O"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HOBr+hv->OH+Br": {
@@ -649,8 +649,8 @@
             "type": "HOBr+hv->OH+Br"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "BrNO+hv->Br+NO": {
@@ -659,8 +659,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "BrONO+hv->Br+NO2": {
@@ -669,8 +669,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.5
+            "type": "base",
+            "constant value": 0.5
          }
       },
       "BrONO+hv->BrO+NO": {
@@ -679,8 +679,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.5
+            "type": "base",
+            "constant value": 0.5
          }
       },
       "BrNO2+hv->Br+NO2": {
@@ -689,8 +689,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "BrONO2+hv->BrO+NO2": {
@@ -699,8 +699,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.15
+            "type": "base",
+            "constant value": 0.15
          }
       },
       "BrONO2+hv->Br+NO3": {
@@ -709,8 +709,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.85
+            "type": "base",
+            "constant value": 0.85
          }
       },
       "BrCl+hv->Br+Cl": {
@@ -719,8 +719,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3Br+hv->Products": {
@@ -729,8 +729,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3ONO2+hv->CH3O+NO2": {
@@ -739,8 +739,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3(OONO2)+hv->CH3OO+NO2": {
@@ -749,8 +749,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "C2H5ONO2+hv->C2H5O+NO2": {
@@ -759,8 +759,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "nC3H7ONO2+hv->C3H7O+NO2": {
@@ -769,8 +769,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "1-C4H9ONO2+hv->1-C4H9O+NO2": {
@@ -779,8 +779,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "2-C4H9ONO2+hv->2-C4H9O+NO2": {
@@ -789,8 +789,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "nitro_acetone+hv->Products": {
@@ -798,8 +798,8 @@
             "type": "CH3COCH2(ONO2)+hv->CH3COCH2(O.)+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "nitro_ethanol+hv->Products": {
@@ -807,8 +807,8 @@
             "type": "CH2(OH)CH2(ONO2)+hv->CH2(OH)CH2(O.)+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3CH2ONO2+hv->CH3CH2O+NO2": {
@@ -817,8 +817,8 @@
             "type": "RONO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3CHONO2CH3+hv->CH3CHOCH3+NO2": {
@@ -827,8 +827,8 @@
             "type": "RONO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3COCH3+hv->CH3CO+CH3": {
@@ -837,7 +837,7 @@
             "type": "CH3COCH3+hv->CH3CO+CH3"
          },
          "quantum yield": {
-            "quantum yield type": "CH3COCH3+hv->CH3CO+CH3 quantum yield"
+            "type": "CH3COCH3+hv->CH3CO+CH3"
          }
       },
       "CCl3F+hv->Products": {
@@ -846,8 +846,8 @@
             "type": "CCl3F+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CCl2F2+hv->Products": {
@@ -856,8 +856,8 @@
             "type": "CCl3F+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CFC-113+hv->Products": {
@@ -866,8 +866,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CFC-114+hv->Products": {
@@ -876,8 +876,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CFC-115+hv->Products": {
@@ -886,8 +886,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCFC-22+hv->Products": {
@@ -896,8 +896,8 @@
             "type": "tint"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF3CHCl2+hv->Products": {
@@ -906,8 +906,8 @@
             "type": "HCFC+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF3CHFCl+hv->Products": {
@@ -916,8 +916,8 @@
             "type": "HCFC+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCFC-141b+hv->Products": {
@@ -926,8 +926,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCFC-142b+hv->Products": {
@@ -936,8 +936,8 @@
             "type": "HCFC+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCFC-225ca+hv->Products": {
@@ -946,8 +946,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "HCFC-225cb+hv->Products": {
@@ -956,8 +956,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "C(CH3)3(ONO2)+hv->C(CH3)(O.)+NO2": {
@@ -965,8 +965,8 @@
             "type": "t_butyl_nitrate+hv->Products"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "C(CH3)3(ONO)+hv->C(CH3)3(O)+NO": {
@@ -975,8 +975,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "PAN+hv->CH3CO(OO)+NO2": {
@@ -985,8 +985,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.7
+            "type": "base",
+            "constant value": 0.7
          }
       },
       "PAN+hv->CH3CO(O)+NO3": {
@@ -995,8 +995,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.3
+            "type": "base",
+            "constant value": 0.3
          }
       },
       "PPN+hv->CH3CH2CO(OO)+NO2": {
@@ -1005,8 +1005,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.61
+            "type": "base",
+            "constant value": 0.61
          }
       },
       "PPN+hv->CH3CH2CO(O)+NO3": {
@@ -1015,8 +1015,8 @@
             "type": "CH3ONO2+hv->CH3O+NO2"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.39
+            "type": "base",
+            "constant value": 0.39
          }
       },
       "CH2=C(CH3)CHO+hv->Products": {
@@ -1025,8 +1025,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.01
+            "type": "base",
+            "constant value": 0.01
          }
       },
       "MVK+hv->Products": {
@@ -1035,7 +1035,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "MVK+hv->Products quantum yield"
+            "type": "MVK+hv->Products"
          }
       },
       "HOCH2CHO+hv->CH2OH+HCO": {
@@ -1044,8 +1044,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.83
+            "type": "base",
+            "constant value": 0.83
          }
       },
       "HOCH2CHO+hv->CH3OH+CO": {
@@ -1054,8 +1054,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.10
+            "type": "base",
+            "constant value": 0.10
          }
       },
       "HOCH2CHO+hv->CH2CHO+OH": {
@@ -1064,8 +1064,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.07
+            "type": "base",
+            "constant value": 0.07
          }
       },
       "CH2(OH)COCH3+hv->CH3CO+CH2(OH)": {
@@ -1074,8 +1074,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.325
+            "type": "base",
+            "constant value": 0.325
          }
       },
       "CH2(OH)COCH3+hv->CH2(OH)CO+CH3": {
@@ -1084,8 +1084,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.325
+            "type": "base",
+            "constant value": 0.325
          }
       },
       "CHOCHO+hv->HCO+HCO": {
@@ -1095,7 +1095,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CHOCHO-HCO_HCO_quantum_yield_1.nc"],
-            "quantum yield type": "base quantum yield",
+            "type": "base",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -1106,7 +1106,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CHOCHO-H2_CO_CO_quantum_yield_1.nc"],
-            "quantum yield type": "base quantum yield",
+            "type": "base",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -1117,7 +1117,7 @@
          },
          "quantum yield": {
             "netcdf files": ["data/XSQY/CHOCHO-CH2O_CO_quantum_yield_1.nc"],
-            "quantum yield type": "base quantum yield",
+            "type": "base",
             "lower extrapolation": { "type": "boundary" }
          }
       },
@@ -1127,7 +1127,7 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "CH3COCHO+hv->CH3CO+HCO quantum yield"
+            "type": "CH3COCHO+hv->CH3CO+HCO"
          }
       },
       "CH3COCOCH3+hv->Products": {
@@ -1136,8 +1136,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.158
+            "type": "base",
+            "constant value": 0.158
          }
       },
       "CH3COOH+hv->CH3+COOH": {
@@ -1146,8 +1146,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 0.55
+            "type": "base",
+            "constant value": 0.55
          }
       },
       "CH3COOOH+hv->Products": {
@@ -1156,8 +1156,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3COCOOH+hv->Products": {
@@ -1166,8 +1166,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CH3CH3NNO+hv->Products": {
@@ -1176,8 +1176,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       },
       "CF2O+hv->Products": {
@@ -1186,8 +1186,8 @@
             "type": "base"
          },
          "quantum yield": {
-            "quantum yield type": "base quantum yield",
-            "quantum yield constant": 1.0
+            "type": "base",
+            "constant value": 1.0
          }
       }
    }

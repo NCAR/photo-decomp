@@ -7,7 +7,7 @@
 !> The base quantum yield type and related functions
 module tuvx_quantum_yield
 
-  use musica_constants,              only : dk => musica_dk
+  use musica_constants,                only : dk => musica_dk
 
   implicit none
 
@@ -15,7 +15,9 @@ module tuvx_quantum_yield
   public :: quantum_yield_t, quantum_yield_ptr, base_constructor
 
   type quantum_yield_parms_t
+    !> Temperature \todo include units - what is this used for?
     real(dk), allocatable :: temperature(:)
+    !> \todo include description and units
     real(dk), allocatable :: array(:,:)
   end type quantum_yield_parms_t
 
@@ -37,8 +39,13 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize base quantum yield_t object
-  subroutine base_constructor( this, config, grid_warehouse, profile_warehouse )
+  !> Performs default initialization for quantum yield_t object
+  !!
+  !! Should only be called by sub-class constructors. Sub-classes can decide
+  !! whether to call this function during construction to load standard
+  !! NetCDF files and configuration options.
+  subroutine base_constructor( this, config, grid_warehouse,                  &
+      profile_warehouse )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
@@ -49,10 +56,13 @@ contains
     use tuvx_profile_warehouse,        only : profile_warehouse_t
     use tuvx_util,                     only : inter2
 
+    !> Quantum yield calculator
     class(quantum_yield_t),    intent(inout) :: this
-    !> quantum yield configuration data
+    !> Configuration data
     type(config_t),            intent(inout) :: config
+    !> Grid warehouse
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
+    !> Profile warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
     ! Local variables
@@ -116,13 +126,14 @@ file_loop: &
           this%quantum_yield_parms( fileNdx )%array = netcdf_obj%parameters
         endif
         if( allocated( netcdf_obj%temperature ) ) then
-          this%quantum_yield_parms( fileNdx )%temperature = netcdf_obj%temperature
+          this%quantum_yield_parms( fileNdx )%temperature =                   &
+              netcdf_obj%temperature
         endif
         deallocate( netcdf_obj )
       enddo file_loop
     else has_netcdf_file
       ! check for quantum yield constant
-      call config%get( 'quantum yield constant', quantum_yield_constant, Iam, &
+      call config%get( 'constant value', quantum_yield_constant, Iam,         &
                        found = found )
       if( found ) then
         allocate( this%quantum_yield_parms(1) )
@@ -137,7 +148,7 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the quantum yield
+  !> Calculates the quantum yield
   function run( this, grid_warehouse, profile_warehouse )                     &
       result( quantum_yield )
 
@@ -146,8 +157,11 @@ file_loop: &
     use tuvx_grid_warehouse,           only : grid_warehouse_t
     use tuvx_profile_warehouse,        only : profile_warehouse_t
 
+    !> Quantum yield calculator
     class(quantum_yield_t),    intent(in)    :: this
+    !> Grid warehouse
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
+    !> Profile warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
     !> Calculated quantum yield
     real(dk), allocatable                    :: quantum_yield(:,:)
@@ -179,7 +193,7 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Add points to the cross-section gridded data based on configuration
+  !> Addw points to the cross-section gridded data based on configuration
   !! options
   subroutine add_points( this, config, data_lambda, data_parameter )
 
@@ -261,7 +275,7 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> finalize the quantum yield object
+  !> Finalizes the quantum yield object
   subroutine finalize( this )
     type(quantum_yield_t), intent(inout) :: this
 

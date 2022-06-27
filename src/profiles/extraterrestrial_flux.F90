@@ -50,10 +50,8 @@ contains
 
     integer(ik), parameter :: Ok = 0_ik
     integer(ik), parameter :: inUnit = 20_ik
-    integer(ik), parameter :: iZERO = 0_ik
-    integer(dk), parameter :: rONE  = 1.0_dk
     real(dk),    parameter :: bin_edge(0:4) = (/ &
-      rZERO,150.01_dk,200.07_dk,1000.99_dk,real(huge(rZERO),dk) &
+      0.0_dk,150.01_dk,200.07_dk,1000.99_dk,real(huge(0.0_dk),dk) &
     /)
     character(len=*), parameter :: comment = '#!$%*'
     class(grid_t), pointer :: lambdaGrid
@@ -90,7 +88,7 @@ contains
     nBins = lambdaGrid%ncells_
 
     file_loop: &
-    do fileNdx = iONE,nFiles
+    do fileNdx = 1,nFiles
       if(Interpolator(fileNdx) == "") then
         Interpolator(fileNdx) = defaultInterpolator
       endif
@@ -111,13 +109,13 @@ contains
       endif
 
       ! Determine number of lines in file
-      nLines = iZERO
+      nLines = 0
       do
         read(inUnit,'(a)',iostat=istat) InputLine
         if( istat == Ok ) then
           trimInputLine = adjustl(InputLine)
           if( verify( trimInputLine(1:1),comment ) /= 0 ) then
-            nLines = nLines + iONE
+            nLines = nLines + 1
             cycle
           endif
         else
@@ -143,7 +141,7 @@ contains
       allocate( inputGrid(nLines) )
       allocate( inputData(nLines) )
       !> Read the data
-      Line = iONE
+      Line = 1
       do
         trimInputLine = adjustl(InputLine)
         if( verify( trimInputLine(1:1),comment ) /= 0 ) then
@@ -154,7 +152,7 @@ contains
             call die_msg( 560768229, "Invalid data format in " // &
               Filespec(fileNdx)%to_char() )
           endif
-          Line = Line + iONE
+          Line = Line + 1
         endif
         read(inUnit,'(a)',iostat=istat) InputLine
         if( istat /= Ok ) then
@@ -170,25 +168,25 @@ contains
         where( inputGrid < 630._dk )
           tmpinputGrid = inputGrid - 0.5_dk
         elsewhere( inputGrid >= 630._dk .and. inputGrid < 870._dk )
-          tmpinputGrid = inputGrid - rONE
+          tmpinputGrid = inputGrid - 1.0_dk
         elsewhere( inputGrid >= 870._dk)
           tmpinputGrid = inputGrid - 2.5_dk
         endwhere
         inputData = 1.e13_dk*hc*inputData/inputGrid
         inputGrid = tmpinputGrid
         inputGrid = [inputGrid,inputGrid(size(inputGrid)) + 2.5_dk]
-        inputData = [inputData,rZERO]
+        inputData = [inputData,0.0_dk]
         deallocate( tmpinputGrid )
       else
         ! extend inputGrid,inputData to cover model photolysis grid
         call addpnt( x=inputGrid,y=inputData, &
-          xnew=(rONE-deltax)*inputGrid(1),ynew=rZERO )
+          xnew=(1.0_dk-deltax)*inputGrid(1),ynew=0.0_dk )
         call addpnt( x=inputGrid,y=inputData, &
-          xnew=rZERO,ynew=rZERO )
+          xnew=0.0_dk,ynew=0.0_dk )
         call addpnt( x=inputGrid,y=inputData, &
-          xnew=(rONE+deltax)*inputGrid(size(inputGrid)),ynew=rZERO )
+          xnew=(1.0_dk+deltax)*inputGrid(size(inputGrid)),ynew=0.0_dk )
         call addpnt( x=inputGrid,y=inputData, &
-          xnew=1.e38_dk,ynew=rZERO )
+          xnew=1.e38_dk,ynew=0.0_dk )
       endif
       ! assign interpolator for this dataset
       select case( Interpolator(fileNdx)%to_char() )
@@ -211,7 +209,7 @@ contains
       )
       if( .not. allocated( this%mid_val_ ) ) then
         allocate( this%mid_val_,mold=interpolatedEtfl )
-        this%mid_val_ = rZERO
+        this%mid_val_ = 0.0_dk
       endif
 
       ! assign interpolated source to model etfl
