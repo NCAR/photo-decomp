@@ -33,15 +33,54 @@ contains
     type(config_t) :: config, cs_set, cs_config
     class(iterator_t), pointer :: iter
     real(kind=dk), allocatable :: results(:,:)
-    ! real(dk), dimension(4:6) :: acetone_no_extrap
-    real(dk) :: acetone_no_extrap(:,:)
+    real(dk), allocatable :: acetone_no_extrap(:,:)
+    real(dk), allocatable :: acetone_lower_extrap(:,:)
+    real(dk), allocatable :: acetone_lower_upper_extrap(:,:)
+    allocate(acetone_no_extrap(4, 6))
+    allocate(acetone_lower_extrap(4, 5))
+    allocate(acetone_lower_upper_extrap(4, 6))
 
-    acetone_no_extrap = reshape([ &
-      7.0301862E+08,6.5655223E+08,6.1219315E+08,5.6989122E+08,5.2959639E+08,4.9126447E+08, &
-      1.1707670E+09,1.0933860E+09,1.0195143E+09,9.4906831E+08,8.8196471E+08,8.1812988E+08, &
-      1.5530895E+09,1.4504406E+09,1.3524467E+09,1.2589971E+09,1.1699813E+09,1.0853017E+09, &
-      9.3653653E+08,8.7463863E+08,8.1554773E+08,7.5919704E+08,7.0551989E+08,6.5445740E+08],&
-      (/ 4, 6 /))
+    ! All of these values were produced by one run of the cross section.
+    ! So, these tests are testing that any changes don't produce unexpected
+    ! changes. The values here are meaningless.
+    acetone_no_extrap = reshape([                                             &
+      7.0301862E+08,6.5655223E+08,6.1219315E+08,                              &
+      5.6989122E+08,5.2959639E+08,4.9126447E+08,                              &
+      1.1707670E+09,1.0933860E+09,1.0195143E+09,                              &
+      9.4906831E+08,8.8196471E+08,8.1812988E+08,                              &
+      1.5530895E+09,1.4504406E+09,1.3524467E+09,                              &
+      1.2589971E+09,1.1699813E+09,1.0853017E+09,                              &
+      9.3653653E+08,8.7463863E+08,8.1554773E+08,                              &
+      7.5919704E+08,7.0551989E+08,6.5445740E+08],                             &
+      (/ size(acetone_no_extrap, 2), size(acetone_no_extrap, 1) /)            &
+    )
+
+    acetone_lower_extrap = reshape([                                          &
+      679520663.87, 634114120.66, 590789797.00,                               &
+      549497594.58, 510190457.65, 1131635623.82,                              &
+      1056019580.15, 983871012.82, 915106495.77,                              &
+      849647669.83, 1501180166.35, 1400872429.35,                             &
+      1305164378.50, 1213945348.72, 1127111396.33,                            &
+      905234910.36, 844748758.10, 787036198.63,                               &
+      732030502.40, 679668992.93],                                            &
+      (/ size(acetone_lower_extrap, 2), size(acetone_lower_extrap, 1) /)      &
+    )
+
+    acetone_lower_upper_extrap = reshape([                                    &
+      703018619.71846068, 656552233.31681216, 612193147.37404847,             &
+      569891218.73771667, 529596393.89548576, 491264467.90404767,             &
+      1170767016.0155232, 1093386038.4216070, 1019514303.0582997,             &
+      949068309.21753716, 881964705.46405852, 818129880.08553731,             &
+      1553089515.1841559, 1450440553.7819972, 1352446681.2051401,             &
+      1258997133.3324850, 1169981344.0539927, 1085301667.4253523,             &
+      7844654649.0400229, 7326251638.3173409, 6831354471.3212347,             &
+      6359403928.4437160, 5909841789.7788944, 5482175087.4377661],            &
+      (/                                                                      &
+        size(acetone_lower_upper_extrap, 2),                                  & 
+        size(acetone_lower_upper_extrap, 1)                                   &
+      /)                                                                      &
+    )
+
 
     ! load test grids
     call config%from_file( "test/data/grid.simple.config.json" )
@@ -59,38 +98,31 @@ contains
     ! load and test cross section w/o extrapolation
     call assert( 560066370, iter%next( ) )
     call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
+    cross_section =>                                                          &
+      cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
     call check_values( results, acetone_no_extrap )
     deallocate( cross_section )
 
-    ! ! load and test cross section w/ fixed lower extrapolation and no upper
-    ! ! extrapolation
-    ! call assert( 102622205, iter%next( ) )
-    ! call cs_set%get( iter, cs_config, Iam )
-    ! cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
-    ! results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
-    ! input = input_base
-    ! input_grid = input_grid_base
-    ! call add_points( input, input_grid, 12.5_dk, 0.0_dk )
-    ! call check_values( results, acetone_no_extrap )
-    ! deallocate( input )
-    ! deallocate( input_grid )
-    ! deallocate( cross_section )
+    ! load and test cross section w/ fixed lower extrapolation and no upper
+    ! extrapolation
+    call assert( 102622205, iter%next( ) )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section =>                                                          &
+      cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
+    results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
+    call check_values( results, acetone_lower_extrap )
+    deallocate( cross_section )
 
-    ! ! load and test cross section w/ extrpolation from lower boundary and
-    ! ! fixed upper extrpolation
-    ! call assert( 101168966, iter%next( ) )
-    ! call cs_set%get( iter, cs_config, Iam )
-    ! cross_section => cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
-    ! results = cross_section%calculate( grids, profiles, at_mid_point = .false. )
-    ! input = input_base
-    ! input_grid = input_grid_base
-    ! call add_points( input, input_grid, 5.0_dk, 32.3_dk )
-    ! call check_values( results, input, input_grid, 6 )
-    ! deallocate( input )
-    ! deallocate( input_grid )
-    ! deallocate( cross_section )
+    ! load and test cross section w/ extrpolation from lower boundary and
+    ! fixed upper extrpolation
+    call assert( 101168966, iter%next( ) )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section =>                                                          &
+      cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
+    results = cross_section%calculate( grids, profiles, at_mid_point = .false.)
+    call check_values( results, acetone_lower_upper_extrap )
+    deallocate( cross_section )
 
     ! clean up
     deallocate( iter )
@@ -98,31 +130,6 @@ contains
     deallocate( profiles )
 
   end subroutine test_cross_section_ch3coch3_ch3co_ch3_t
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !> Adds additional points input data
-  subroutine add_points( values, grid, lower_val, upper_val )
-
-    use musica_constants,              only : dk => musica_dk
-    use tuvx_util,                     only : addpnt
-
-    real(kind=dk), allocatable, intent(inout) :: values(:)
-    real(kind=dk), allocatable, intent(inout) :: grid(:)
-    real(kind=dk),              intent(in)    :: lower_val
-    real(kind=dk),              intent(in)    :: upper_val
-
-    call addpnt( x = grid, y = values,                                        &
-                 xnew = ( 1.0_dk - 1.0e-5_dk ) * grid(1), ynew = lower_val )
-    call addpnt( x = grid, y = values,                                        &
-                 xnew = 0.0_dk, ynew = lower_val )
-    call addpnt( x = grid, y = values,                                        &
-                 xnew = ( 1.0_dk + 1.0e-5_dk ) * grid( size( grid ) ),        &
-                 ynew = upper_val )
-    call addpnt( x = grid, y = values,                                        &
-                 xnew = 1.0e38_dk, ynew = upper_val )
-
-  end subroutine add_points
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
