@@ -7,6 +7,7 @@ program test_cross_section
 
   use tuvx_cross_section, only : cross_section_t
   use tuvx_cross_section_ch3coch3_ch3co_ch3
+  use tuvx_test_cross_section_utils, only : check_values
 
   implicit none
 
@@ -101,7 +102,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    call check_values( results, acetone_no_extrap )
+    call check_values( results, acetone_no_extrap, 0.005_dk+8 )
     deallocate( cross_section )
 
     ! load and test cross section w/ fixed lower extrapolation and no upper
@@ -111,7 +112,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
-    call check_values( results, acetone_lower_extrap )
+    call check_values( results, acetone_lower_extrap, 0.005_dk )
     deallocate( cross_section )
 
     ! load and test cross section w/ extrpolation from lower boundary and
@@ -121,7 +122,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles, at_mid_point = .false.)
-    call check_values( results, acetone_lower_upper_extrap )
+    call check_values( results, acetone_lower_upper_extrap, 0.005_dk )
     deallocate( cross_section )
 
     ! clean up
@@ -130,35 +131,6 @@ contains
     deallocate( profiles )
 
   end subroutine test_cross_section_ch3coch3_ch3co_ch3_t
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !> Checks results against expectations
-  subroutine check_values( results, expected_results )
-
-    use musica_assert,                 only : assert, almost_equal
-    use musica_constants,              only : dk => musica_dk
-    use tuvx_util,                     only : inter2
-
-    real(kind=dk), intent(in) :: results(:,:)
-    real(kind=dk), intent(in) :: expected_results(:,:)
-
-    integer :: i_level, i_wavelength
-
-    call assert( 577098581, &
-      size( results, dim = 1 ) == size( expected_results, dim = 1) )
-    call assert( 696108875, &
-      size( results, dim = 2 ) == size( expected_results, dim = 2) )
-    do i_wavelength = 1, size( results, dim = 2 )
-      do i_level = 2, size( results, dim = 1 )
-        call assert( 179372912, almost_equal( &
-          results( i_level, i_wavelength ), &
-          expected_results( i_level, i_wavelength ), &
-          0.005_dk+8))
-      end do
-    end do
-
-  end subroutine check_values
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
