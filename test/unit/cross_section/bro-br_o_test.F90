@@ -37,7 +37,7 @@ contains
     real(dk), allocatable :: no_extrap(:,:)
     real(dk), allocatable :: lower_extrap(:,:)
     ! real(dk), allocatable :: lower_upper_extrap(:,:)
-    allocate(no_extrap(4, 6))
+    allocate(no_extrap(15, 6))
     ! allocate(lower_extrap(4, 5))
     ! allocate(lower_upper_extrap(4, 6))
 
@@ -45,10 +45,21 @@ contains
     ! So, these tests are testing that any changes don't produce unexpected
     ! changes. The values here are meaningless.
     no_extrap = reshape([                                                     &
-      1.333, 1.333, 1.333, 1.333, 1.333, 1.333,                               &
-      2.000, 2.000, 2.000, 2.000, 2.000, 2.000,                               & 
-      3.000, 3.000, 3.000, 3.000, 3.000, 3.000,                              &
-      2.666, 2.666, 2.666, 2.666, 2.666, 2.666],                               & 
+      2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18,             &
+      2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18,             &
+      4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18,             &
+      3.91e-18, 3.91e-18, 3.91e-18, 3.91e-18, 3.91e-18, 3.91e-18,             &
+      6.00e-18, 6.00e-18, 6.00e-18, 6.00e-18, 6.00e-18, 6.00e-18,             &
+      7.53e-18, 7.53e-18, 7.53e-18, 7.53e-18, 7.53e-18, 7.53e-18,             &
+      6.27e-18, 6.27e-18, 6.27e-18, 6.27e-18, 6.27e-18, 6.27e-18,             &
+      5.89e-18, 5.89e-18, 5.89e-18, 5.89e-18, 5.89e-18, 5.89e-18,             &
+      5.15e-18, 5.15e-18, 5.15e-18, 5.15e-18, 5.15e-18, 5.15e-18,             &
+      3.99e-18, 3.99e-18, 3.99e-18, 3.99e-18, 3.99e-18, 3.99e-18,             &
+      2.27e-18, 2.27e-18, 2.27e-18, 2.27e-18, 2.27e-18, 2.27e-18,             &
+      1.72e-18, 1.72e-18, 1.72e-18, 1.72e-18, 1.72e-18, 1.72e-18,             &
+      1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18,             &
+      9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19,             &
+      5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19],            &
       (/ size(no_extrap, 2), size(no_extrap, 1) /)                            &
     )
 
@@ -80,15 +91,15 @@ contains
 
 
     ! load test grids
-    call config%from_file( "test/data/grid.simple.config.json" )
+    call config%from_file( "test/data/grid.300-375.config.json" )
     grids => grid_warehouse_t( config )
 
     ! load test profiles
-    call config%from_file( "test/data/profile.acetone.config.json" )
+    call config%from_file( "test/data/profile.simple.config.json" )
     profiles => profile_warehouse_t( config, grids )
 
     ! get cross section config data
-    call config%from_file( "test/data/cross_section.acetone.config.json" )
+    call config%from_file( "test/data/cross_section.BrO.config.json" )
     call config%get( "cross sections", cs_set, Iam )
     iter => cs_set%get_iterator( )
 
