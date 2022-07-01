@@ -46,7 +46,7 @@ contains
     type(string_t), intent(in) :: config_flsp
     !> Local variables
     character(len=*), parameter :: Iam = 'test_Profile: '
-    type(config_t)              :: tst_config
+    type(config_t)              :: tst_config, child_config
     type(grid_warehouse_t), pointer :: theGridWarehouse
     class(grid_t), pointer   :: zGrid, lambdaGrid
     type(Profile_warehouse_t), pointer :: theProfileWarehouse
@@ -61,7 +61,8 @@ contains
     call tst_config%from_file( config_flsp%to_char() )
 
     !> Initialize grid warehouse
-    theGridWarehouse => grid_warehouse_t( tst_config )
+    call tst_config%get( "grids", child_config, Iam )
+    theGridWarehouse => grid_warehouse_t( child_config )
 
     !> Get copy of grid
     Handle = 'Vertical Z'
@@ -74,7 +75,9 @@ contains
     lambdaGrid => theGridWarehouse%get_grid( Handle )
 
     !> Initialize profile warehouse
-    theProfileWarehouse => Profile_warehouse_t( tst_config, theGridWareHouse )
+    call tst_config%get( "profiles", child_config, Iam )
+    theProfileWarehouse =>                                                    &
+        Profile_warehouse_t( child_config, theGridWareHouse )
 
     !> Get copy of the Air Profile
     Handle = 'Air'

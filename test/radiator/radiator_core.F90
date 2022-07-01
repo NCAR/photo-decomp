@@ -16,7 +16,7 @@ module radiator_core
   use tuvx_cross_section_warehouse,        only : cross_section_warehouse_t
   use tuvx_cross_section, only : cross_section_t
   use tuvx_radiator_warehouse,    only : radiator_warehouse_t
-  use tuvx_radiator,     only : base_radiator_t
+  use tuvx_radiator,     only : radiator_t
   use tuvx_radiator,     only : radiator_state_t
 
   implicit none
@@ -51,32 +51,36 @@ contains
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radiator core constructor: '
-    type(config_t)              :: tst_config
+    type(config_t)              :: tst_config, child_config
 
-    write(*,*) Iam // 'entering'
-
-    !> master configuration -> config type
+    ! main configuration -> config type
     call tst_config%from_file( config_flsp%to_char() )
 
-    !> Instantiate object
+    ! Instantiate object
     allocate( radiator_core_t :: radiator_core_obj )
 
-    !> Initialize grid warehouse
-    radiator_core_obj%theGridWarehouse_ => grid_warehouse_t( tst_config )
+    ! Initialize grid warehouse
+    call tst_config%get( "grids", child_config, Iam )
+    radiator_core_obj%theGridWarehouse_ => grid_warehouse_t( child_config )
 
-    !> Initialize profile warehouse
-    radiator_core_obj%theProfileWarehouse_ => Profile_warehouse_t( tst_config, radiator_core_obj%theGridWareHouse_ )
+    ! Initialize profile warehouse
+    call tst_config%get( "profiles", child_config, Iam )
+    radiator_core_obj%theProfileWarehouse_ =>                                 &
+        profile_warehouse_t( child_config,                                    &
+                             radiator_core_obj%theGridWareHouse_ )
 
-    !> Initialize radXfer xsect warehouse
-    radiator_core_obj%theradXferXsectWarehouse_ => cross_section_warehouse_t( &
-                                                  tst_config, &
-                                                  radiator_core_obj%theGridWareHouse_, &
-                                                  radiator_core_obj%theProfileWarehouse_ )
+    ! Initialize radXfer xsect warehouse
+    call tst_config%get( "cross sections", child_config, Iam )
+    radiator_core_obj%theradXferXsectWarehouse_ =>                            &
+        cross_section_warehouse_t( child_config,                              &
+                                   radiator_core_obj%theGridWareHouse_,       &
+                                   radiator_core_obj%theProfileWarehouse_ )
 
-    !> Initialize radiator warehouse
-    radiator_core_obj%theRadiatorWarehouse_ => radiator_warehouse_t( tst_config, radiator_core_obj%theGridWareHouse_ )
-
-    write(*,*) Iam // 'exiting'
+    ! Initialize radiator warehouse
+    call tst_config%get( "radiators", child_config, Iam )
+    radiator_core_obj%theRadiatorWarehouse_ =>                                &
+        radiator_warehouse_t( child_config,                                   &
+                              radiator_core_obj%theGridWareHouse_ )
 
   end function constructor
 
@@ -98,8 +102,8 @@ contains
   class(grid_t), pointer       :: zGrid, lambdaGrid
   class(profile_t), pointer       :: AirProfile, TemperatureProfile
   class(cross_section_t), pointer :: RaylieghCrossSection
-  class(base_radiator_t), pointer     :: RaylieghRadiator
-  class(base_radiator_t), pointer     :: aRadiator
+  class(radiator_t), pointer     :: RaylieghRadiator
+  class(radiator_t), pointer     :: aRadiator
   type(warehouse_iterator_t), pointer :: iter
   type(string_t)                      :: Handle
   type(radiator_state_t), allocatable :: RadiatorState
@@ -160,7 +164,7 @@ contains
     !> Get copy of the rayliegh radiator
     Handle = 'air'
     RaylieghRadiator => this%theRadiatorWarehouse_%get_radiator( Handle )
-    call RaylieghRadiator%upDateState( this%theGridWareHouse_, this%theProfileWareHouse_, &
+    call RaylieghRadiator%update_state( this%theGridWareHouse_, this%theProfileWareHouse_, &
                                        this%theradXferXsectWareHouse_ )
     call assert( 312238775, all( RaylieghRadiator%state_%layer_OD_ >= 0._dk ) )
     write(*,*) Iam // 'layer_OD_ is (',size(RaylieghRadiator%state_%layer_OD_,dim=1),' x ', &

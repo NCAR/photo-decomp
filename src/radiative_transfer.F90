@@ -74,21 +74,25 @@ contains
 
     character(len=*), parameter :: Iam = 'radXfer component constructor: '
     type(string_t)       :: solver
-
-    write(*,*) ' '
-    write(*,*) Iam // 'entering'
+    type(config_t) :: child_config
 
     allocate( radXfer_component )
 
-    !> instantiate and initialize the radXfer cross section warehouse
-    radXfer_component%radXferXsectWareHouse_ => cross_section_warehouse_t( config, gridWareHouse, ProfileWareHouse )
-    !> instantiate and initialize the radiator warehouse
-    radXfer_component%radiatorWareHouse_ => radiator_warehouse_t( config, gridWareHouse )
+    ! instantiate and initialize the radXfer cross section warehouse
+    call config%get( "cross sections", child_config, Iam )
+    radXfer_component%radXferXsectWareHouse_ =>                               &
+        cross_section_warehouse_t( child_config, gridWareHouse,               &
+                                   ProfileWareHouse )
 
-    !> save the configuration (used for preprocessing input data only)
+    ! instantiate and initialize the radiator warehouse
+    call config%get( "radiators", child_config, Iam )
+    radXfer_component%radiatorWareHouse_ =>                                   &
+        radiator_warehouse_t( child_config, gridWareHouse )
+
+    ! save the configuration (used for preprocessing input data only)
     radXfer_component%config_ = config
 
-    !> get the radiative transfer solver
+    ! get the radiative transfer solver
     call config%get( "Solver", solver, Iam, default="Delta Eddington" )
     if( solver == 'Discrete Ordinants' ) then
       call config%get( "nStreams", radXfer_component%nStreams_, Iam, default=4_ik )
@@ -96,9 +100,6 @@ contains
     else
       allocate( delta_eddington_t :: radXfer_component%radXferSolver_ )
     endif
-
-    write(*,*) ' '
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 
@@ -135,7 +136,7 @@ contains
     use musica_string,                 only : to_char
     use tuvx_grid,                  only : grid_t
     use tuvx_radiator_warehouse,       only : warehouse_iterator_t
-    use tuvx_radiator,        only : base_radiator_t
+    use tuvx_radiator,        only : radiator_t
     use tuvx_radiator,        only : radiator_state_t
     use tuvx_profile,                  only : profile_t
     use tuvx_spherical_geometry,           only : spherical_geom_t
@@ -165,7 +166,7 @@ contains
     real(dk), allocatable                :: airVcol(:), airScol(:)
     type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter => null( )
-    class(base_radiator_t),     pointer  :: aRadiator => null()
+    class(radiator_t),          pointer  :: aRadiator => null()
     class(profile_t),           pointer  :: airProfile => null()
 
     write(*,*) ' '
@@ -176,7 +177,7 @@ contains
     do while( iter%next() )
       aRadiator => this%RadiatorWareHouse_%get_radiator( iter )
       write(*,*) Iam // 'radiator handle = ',aRadiator%handle_%to_char()
-      call aRadiator%upDateState( GridWareHouse, ProfileWareHouse, this%radXferXsectWareHouse_ )
+      call aRadiator%update_state( GridWareHouse, ProfileWareHouse, this%radXferXsectWareHouse_ )
     enddo
     deallocate( iter )
 

@@ -45,10 +45,11 @@ contains
 
   function constructor( config_flsp ) result( photolysis_core_obj )
 
-    use musica_iterator,              only : iterator_t
-    use musica_string,                only : string_t
-    use tuvx_profile,                 only : profile_t
-    use tuvx_diagnostic_util,                        only : diagout
+    use musica_assert,                 only : assert_msg
+    use musica_iterator,               only : iterator_t
+    use musica_string,                 only : string_t
+    use tuvx_diagnostic_util,          only : diagout
+    use tuvx_profile,                  only : profile_t
 
     !> Arguments
     type(string_t), intent(in) :: config_flsp
@@ -61,40 +62,34 @@ contains
     character(len=32)           :: keyChar
     logical(lk)                 :: found
     type(string_t)              :: keyString
-    type(config_t)              :: master_config, components_config, radXfer_config
-    type(config_t)              :: radXfer_cross_sections_config, Radiators_config
-    type(config_t)              :: component_config
+    type(config_t)              :: core_config, child_config
     type(string_t)              :: Handle
     class(iterator_t), pointer  :: iter
-    class(profile_t), pointer :: aProfile
+    class(profile_t),  pointer  :: aProfile
+    type(string_t)              :: required_keys(3), optional_keys(1)
 
-    write(*,*) Iam // 'entering'
+    call core_config%from_file( config_flsp%to_char() )
 
-    !> Check json configuration file for basic structure, integrity
-    !> master configuration -> config type
-    call master_config%from_file( config_flsp%to_char() )
-    !> components; radiative transfer
-    call master_config%get( "Components", components_config, Iam )
-    !> Radiative transfer key must be in config
-    call components_config%get( "Radiative transfer", radXfer_config, Iam )
-    !> Radiative transfer cross sections are optional
-    call radXfer_config%get( "cross sections", radXfer_cross_sections_config, Iam, found=found )
-    !> Radiators keys must be in config
-    call radXfer_config%get( "radiators", Radiators_config, Iam )
-
+    ! Check json configuration file for basic structure, integrity
+    required_keys(1) = "radiative transfer"
+    required_keys(2) = "grids"
+    required_keys(3) = "profiles"
+    optional_keys(1) = "photolysis reactions"
+    call assert_msg( 255400232,                                               &
+                     core_config%validate( required_keys, optional_keys ),    &
+                     "Bad configuration data format for tuv-x core." )
 
     !> Instantiate photolysis core
     allocate( photolysis_core_obj )
 
-    ! get optical depth diagnostics to output
-    call radXfer_config%get( "Diagnostics", photolysis_core_obj%diagnostics_, Iam, found = found )
-    if( .not. found ) allocate( photolysis_core_obj%diagnostics_( 0 ) )
-
-    !> Instantiate and initialize grid warehouse
-    photolysis_core_obj%GridWarehouse_ => grid_warehouse_t( master_config )
+    ! Instantiate and initialize grid warehouse
+    call core_config%get( "grids", child_config, Iam )
+    photolysis_core_obj%GridWarehouse_ => grid_warehouse_t( child_config )
 
     !> Instantiate and initialize profile warehouse
-    photolysis_core_obj%ProfileWarehouse_ => Profile_warehouse_t( master_config, photolysis_core_obj%GridWareHouse_ )
+    call core_config%get( "profiles", child_config, Iam )
+    photolysis_core_obj%ProfileWarehouse_ =>                                  &
+        profile_warehouse_t( child_config, photolysis_core_obj%GridWareHouse_ )
 
     !> Diagnostics for testing
     Handle = 'Temperature' ; aProfile => photolysis_core_obj%ProfileWareHouse_%get_Profile( Handle )
@@ -109,42 +104,34 @@ contains
     call diagout( 'vpco3.new', aProfile%layer_dens_ )
     deallocate( aProfile )
 
-    !> set up the components; first call radiative transfer component
-    iter => components_config%get_iterator()
-    do while( iter%next() )
-      keyChar = components_config%key(iter)
-      if( keyChar == 'Radiative transfer' ) then
-        write(*,*) ' '
-        write(*,*) Iam,'key = ',trim(keyChar)
-        call components_config%get( iter, component_config, Iam )
-        photolysis_core_obj%radXfer_component_ => &
-               radXfer_component_core_t( component_config, photolysis_core_obj%GridWareHouse_, &
-                                         photolysis_core_obj%ProfileWareHouse_ )
-        exit
-      endif
-    enddo
+    ! Set up radiative transfer calculator
+    call core_config%get( "radiative transfer", child_config, Iam )
+    photolysis_core_obj%radXfer_component_ => &
+        radXfer_component_core_t( child_config,                               &
+                                  photolysis_core_obj%GridWareHouse_,         &
+                                  photolysis_core_obj%ProfileWareHouse_ )
 
-    !> photo and dose rate components
-    call iter%reset()
-    do while( iter%next() )
-      keyChar = components_config%key(iter)
-      if( keyChar == 'Photo reaction rate constants' ) then
-        write(*,*) ' '
-        write(*,*) Iam,'key = ',trim(keyChar)
-        call components_config%get( iter, component_config, Iam )
-        photolysis_core_obj%photorates_component_ => &
-               photolysis_rates_t( component_config, photolysis_core_obj%GridWareHouse_, &
-                                            photolysis_core_obj%ProfileWareHouse_ )
-      endif
-    enddo
-    deallocate( iter )
+    ! get optical depth diagnostics to output
+    !> \todo this should be moved out of the radiative transfer config if it
+    !!       is owned by the core
+    call child_config%get( "Diagnostics", photolysis_core_obj%diagnostics_,   &
+                           Iam, found = found )
+    if( .not. found ) allocate( photolysis_core_obj%diagnostics_( 0 ) )
+
+    ! photo and dose rate components
+    call core_config%get( "photolysis reactions", child_config, Iam,          &
+                          found = found )
+    if( found ) then
+      photolysis_core_obj%photorates_component_ => &
+          photolysis_rates_t( child_config,                                   &
+                              photolysis_core_obj%GridWareHouse_,             &
+                              photolysis_core_obj%ProfileWareHouse_ )
+    end if
 
     !> instantiate and initialize spherical geometry type
     photolysis_core_obj%sphericalGeom_ => spherical_geom_t( photolysis_core_obj%GridWareHouse_ )
     !> instantiate and initialize lyman alpha, srb type
     photolysis_core_obj%la_srb_ => la_srb_t( photolysis_core_obj%GridWareHouse_ )
-
-    write(*,*) Iam // 'exiting'
 
   end function constructor
 
@@ -154,7 +141,7 @@ contains
 
   use tuvx_profile,                 only : profile_t
   use tuvx_radiator_warehouse,      only : radiator_warehouse_t
-  use tuvx_radiator,       only : base_radiator_t
+  use tuvx_radiator,                only : radiator_t
   use tuvx_radiative_transfer_solver,        only : radField_t
   use tuvx_diagnostic_util,                        only : diagout
 
@@ -168,7 +155,7 @@ contains
   real(dk), allocatable           :: photoRates(:,:)
   character(len=2)                :: number
   class(profile_t),       pointer :: SZAngles => null( )
-  class(base_radiator_t), pointer :: aRadiator => null()
+  class(radiator_t),      pointer :: aRadiator => null()
   class(radField_t),      pointer :: radiationFld => null( )
   type(string_t)                  :: Handle
 

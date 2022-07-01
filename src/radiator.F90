@@ -4,19 +4,18 @@
 !> \file
 !> The base_tuvx_radiator module
 
-!> The base_radiator_t type and related functions
-!!
+!> The radiator_t type and related functions
 module tuvx_radiator
 
-  use musica_constants,       only : dk => musica_dk, ik => musica_ik, lk => musica_lk
-  use musica_string,          only : string_t
+  use musica_constants,                only : dk => musica_dk
+  use musica_string,                   only : string_t
 
   implicit none
 
   private
-  public :: base_radiator_t, base_constructor, radiator_ptr, radiator_state_t
+  public :: radiator_t, radiator_ptr, radiator_state_t, base_constructor
 
-  !> radiator state type
+  !> Optical properties for a radiator
   type :: radiator_state_t
     !> layer optical depth
     real(kind=dk), allocatable :: layer_OD_(:,:)
@@ -28,159 +27,166 @@ module tuvx_radiator
     final :: finalize
   end type radiator_state_t
 
-  !> base radiator type
-  type :: base_radiator_t
+  !> Optically active species
+  type :: radiator_t
     type(string_t)         :: handle_
     !> Name of the vertical profile to use
-    type(string_t) :: vertical_profile_name_
+    type(string_t)         :: vertical_profile_name_
     !> Name of the absorption cross-section to use
-    type(string_t) :: cross_section_name_
+    type(string_t)         :: cross_section_name_
+    !> Optical properties
     type(radiator_state_t) :: state_
   contains
     !> Update radiator for new environmental conditions
-    procedure :: upDateState
-  end type base_radiator_t
+    procedure :: update_state
+  end type radiator_t
+
+  interface radiator_t
+    module procedure :: constructor
+  end interface
 
   !> Pointer type for building sets of radiator objects
   type :: radiator_ptr
-    class(base_radiator_t), pointer :: val_ => null( )
+    class(radiator_t), pointer :: val_ => null( )
   end type radiator_ptr
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize radiator_t object
-  subroutine base_constructor( this, radiator_config, gridWareHouse )
+  !> Constructs a base_radiator_t object
+  function constructor( config, grid_warehouse ) result( new_radiator )
+
+    use musica_config,                 only : config_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+
+    !> New radiator object
+    class(radiator_t),      pointer       :: new_radiator
+    !> Radiator configuration
+    type(config_t),         intent(inout) :: config
+    !> Grid warehouse
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
+
+    allocate( new_radiator )
+    call base_constructor( new_radiator, config, grid_warehouse )
+
+  end function constructor
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !> Initializes a radiator_t object
+  !!
+  !! This should only be called by subclasses of radiator_t
+  subroutine base_constructor( this, config, grid_warehouse )
 
     use musica_assert,                 only : assert_msg
-    use musica_config,        only : config_t
-    use tuvx_grid_warehouse,  only : grid_warehouse_t
-    use tuvx_grid,         only : grid_t
+    use musica_config,                 only : config_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_grid,                     only : grid_t
 
-    !> radiator object
-    class(base_radiator_t), intent(inout) :: this
-    !> radiator configuration object
-    type(config_t), intent(inout)         :: radiator_config
-    !> grid warehouse
-    type(grid_warehouse_t), intent(inout) :: gridWareHouse
+    !> Radiator object
+    class(radiator_t),      intent(inout) :: this
+    !> Radiator configuration
+    type(config_t),         intent(inout) :: config
+    !> Grid warehouse
+    type(grid_warehouse_t), intent(inout) :: grid_warehouse
 
-    !> local variables
-    character(len=*), parameter   :: Iam = "Radiator initialize: "
-    type(string_t)                :: Handle
-    class(grid_t), pointer :: zGrid, lambdaGrid
-    type(string_t) :: required_keys(4), optional_keys(0)
+    ! local variables
+    character(len=*), parameter   :: Iam = "Base radiator constructor"
+    type(string_t)                :: handle
+    class(grid_t),    pointer     :: z_grid, lambda_grid
+    type(string_t)                :: required_keys(4), optional_keys(0)
 
     required_keys(1) = "name"
     required_keys(2) = "type"
     required_keys(3) = "cross section"
     required_keys(4) = "vertical profile"
     call assert_msg( 691711954,                                               &
-                     radiator_config%validate( required_keys, optional_keys ),&
+                     config%validate( required_keys, optional_keys ),         &
                      "Bad configuration data format for "//                   &
                      "base radiator." )
 
-    write(*,*) ' '
-    write(*,*) Iam,'entering'
+    handle = 'Vertical Z'
+    z_grid => grid_warehouse%get_grid( handle )
+    handle = 'Photolysis, wavelength'
+    lambda_grid => grid_warehouse%get_grid( handle )
 
-    Handle = 'Vertical Z' ; zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
+    call config%get( 'name',             this%handle_,                Iam )
+    call config%get( 'vertical profile', this%vertical_profile_name_, Iam )
+    call config%get( 'cross section',    this%cross_section_name_,    Iam )
 
-!-----------------------------------------------------------------------------
-!> Get radiator "Handle"
-!-----------------------------------------------------------------------------
-    call radiator_config%get( 'name', this%handle_, Iam )
-    write(*,*) Iam // 'handle = ',this%handle_%to_char()
+    ! allocate radiator state variables
+    allocate( this%state_%layer_OD_(  z_grid%ncells_, lambda_grid%ncells_ ) )
+    allocate( this%state_%layer_SSA_( z_grid%ncells_, lambda_grid%ncells_ ) )
+    allocate( this%state_%layer_G_(   z_grid%ncells_, lambda_grid%ncells_ ) )
 
-    call radiator_config%get( 'vertical profile', this%vertical_profile_name_, &
-                              Iam )
-    call radiator_config%get( 'cross section', this%cross_section_name_, Iam )
-
-!> allocate radiator state_ variables
-    allocate( this%state_%layer_OD_(zGrid%ncells_,lambdaGrid%ncells_) )
-    allocate( this%state_%layer_SSA_(zGrid%ncells_,lambdaGrid%ncells_) )
-    allocate( this%state_%layer_G_(zGrid%ncells_,lambdaGrid%ncells_) )
-    write(*,*) Iam // 'state_%layer_OD_ is allocated = ',allocated(this%state_%layer_OD_)
-    write(*,*) Iam // 'state_%layer_SSA_ is allocated = ',allocated(this%state_%layer_SSA_)
-    write(*,*) Iam // 'state_%layer_G_ is allocated = ',allocated(this%state_%layer_G_)
-    write(*,*) Iam // 'state_%layer_OD_ is (',size(this%state_%layer_OD_,dim=1),' x ',size(this%state_%layer_OD_,dim=2),')'
-
-    deallocate( zGrid )
-    deallocate( lambdaGrid )
-    write(*,*) ' '
-    write(*,*) Iam,'exiting'
+    deallocate( z_grid      )
+    deallocate( lambda_grid )
 
   end subroutine base_constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Update radiator state
-  subroutine upDateState( this, gridWareHouse, ProfileWareHouse, radXferXsectWareHouse )
+  subroutine update_state( this, grid_warehouse, profile_warehouse,           &
+      cross_section_warehouse )
 
-    use musica_assert,                 only : die_msg
-    use tuvx_profile_warehouse,        only : Profile_warehouse_t
-    use tuvx_profile,                  only : profile_t
-    use tuvx_grid_warehouse,           only : grid_warehouse_t
-    use tuvx_grid,                  only : grid_t
-    use tuvx_cross_section, only : cross_section_t
-    use tuvx_diagnostic_util,                         only : diagout
+    use musica_assert,                 only : assert_msg
+    use tuvx_cross_section,            only : cross_section_t
     use tuvx_cross_section_warehouse,  only : cross_section_warehouse_t
+    use tuvx_diagnostic_util,          only : diagout
+    use tuvx_grid,                     only : grid_t
+    use tuvx_grid_warehouse,           only : grid_warehouse_t
+    use tuvx_profile,                  only : profile_t
+    use tuvx_profile_warehouse,        only : profile_warehouse_t
 
-    !> Arguments
-    !> radiator obj
-    class(base_radiator_t), intent(inout) :: this
+    !> Radiator
+    class(radiator_t),               intent(inout) :: this
     !> Grid warehouse
-    type(grid_warehouse_t), intent(inout) :: gridWareHouse
+    type(grid_warehouse_t),          intent(inout) :: grid_warehouse
     !> Profile warehouse
-    type(Profile_warehouse_t), intent(inout)       :: ProfileWareHouse
-    type(cross_section_warehouse_t), intent(inout) :: radXferXsectWareHouse
-    !> Radiator state
+    type(profile_warehouse_t),       intent(inout) :: profile_warehouse
+    !> Cross section warehouse
+    type(cross_section_warehouse_t), intent(inout) :: cross_section_warehouse
 
-    !> Local variables
-    real(dk) , parameter  :: km2cm = 1.e5_dk
+    ! Local variables
+    character(len=*), parameter     :: Iam = 'Base radiator update state'
+    real(dk) ,        parameter     :: km2cm = 1.e5_dk
+    type(string_t)                  :: handle
+    integer                         :: w_index
+    real(dk),         allocatable   :: cross_section(:,:)
+    class(grid_t),          pointer :: z_grid
+    class(grid_t),          pointer :: lambda_grid
+    class(profile_t),       pointer :: radiator_profile
+    class(cross_section_t), pointer :: radiator_cross_section
 
-    integer(ik) :: wNdx
-    real(dk), allocatable :: CrossSection(:,:)
-    character(len=*), parameter :: Iam = 'base radiator upDateState: '
-    type(string_t)      :: Handle
-    class(grid_t), pointer :: zGrid
-    class(grid_t), pointer :: lambdaGrid
-    class(profile_t), pointer  :: radiatorProfile
-    class(cross_section_t), pointer :: radiatorCrossSection
+    ! get specific grids and profiles
+    handle = 'Vertical Z'
+    z_grid => grid_warehouse%get_grid( handle )
+    handle = 'Photolysis, wavelength'
+    lambda_grid => grid_warehouse%get_grid( handle )
 
-    write(*,*) ' '
-    write(*,*) Iam,'entering'
+    radiator_profile =>                                                       &
+      profile_warehouse%get_profile( this%vertical_profile_name_ )
 
-    write(*,*) Iam // 'handle = ',this%handle_%to_char()
-!-----------------------------------------------------------------------------
-!> get specific grids and profiles
-!-----------------------------------------------------------------------------
-    Handle = 'Vertical Z' ; zGrid => gridWareHouse%get_grid( Handle )
-    Handle = 'Photolysis, wavelength' ; lambdaGrid => gridWareHouse%get_grid( Handle )
-    write(*,*) Iam // 'nlyr,nbins = ',zGrid%ncells_,lambdaGrid%ncells_
+    radiator_cross_section =>                                                 &
+      cross_section_warehouse%get( this%cross_section_name_ )
 
-    radiatorProfile => ProfileWareHouse%get_Profile( this%vertical_profile_name_ )
+    ! check radiator state type allocation
+    call assert_msg( 345645215, allocated( this%state_%layer_OD_ ),           &
+                     "Radiator state not allocated" )
 
-    radiatorCrossSection =>                                                   &
-      radXferXsectWareHouse%get( this%cross_section_name_ )
-
-    !> check radiator state type allocation
-    if( .not. allocated( this%state_%layer_OD_ ) ) then
-      call die_msg( 2222222,"In radiator%upDateState radiator state not allocate" )
-    else
-      write(*,*) Iam // 'radiator state is allocated'
-    endif
-    write(*,*) Iam // 'size OD = ',size(this%state_%layer_OD_,dim=1),' x ', &
-                                  size(this%state_%layer_OD_,dim=2)
-
-    !> set radiator state members
-    CrossSection = radiatorCrossSection%calculate( gridWareHouse, ProfileWareHouse, at_mid_point=.true._lk )
-    call diagout( 'o2xs.new',CrossSection )
-    do wNdx = 1,lambdaGrid%ncells_
-      this%state_%layer_OD_(:,wNdx) = radiatorProfile%layer_dens_ * CrossSection(:,wNdx)
+    ! set radiator state members
+    cross_section = radiator_cross_section%calculate( grid_warehouse,         &
+                                                      profile_warehouse,      &
+                                                      at_mid_point = .true. )
+    call diagout( 'o2xs.new',cross_section )
+    do w_index = 1,lambda_grid%ncells_
+      this%state_%layer_OD_(:,w_index) = radiator_profile%layer_dens_         &
+                                         * cross_section(:,w_index)
     enddo
 
-    !> Settings for a gas phase radiator
+    ! Settings for a gas phase radiator
     if( this%handle_ == 'air' ) then
       this%state_%layer_SSA_ = 1._dk
       this%state_%layer_G_   = 0._dk
@@ -189,22 +195,21 @@ contains
       this%state_%layer_G_   = 0._dk
     endif
 
-    deallocate( zGrid )
-    deallocate( lambdaGrid )
-    deallocate( radiatorProfile )
-    deallocate( radiatorCrossSection )
+    deallocate( z_grid )
+    deallocate( lambda_grid )
+    deallocate( radiator_profile )
+    deallocate( radiator_cross_section )
 
-    write(*,*) ' '
-    write(*,*) Iam,'exiting'
+  end subroutine update_state
 
-  end subroutine upDateState
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Finalize the radiator state obj
+  !> Finalizes a radiator state object
   subroutine finalize( this )
 
-    !> object declaration
+    !> Radiator optical properties
     type(radiator_state_t) :: this
-  
+
     if( allocated( this%layer_OD_ ) ) then
       deallocate( this%layer_OD_ )
     endif
@@ -214,7 +219,9 @@ contains
     if( allocated( this%layer_G_ ) ) then
       deallocate( this%layer_G_ )
     endif
-  
-    end subroutine finalize
+
+  end subroutine finalize
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module tuvx_radiator

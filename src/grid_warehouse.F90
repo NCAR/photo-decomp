@@ -36,7 +36,7 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Grid warehouse constructor
-  function constructor( config ) result( grid_warehouse_obj )
+  function constructor( config ) result( grid_warehouse )
 
     use musica_config,                 only : config_t
     use musica_iterator,               only : iterator_t
@@ -47,44 +47,34 @@ contains
     !> grid configuration data
     type(config_t), intent(inout) :: config
 
-    !> New grid_warehouse_obj
-    class(grid_warehouse_t), pointer :: grid_warehouse_obj
+    !> New grid_warehouse
+    class(grid_warehouse_t), pointer :: grid_warehouse
 
     !> local variables
     character(len=*), parameter :: Iam = "Grid warehouse constructor: "
-    type(config_t)              :: grid_set, grid_config
+    type(config_t)              :: grid_config
     class(iterator_t), pointer  :: iter
     class(grid_warehouse_t), pointer :: grid_warehouse_ptr
-    type(grid_ptr)            :: grid_obj
+    type(grid_ptr)              :: grid_obj
     character(len=32)           :: keychar
     type(string_t)              :: aswkey
 
-    allocate( grid_warehouse_obj )
+    allocate( grid_warehouse )
+    allocate( grid_warehouse%grid_objs_(0) )
 
-    associate(new_obj=>grid_warehouse_obj)
-
-    allocate( new_obj%grid_objs_(0) )
-
-    call config%get( 'Grids', grid_set, Iam )
-    iter => grid_set%get_iterator()
-!-----------------------------------------------------------------------------
-!> iterate over grids
-!-----------------------------------------------------------------------------
+    ! iterate over grids
+    iter => config%get_iterator()
     do while( iter%next() )
-      keychar = grid_set%key(iter)
-      aswkey  = keychar 
-      call grid_set%get( iter, grid_config, Iam )
+      keychar = config%key(iter)
+      aswkey  = keychar
+      call config%get( iter, grid_config, Iam )
       call grid_config%add( 'Handle', aswkey, Iam )
-!-----------------------------------------------------------------------------
-!> Build grid objects
-!-----------------------------------------------------------------------------
+
+      ! Build grid objects
       grid_obj%val_ => grid_builder( grid_config )
-      new_obj%grid_objs_ = [new_obj%grid_objs_,grid_obj]
+      grid_warehouse%grid_objs_ = [ grid_warehouse%grid_objs_, grid_obj ]
     end do
-
     deallocate( iter )
-
-    end associate
 
   end function constructor
 

@@ -1,5 +1,5 @@
 {
-   "Grids": {
+   "grids": {
       "Vertical Z": {
          "Grid type": "Equal interval",
          "Grid begins at" : 0.0,
@@ -15,7 +15,7 @@
          "Values": [ 12.0, 14.0, 16.0, 18.0, 20.0 ]
       }
    },
-   "Profiles": {
+   "profiles": {
       "O3": {
          "Profile type": "O3 from csv file",
          "Filespec": "data/DATAE1/ATM/ussa.ozone"
@@ -44,34 +44,32 @@
          "Grid": "Photolysis, wavelength"
       }
    },
-   "Components": {
-      "Radiative transfer": {
-         "cross sections": [
-            {
-               "name": "air",
-               "type": "air"
-            },
-            {
-               "name": "O3",
-               "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
-               "type": "O3"
-            },
-            {
-               "name": "O2",
-               "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
-               "type": "base",
-               "lower extrapolation": { "type": "boundary" }
-            }
-         ],
-         "radiators": [
-            {
-               "name": "air",
-               "type": "base",
-               "cross section": "air",
-               "vertical profile": "Air"
-            }
-         ],
-         "Diagnostics" : [ "air" ]
-      }
+   "radiative transfer": {
+      "cross sections": [
+         {
+            "name": "air",
+            "type": "air"
+         },
+         {
+            "name": "O3",
+            "netcdf files": ["data/XSQY/O3_cross_section_1.nc","data/XSQY/O3_cross_section_2.nc","data/XSQY/O3_cross_section_3.nc","data/XSQY/O3_cross_section_4.nc"],
+            "type": "O3"
+         },
+         {
+            "name": "O2",
+            "netcdf files": ["data/XSQY/O2_cross_section_1.nc"],
+            "type": "base",
+            "lower extrapolation": { "type": "boundary" }
+         }
+      ],
+      "radiators": [
+         {
+            "name": "air",
+            "type": "base",
+            "cross section": "air",
+            "vertical profile": "Air"
+         }
+      ],
+      "Diagnostics" : [ "air" ]
    }
 }

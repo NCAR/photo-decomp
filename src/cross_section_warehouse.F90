@@ -60,14 +60,12 @@ contains
     !> Profile warehouse
     type(Profile_warehouse_t),  intent(inout) :: profile_warehouse
 
-    !> local variables
+    ! local variables
     integer :: ndx
     character(len=*), parameter :: Iam = "Cross section constructor"
-    type(config_t) :: cross_section_set
     type(config_t) :: cross_section_config
     class(iterator_t), pointer :: iter
     type(cross_section_ptr) :: cross_section_ptr
-    character(:), allocatable   :: jsonkey
     character(len=32)           :: keychar
     type(string_t)              :: cross_section_name
     type(string_t), allocatable :: netcdfFiles(:)
@@ -77,16 +75,10 @@ contains
     allocate( string_t :: new_obj%handles_(0) )
     allocate( new_obj%cross_section_objs_(0) )
 
-    jsonkey = 'cross sections'
-    call config%get( jsonkey, cross_section_set, Iam, found = found )
-
-    ! cross section objects are not required
-    if( .not. found ) return
-
     ! iterate over cross sections
-    iter => cross_section_set%get_iterator( )
+    iter => config%get_iterator( )
     do while( iter%next( ) )
-      call cross_section_set%get( iter, cross_section_config, Iam )
+      call config%get( iter, cross_section_config, Iam )
 
       ! save the cross section name for lookups
       call cross_section_config%get( "name", cross_section_name, Iam )

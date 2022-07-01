@@ -14,6 +14,9 @@ module tuvx_interpolate
 
    implicit none
 
+   private
+   public :: abs_interpolator_t, interp1_t, interp2_t, interp3_t, interp4_t
+
    integer(ik), parameter :: iONE = 1_ik
    real(dk),    parameter :: rZERO = 0.0_dk
 

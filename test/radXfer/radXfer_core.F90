@@ -47,29 +47,29 @@ contains
 
     !> Local variables
     character(len=*), parameter :: Iam = 'radXfer core constructor: '
-    type(config_t)              :: tst_config
+    type(config_t)              :: tst_config, child_config
 
-    write(*,*) Iam // 'entering'
-
-    !> master configuration -> config type
+    ! main configuration -> config type
     call tst_config%from_file( config_flsp%to_char() )
 
-    !> Instantiate object
+    ! Instantiate object
     allocate( radXfer_core_t :: radXfer_core_obj )
 
-    !> Initialize grid warehouse
-    radXfer_core_obj%theGridWarehouse_ => grid_warehouse_t( tst_config )
+    ! Initialize grid warehouse
+    call tst_config%get( "grids", child_config, Iam )
+    radXfer_core_obj%theGridWarehouse_ => grid_warehouse_t( child_config )
 
-    !> Initialize profile warehouse
-    radXfer_core_obj%theProfileWarehouse_ => Profile_warehouse_t( tst_config, radXfer_core_obj%theGridWareHouse_ )
+    ! Initialize profile warehouse
+    call tst_config%get( "profiles", child_config, Iam )
+    radXfer_core_obj%theProfileWarehouse_ =>                                  &
+        profile_warehouse_t( child_config, radXfer_core_obj%theGridWareHouse_ )
 
-    !> Initialize radXfer xsect warehouse
-    radXfer_core_obj%theradXferXsectWarehouse_ => cross_section_warehouse_t( &
-                                                  tst_config, &
-                                                  radXfer_core_obj%theGridWareHouse_, &
-                                                  radXfer_core_obj%theProfileWarehouse_ )
-
-    write(*,*) Iam // 'exiting'
+    ! Initialize radXfer xsect warehouse
+    call tst_config%get( "cross sections", child_config, Iam )
+    radXfer_core_obj%theradXferXsectWarehouse_ =>                             &
+        cross_section_warehouse_t( child_config,                              &
+                                   radXfer_core_obj%theGridWareHouse_,        &
+                                   radXfer_core_obj%theProfileWarehouse_ )
 
   end function constructor
 

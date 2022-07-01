@@ -28,7 +28,10 @@ module tuvx_quantum_yield_o3_o2_o1d
 
 contains
 
-function constructor( config, grid_warehouse, profile_warehouse ) result( this )
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function constructor( config, grid_warehouse, profile_warehouse )           &
+      result( this )
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
