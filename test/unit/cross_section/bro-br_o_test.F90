@@ -84,6 +84,7 @@ contains
     deallocate( iter )
     deallocate( grids )
     deallocate( profiles )
+    deallocate( expected )
 
   end subroutine test_cross_section_bro_br_o_t
 

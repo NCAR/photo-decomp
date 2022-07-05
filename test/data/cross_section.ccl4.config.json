@@ -9,14 +9,14 @@
       "name": "fix-zero",
       "type": "CCl4+hv->Products",
       "netcdf files": [ "test/data/cross_section.ccl4.nc" ],
-      "lower extrapolation": { "type": "constant", "value" : 12.5 }
+      "lower extrapolation": { "type": "constant", "value" : 180 }
     },
     {
       "name": "extend-fix",
       "type": "CCl4+hv->Products",
       "netcdf files": [ "test/data/cross_section.ccl4.nc" ],
       "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 32.3 }
+      "upper extrapolation": { "type": "constant", "value": 220 }
     }
   ]
 }

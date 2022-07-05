@@ -129,6 +129,9 @@ contains
     deallocate( iter )
     deallocate( grids )
     deallocate( profiles )
+    deallocate( acetone_no_extrap )
+    deallocate( acetone_lower_extrap )
+    deallocate( acetone_lower_upper_extrap )
 
   end subroutine test_cross_section_ch3coch3_ch3co_ch3_t
 
