@@ -1,7 +1,7 @@
 {
   "cross sections" : [
     {
-      "name": "no extrapolation",
+      "name": "base",
       "netcdf files": [ "test/data/cross_section.BrO.nc" ],
       "type": "BrO+hv->Br+O"
     }

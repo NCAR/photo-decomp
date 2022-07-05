@@ -30,20 +30,17 @@ contains
     class(profile_warehouse_t), pointer :: profiles
     class(cross_section_t),     pointer :: cross_section
 
-    character(len=*), parameter :: Iam = "acetone cross section tests"
+    character(len=*), parameter :: Iam = "bro-br_o cross section tests"
     type(config_t) :: config, cs_set, cs_config
     class(iterator_t), pointer :: iter
     real(kind=dk), allocatable :: results(:,:)
-    real(dk), allocatable :: no_extrap(:,:)
-    ! real(dk), allocatable :: lower_upper_extrap(:,:)
-    allocate(no_extrap(15, 6))
-    ! allocate(lower_extrap(4, 5))
-    ! allocate(lower_upper_extrap(4, 6))
+    real(dk), allocatable :: expected(:,:)
+    allocate(expected(15, 6))
 
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
     ! changes. The values here are meaningless.
-    no_extrap = reshape([                                                     &
+    expected = reshape([                                                     &
       2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18, 2.00e-18,             &
       2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18, 2.59e-18,             &
       4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18, 4.53e-18,             &
@@ -59,7 +56,7 @@ contains
       1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18, 1.60e-18,             &
       9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19, 9.19e-19,             &
       5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19, 5.09e-19],            &
-      (/ size(no_extrap, 2), size(no_extrap, 1) /)                            &
+      (/ size(expected, 2), size(expected, 1) /)                            &
     )
 
     ! load test grids
@@ -80,7 +77,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_bro_br_o_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    call check_values( results, no_extrap, .01_dk )
+    call check_values( results, expected, .01_dk )
     deallocate( cross_section )
 
     ! clean up

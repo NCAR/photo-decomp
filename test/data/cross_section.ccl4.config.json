@@ -2,19 +2,19 @@
   "cross sections" : [
     {
       "name": "no extrapolation",
-      "netcdf files": [ "test/data/cross_section.acetone.nc" ],
-      "type": "CH3COCH3+hv->CH3CO+CH3"
+      "netcdf files": [ "test/data/cross_section.ccl4.nc" ],
+      "type": "CCl4+hv->Products"
     },
     {
       "name": "fix-zero",
-      "type": "CH3COCH3+hv->CH3CO+CH3",
-      "netcdf files": [ "test/data/cross_section.acetone.nc" ],
+      "type": "CCl4+hv->Products",
+      "netcdf files": [ "test/data/cross_section.ccl4.nc" ],
       "lower extrapolation": { "type": "constant", "value" : 12.5 }
     },
     {
       "name": "extend-fix",
-      "type": "CH3COCH3+hv->CH3CO+CH3",
-      "netcdf files": [ "test/data/cross_section.acetone.nc" ],
+      "type": "CCl4+hv->Products",
+      "netcdf files": [ "test/data/cross_section.ccl4.nc" ],
       "lower extrapolation": { "type": "boundary" },
       "upper extrapolation": { "type": "constant", "value": 32.3 }
     }

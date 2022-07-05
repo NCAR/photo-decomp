@@ -88,7 +88,7 @@ contains
     grids => grid_warehouse_t( config )
 
     ! load test profiles
-    call config%from_file( "test/data/profile.acetone.config.json" )
+    call config%from_file( "test/data/profile.temperature.config.json" )
     profiles => profile_warehouse_t( config, grids )
 
     ! get cross section config data
