@@ -4,19 +4,6 @@
       "name": "no extrapolation",
       "netcdf files": [ "test/data/cross_section.BrO.nc" ],
       "type": "BrO+hv->Br+O"
-    },
-    {
-      "name": "fix-zero",
-      "type": "BrO+hv->Br+O",
-      "netcdf files": [ "test/data/cross_section.BrO.nc" ],
-      "lower extrapolation": { "type": "constant", "value" : 12.5 }
-    },
-    {
-      "name": "extend-fix",
-      "type": "BrO+hv->Br+O",
-      "netcdf files": [ "test/data/cross_section.BrO.nc" ],
-      "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 32.3 }
     }
   ]
 }

@@ -102,7 +102,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    call check_values( results, acetone_no_extrap, 0.005_dk+8 )
+    call check_values( results, acetone_no_extrap, 0.01_dk )
     deallocate( cross_section )
 
     ! load and test cross section w/ fixed lower extrapolation and no upper
@@ -112,7 +112,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles, at_mid_point = .true. )
-    call check_values( results, acetone_lower_extrap, 0.005_dk )
+    call check_values( results, acetone_lower_extrap, 0.01_dk )
     deallocate( cross_section )
 
     ! load and test cross section w/ extrpolation from lower boundary and
@@ -122,7 +122,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles, at_mid_point = .false.)
-    call check_values( results, acetone_lower_upper_extrap, 0.005_dk )
+    call check_values( results, acetone_lower_upper_extrap, 0.01_dk )
     deallocate( cross_section )
 
     ! clean up
