@@ -15,5 +15,6 @@ create_standard_test(NAME cross_section_ch2o SOURCES ch2o_test.F90 cross_section
 create_standard_test(NAME cross_section_ch3ono2_ch3o_no2 SOURCES ch3ono2_ch3o_no2_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_chbr3 SOURCES chbr3_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_chcl3 SOURCES chcl3_test.F90 cross_section_test_utils.F90)
+create_standard_test(NAME cross_section_cl2-cl_cl SOURCES cl2-cl_cl_test.F90 cross_section_test_utils.F90)
 
 ################################################################################
