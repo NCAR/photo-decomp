@@ -36,9 +36,10 @@ contains
     real(kind=dk), allocatable :: results(:,:)
     real(dk), allocatable :: no_extrap(:,:)
     real(dk), allocatable :: lower_extrap(:,:)
+    real(dk), allocatable :: lower_upper_extrap(:,:)
     allocate(no_extrap(10, 6))
     allocate(lower_extrap(10, 6))
-    ! allocate(lower_upper_extrap(4, 6))
+    allocate(lower_upper_extrap(10, 6))
 
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
@@ -71,6 +72,21 @@ contains
       (/ size(lower_extrap, 2), size(lower_extrap, 1) /)                      &
     )
 
+    lower_upper_extrap = reshape([                                            &
+      6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19,       &
+      6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19,       &
+      6.591e-19, 6.584e-19, 6.576e-19, 6.568e-19, 6.560e-19, 6.553e-19,       &
+      6.598e-19, 6.596e-19, 6.595e-19, 6.593e-19, 6.591e-19, 6.590e-19,       &
+      6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.598e-19, 6.598e-19,       &
+      6.486e-19, 6.483e-19, 6.480e-19, 6.477e-19, 6.474e-19, 6.470e-19,       &
+      6.229e-19, 6.220e-19, 6.210e-19, 6.200e-19, 6.191e-19, 6.181e-19,       &
+      5.880e-19, 5.861e-19, 5.843e-19, 5.824e-19, 5.806e-19, 5.787e-19,       &
+      5.444e-19, 5.415e-19, 5.387e-19, 5.358e-19, 5.330e-19, 5.302e-19,       &
+      4.929e-19, 4.890e-19, 4.852e-19, 4.814e-19, 4.776e-19, 4.739e-19],      &
+      (/ size(lower_upper_extrap, 2), size(lower_upper_extrap, 1) /)          &
+    )
+
+
     ! load test grids
     call config%from_file( "test/data/grid.190-210.config.json" )
     grids => grid_warehouse_t( config )
@@ -100,12 +116,21 @@ contains
     call check_values( results, lower_extrap, .01_dk )
     deallocate( cross_section )
 
+    ! load and test cross section with lower and upper extrapolation
+    call assert( 101264914, iter%next( ) )
+    call cs_set%get( iter, cs_config, Iam )
+    cross_section => cross_section_ccl4_t( cs_config, grids, profiles )
+    results = cross_section%calculate( grids, profiles )
+    call check_values( results, lower_upper_extrap, .01_dk )
+    deallocate( cross_section )
+
     ! clean up
     deallocate( iter )
     deallocate( grids )
     deallocate( profiles )
     deallocate( no_extrap )
     deallocate( lower_extrap )
+    deallocate( lower_upper_extrap )
 
   end subroutine test_cross_section_ccl4_t
 
