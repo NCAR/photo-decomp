@@ -6,13 +6,13 @@
       "type": "CHCl3+hv->Products"
     },
     {
-      "name": "fix-zero",
+      "name": "lower extrapolation",
       "type": "CHCl3+hv->Products",
       "netcdf files": [ "test/data/cross_section.chcl3.nc" ],
       "lower extrapolation": { "type": "constant", "value" : 188 }
     },
     {
-      "name": "extend-fix",
+      "name": "upper extrapolation",
       "type": "CHCl3+hv->Products",
       "netcdf files": [ "test/data/cross_section.chcl3.nc" ],
       "lower extrapolation": { "type": "boundary" },
