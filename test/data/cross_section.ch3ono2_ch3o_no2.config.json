@@ -6,17 +6,17 @@
       "type": "CCl4+hv->Products"
     },
     {
-      "name": "fix-zero",
-      "type": "CCl4+hv->Products",
+      "name": "lower extrapolation",
+      "type": "CH3ONO2+hv->CH3O+NO2",
       "netcdf files": [ "test/data/cross_section.ch3ono2_ch3o_no2.nc" ],
-      "lower extrapolation": { "type": "constant", "value" : 298 }
+      "lower extrapolation": { "type": "constant", "value" : 300 }
     },
     {
-      "name": "extend-fix",
-      "type": "CCl4+hv->Products",
+      "name": "upper extrapolation",
+      "type": "CH3ONO2+hv->CH3O+NO2",
       "netcdf files": [ "test/data/cross_section.ch3ono2_ch3o_no2.nc" ],
       "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 312 }
+      "upper extrapolation": { "type": "constant", "value": 310 }
     }
   ]
 }

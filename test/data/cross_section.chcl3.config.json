@@ -16,7 +16,7 @@
       "type": "CHCl3+hv->Products",
       "netcdf files": [ "test/data/cross_section.chcl3.nc" ],
       "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 242 }
+      "upper extrapolation": { "type": "constant", "value": 212 }
     }
   ]
 }

@@ -36,10 +36,10 @@ contains
     real(kind=dk), allocatable :: results(:,:)
     real(dk), allocatable :: acetone_no_extrap(:,:)
     real(dk), allocatable :: acetone_lower_extrap(:,:)
-    real(dk), allocatable :: acetone_lower_upper_extrap(:,:)
+    real(dk), allocatable :: acetone_upper_extrap(:,:)
     allocate(acetone_no_extrap(4, 6))
     allocate(acetone_lower_extrap(4, 5))
-    allocate(acetone_lower_upper_extrap(4, 6))
+    allocate(acetone_upper_extrap(4, 6))
 
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
@@ -67,7 +67,7 @@ contains
       (/ size(acetone_lower_extrap, 2), size(acetone_lower_extrap, 1) /)      &
     )
 
-    acetone_lower_upper_extrap = reshape([                                    &
+    acetone_upper_extrap = reshape([                                    &
       703018619.71846068, 656552233.31681216, 612193147.37404847,             &
       569891218.73771667, 529596393.89548576, 491264467.90404767,             &
       1170767016.0155232, 1093386038.4216070, 1019514303.0582997,             &
@@ -77,8 +77,8 @@ contains
       7844654649.0400229, 7326251638.3173409, 6831354471.3212347,             &
       6359403928.4437160, 5909841789.7788944, 5482175087.4377661],            &
       (/                                                                      &
-        size(acetone_lower_upper_extrap, 2),                                  & 
-        size(acetone_lower_upper_extrap, 1)                                   &
+        size(acetone_upper_extrap, 2),                                  & 
+        size(acetone_upper_extrap, 1)                                   &
       /)                                                                      &
     )
 
@@ -122,7 +122,7 @@ contains
     cross_section =>                                                          &
       cross_section_ch3coch3_ch3co_ch3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles, at_mid_point = .false.)
-    call check_values( results, acetone_lower_upper_extrap, 0.01_dk )
+    call check_values( results, acetone_upper_extrap, 0.01_dk )
     deallocate( cross_section )
 
     ! clean up
@@ -131,7 +131,7 @@ contains
     deallocate( profiles )
     deallocate( acetone_no_extrap )
     deallocate( acetone_lower_extrap )
-    deallocate( acetone_lower_upper_extrap )
+    deallocate( acetone_upper_extrap )
 
   end subroutine test_cross_section_ch3coch3_ch3co_ch3_t
 

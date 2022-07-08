@@ -3,20 +3,20 @@
     {
       "name": "no extrapolation",
       "netcdf files": [ "test/data/cross_section.ch2o.nc" ],
-      "type": "CCl4+hv->Products"
+      "type": "CH2O+hv->H+HCO"
     },
     {
-      "name": "fix-zero",
-      "type": "CCl4+hv->Products",
+      "name": "lower extrapolation",
+      "type": "CH2O+hv->H+HCO",
       "netcdf files": [ "test/data/cross_section.ch2o.nc" ],
-      "lower extrapolation": { "type": "constant", "value" : 195 }
+      "lower extrapolation": { "type": "constant", "value" : 300 }
     },
     {
-      "name": "extend-fix",
-      "type": "CCl4+hv->Products",
+      "name": "upper extrapolation",
+      "type": "CH2O+hv->H+HCO",
       "netcdf files": [ "test/data/cross_section.ch2o.nc" ],
       "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 380 }
+      "upper extrapolation": { "type": "constant", "value": 375 }
     }
   ]
 }

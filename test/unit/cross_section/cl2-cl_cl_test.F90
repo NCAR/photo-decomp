@@ -19,7 +19,7 @@ contains
 
   subroutine test_cross_section_cl2_cl_cl_t( )
 
-    use musica_assert,                 only : assert
+    use musica_assert,                 only : assert, assert_msg
     use musica_constants,              only : dk => musica_dk
     use musica_config,                 only : config_t
     use musica_iterator,               only : iterator_t

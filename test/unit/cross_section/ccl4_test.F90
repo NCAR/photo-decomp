@@ -36,10 +36,10 @@ contains
     real(kind=dk), allocatable :: results(:,:)
     real(dk), allocatable :: no_extrap(:,:)
     real(dk), allocatable :: lower_extrap(:,:)
-    real(dk), allocatable :: lower_upper_extrap(:,:)
+    real(dk), allocatable :: upper_extrap(:,:)
     allocate(no_extrap(10, 6))
     allocate(lower_extrap(10, 6))
-    allocate(lower_upper_extrap(10, 6))
+    allocate(upper_extrap(10, 6))
 
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
@@ -72,7 +72,7 @@ contains
       (/ size(lower_extrap, 2), size(lower_extrap, 1) /)                      &
     )
 
-    lower_upper_extrap = reshape([                                            &
+    upper_extrap = reshape([                                            &
       6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19,       &
       6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19, 6.599e-19,       &
       6.591e-19, 6.584e-19, 6.576e-19, 6.568e-19, 6.560e-19, 6.553e-19,       &
@@ -83,7 +83,7 @@ contains
       5.880e-19, 5.861e-19, 5.843e-19, 5.824e-19, 5.806e-19, 5.787e-19,       &
       5.444e-19, 5.415e-19, 5.387e-19, 5.358e-19, 5.330e-19, 5.302e-19,       &
       4.929e-19, 4.890e-19, 4.852e-19, 4.814e-19, 4.776e-19, 4.739e-19],      &
-      (/ size(lower_upper_extrap, 2), size(lower_upper_extrap, 1) /)          &
+      (/ size(upper_extrap, 2), size(upper_extrap, 1) /)          &
     )
 
 
@@ -121,7 +121,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_ccl4_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    call check_values( results, lower_upper_extrap, .01_dk )
+    call check_values( results, upper_extrap, .01_dk )
     deallocate( cross_section )
 
     ! clean up
@@ -130,7 +130,7 @@ contains
     deallocate( profiles )
     deallocate( no_extrap )
     deallocate( lower_extrap )
-    deallocate( lower_upper_extrap )
+    deallocate( upper_extrap )
 
   end subroutine test_cross_section_ccl4_t
 
