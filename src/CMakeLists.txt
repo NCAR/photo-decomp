@@ -9,7 +9,6 @@ set(TUVX_SRC constants.F90
              delta_eddington.F90
              diagnostic_util.F90
              dose_rates.F90
-             environment.F90
              grid.F90
              grid_factory.F90
              grid_warehouse.F90
