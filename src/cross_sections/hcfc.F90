@@ -50,8 +50,6 @@ contains
 
     required_keys(1) = "type"
     required_keys(2) = "netcdf files"
-    optional_keys(1) = "lower extrapolation"
-    optional_keys(2) = "upper extrapolation"
     optional_keys(3) = "name"
     call assert_msg( 369759228,                                               &
                      config%validate( required_keys, optional_keys ),         &

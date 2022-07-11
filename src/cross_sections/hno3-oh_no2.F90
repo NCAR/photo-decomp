@@ -187,8 +187,6 @@ file_loop: &
     class(grid_t),    pointer     :: zGrid => null( )
     class(profile_t), pointer     :: temperature => null( )
 
-    write(*,*) Iam,'entering'
-
     Handle = 'Photolysis, wavelength'
     lambdaGrid  => grid_warehouse%get_grid( Handle )
     Handle = 'Vertical Z'
