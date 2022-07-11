@@ -118,8 +118,6 @@ contains
     class(grid_t),    pointer :: lambdaGrid => null( )
     class(profile_t), pointer :: temperature => null( )
 
-    write(*,*) Iam,'entering'
-
     Handle = 'Vertical Z'
     zGrid => grid_warehouse%get_grid( Handle )
     Handle = 'Photolysis, wavelength'
