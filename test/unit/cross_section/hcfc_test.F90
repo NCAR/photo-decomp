@@ -82,7 +82,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_hcfc_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, expected, .01_dk )
+    call check_values( results, expected, .01_dk )
     deallocate( cross_section )
 
     ! clean up
