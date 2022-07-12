@@ -1,0 +1,22 @@
+{
+  "cross sections" : [
+    {
+      "name": "no extrapolation",
+      "netcdf files": [ "test/data/cross_section.o3_tint.nc" ],
+      "type": "O3 tint"
+    },
+    {
+      "name": "lower extrapolation",
+      "type": "O3 tint",
+      "netcdf files": [ "test/data/cross_section.o3_tint.nc" ],
+      "lower extrapolation": { "type": "constant", "value" : 195 }
+    },
+    {
+      "name": "upper extrapolation",
+      "type": "O3 tint",
+      "netcdf files": [ "test/data/cross_section.o3_tint.nc" ],
+      "lower extrapolation": { "type": "boundary" },
+      "upper extrapolation": { "type": "constant", "value": 205 }
+    }
+  ]
+}

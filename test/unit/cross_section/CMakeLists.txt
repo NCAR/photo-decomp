@@ -26,5 +26,6 @@ create_standard_test(NAME cross_section_n2o5-no2_no3 SOURCES n2o5-no2_no3_test.F
 create_standard_test(NAME cross_section_nitroxy_acetone SOURCES nitroxy_acetone_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_nitroxy_ethanol SOURCES nitroxy_ethanol_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_no2_tint SOURCES no2_tint_test.F90 cross_section_test_utils.F90)
+create_standard_test(NAME cross_section_o3_tint SOURCES o3_tint_test.F90 cross_section_test_utils.F90)
 
 ################################################################################
