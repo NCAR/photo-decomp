@@ -11,13 +11,13 @@ program test_cross_section
 
   implicit none
 
-  call test_cross_section_clono2_t( )
+  call test_cross_section_h2o2_oh_oh_t( )
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine test_cross_section_clono2_t( )
+  subroutine test_cross_section_h2o2_oh_oh_t( )
 
     use musica_assert,                 only : assert
     use musica_constants,              only : dk => musica_dk
@@ -161,7 +161,7 @@ contains
     deallocate( lower_extrap )
     deallocate( upper_extrap )
 
-  end subroutine test_cross_section_clono2_t
+  end subroutine test_cross_section_h2o2_oh_oh_t
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

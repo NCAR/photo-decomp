@@ -6,18 +6,18 @@
 program test_cross_section
 
   use tuvx_cross_section, only : cross_section_t
-  use tuvx_cross_section_no2_tint
+  use tuvx_cross_section_oclo
   use tuvx_test_cross_section_utils, only : check_values
 
   implicit none
 
-  call test_cross_section_no2_tint_t( )
+  call test_cross_section_oclo_t( )
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine test_cross_section_no2_tint_t( )
+  subroutine test_cross_section_oclo_t( )
 
     use musica_assert,                 only : assert
     use musica_constants,              only : dk => musica_dk
@@ -30,7 +30,7 @@ contains
     class(profile_warehouse_t), pointer :: profiles
     class(cross_section_t),     pointer :: cross_section
 
-    character(len=*), parameter :: Iam = "no2_tint cross section tests"
+    character(len=*), parameter :: Iam = "oclo cross section tests"
     type(config_t) :: config, cs_set, cs_config
     class(iterator_t), pointer :: iter
     real(kind=dk), allocatable :: results(:,:)
@@ -45,32 +45,31 @@ contains
     ! So, these tests are testing that any changes don't produce unexpected
     ! changes. The values here are meaningless.
     no_extrap = reshape([ real::                                              &
-      8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20,             &                             
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19,             &                             
       0, 0, 0, 0, 0, 0,                                                       &
-      0, 0, 0, 0, 0, 0],                                                      &
+      9.95e-19, 9.95e-19, 9.95e-19, 9.95e-19, 9.95e-19, 9.95e-19,             &
+      2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18,             &
+      1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18,             &
+      7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19],            &
       (/ size(no_extrap, 2), size(no_extrap, 1) /)                            &
     )
 
     lower_extrap = reshape([ real::                                           &
-      115.04, 115.04, 115.04, 115.04, 115.04, 115.04,                         &                 
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19,             &                             
-      0, 0, 0, 0, 0, 0,                                                       &
-      0, 0, 0, 0, 0, 0],                                                      &
+      300, 300, 300, 300, 300, 300,                                           &
+      11.77, 11.77, 11.77, 11.77, 11.77, 11.77,                               &
+      2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18,             &
+      1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18,             &
+      7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19, 7.99e-19],            &
       (/ size(lower_extrap, 2), size(lower_extrap, 1) /)                      &
     )
 
     upper_extrap = reshape([ real::                                           &
-      1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19,             &                             
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      98.80, 98.80, 98.80, 98.80, 98.80, 98.80,                               &           
-      310, 310, 310, 310, 310, 310,                                           &
-      310, 310, 310, 310, 310, 310],                                          &
+      1.34e-18, 1.34e-18, 1.34e-18, 1.34e-18, 1.34e-18, 1.34e-18,             &
+      1.04e-18, 1.04e-18, 1.04e-18, 1.04e-18, 1.04e-18, 1.04e-18,             &
+      2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18, 2.50e-18,             &
+      1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18, 1.98e-18,             &
+      50.91, 50.91, 50.91, 50.91, 50.91, 50.91],                              &
       (/ size(upper_extrap, 2), size(upper_extrap, 1) /)                      &
     )
-
     ! load test grids
     call config%from_file( "test/data/grid.300-310.config.json" )
     grids => grid_warehouse_t( config )
@@ -80,14 +79,14 @@ contains
     profiles => profile_warehouse_t( config, grids )
 
     ! get cross section config data
-    call config%from_file( "test/data/cross_section.no2_tint.config.json" )
+    call config%from_file( "test/data/cross_section.oclo.config.json" )
     call config%get( "cross sections", cs_set, Iam )
     iter => cs_set%get_iterator( )
 
     ! load and test cross section w/o extrapolation
     call assert( 101264914, iter%next( ) )
     call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_no2_tint_t( cs_config, grids, profiles )
+    cross_section => cross_section_oclo_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
     call check_values( results, no_extrap, .01_dk )
     deallocate( cross_section )
@@ -95,7 +94,7 @@ contains
     ! load and test cross section with lower extrapolation
     call assert( 101264915, iter%next( ) )
     call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_no2_tint_t( cs_config, grids, profiles )
+    cross_section => cross_section_oclo_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
     call check_values( results, lower_extrap, .01_dk )
     deallocate( cross_section )
@@ -103,7 +102,7 @@ contains
     ! load and test cross section with upper extrapolation
     call assert( 101264914, iter%next( ) )
     call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_no2_tint_t( cs_config, grids, profiles )
+    cross_section => cross_section_oclo_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
     call check_values( results, upper_extrap, .01_dk )
     deallocate( cross_section )
@@ -116,7 +115,7 @@ contains
     deallocate( lower_extrap )
     deallocate( upper_extrap )
 
-  end subroutine test_cross_section_no2_tint_t
+  end subroutine test_cross_section_oclo_t
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

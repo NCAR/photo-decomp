@@ -7,6 +7,6 @@
    },
    "Photolysis, wavelength": {
       "Grid type": "From csv file",
-      "Filespec": "test/data/grid.photo.180-220.csv"
+      "Filespec": "test/data/grid.photo.195-205.csv"
    }
 }

@@ -11,13 +11,13 @@ program test_cross_section
 
   implicit none
 
-  call test_cross_section_clono2_t( )
+  call test_cross_section_n2o_n2_o1d_t( )
 
 contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine test_cross_section_clono2_t( )
+  subroutine test_cross_section_n2o_n2_o1d_t( )
 
     use musica_assert,                 only : assert
     use musica_constants,              only : dk => musica_dk
@@ -91,7 +91,7 @@ contains
     deallocate( profiles )
     deallocate( expected )
 
-  end subroutine test_cross_section_clono2_t
+  end subroutine test_cross_section_n2o_n2_o1d_t
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
