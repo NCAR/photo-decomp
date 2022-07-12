@@ -6,7 +6,7 @@
 program test_cross_section
 
   use tuvx_cross_section, only : cross_section_t
-  use tuvx_cross_section_nitroxy_acetone
+  use tuvx_cross_section_nitroxy_ethanol
   use tuvx_test_cross_section_utils, only : check_values
 
   implicit none
@@ -40,12 +40,12 @@ contains
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
     ! changes. The values here are meaningless.
-    expected = reshape([                                                      &
-      3.99e-20, 3.99e-20, 3.99e-20, 3.99e-20, 3.99e-20, 3.99e-20,             &
-      3.67e-20, 3.67e-20, 3.67e-20, 3.67e-20, 3.67e-20, 3.67e-20,             &
-      3.35e-20, 3.35e-20, 3.35e-20, 3.35e-20, 3.35e-20, 3.35e-20,             &
-      3.02e-20, 3.02e-20, 3.02e-20, 3.02e-20, 3.02e-20, 3.02e-20,             &
-      2.69e-20, 2.69e-20, 2.69e-20, 2.69e-20, 2.69e-20, 2.69e-20],            &
+    expected = reshape([real::                                                &
+      8.30e-22, 8.30e-22, 8.30e-22, 8.30e-22, 8.30e-22, 8.30e-22,             &
+      5.82e-22, 5.82e-22, 5.82e-22, 5.82e-22, 5.82e-22, 5.82e-22,             &
+      4.01e-22, 4.01e-22, 4.01e-22, 4.01e-22, 4.01e-22, 4.01e-22,             &
+      0, 0, 0, 0, 0, 0,                                                       &
+      0, 0, 0, 0, 0, 0],                                                      &
       (/ size(expected, 2), size(expected, 1) /)                              &
     )
 
@@ -65,7 +65,7 @@ contains
     ! load and test cross section w/o extrapolation
     call assert( 101264914, iter%next( ) )
     call cs_set%get( iter, cs_config, Iam )
-    cross_section => cross_section_nitroxy_acetone_t( cs_config, grids, profiles )
+    cross_section => cross_section_nitroxy_ethanol_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
     call check_values( results, expected, .01_dk )
     deallocate( cross_section )

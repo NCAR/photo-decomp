@@ -2,7 +2,7 @@
   "cross sections" : [
     {
       "name": "no extrapolation",
-      "type": "CH3COCH2(ONO2)+hv->CH3COCH2(O.)+NO2"
+      "type": "all nitroxy reactions"
     }
   ]
 }
