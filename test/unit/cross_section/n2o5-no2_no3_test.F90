@@ -142,7 +142,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_n2o5_no2_no3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, no_extrap, .01_dk )
+    call check_values( results, no_extrap, .01_dk )
     deallocate( cross_section )
 
     ! load and test cross section with lower extrapolation
@@ -150,7 +150,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_n2o5_no2_no3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, lower_extrap, .01_dk )
+    call check_values( results, lower_extrap, .01_dk )
     deallocate( cross_section )
 
     ! load and test cross section with lower and upper extrapolation
@@ -158,7 +158,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_n2o5_no2_no3_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, upper_extrap, .01_dk )
+    call check_values( results, upper_extrap, .01_dk )
     deallocate( cross_section )
 
     ! clean up
