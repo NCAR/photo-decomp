@@ -17,7 +17,7 @@ module tuvx_quantum_yield
   type quantum_yield_parms_t
     !> Temperature \todo include units - what is this used for?
     real(dk), allocatable :: temperature(:)
-    !> \todo include description and units
+    !> Parameters for calculating quantum yields (wavelength, parameter)
     real(dk), allocatable :: array(:,:)
   end type quantum_yield_parms_t
 
@@ -44,6 +44,15 @@ contains
   !! Should only be called by sub-class constructors. Sub-classes can decide
   !! whether to call this function during construction to load standard
   !! NetCDF files and configuration options.
+  !!
+  !! Reads NetCDF files specified in configuration array 'netcdf files'.
+  !! Data from each NetCDF file will be loaded into an element of the
+  !! \c quantum_yield_parms data member. If a NetCDF variable named
+  !! \c quantum_yield_parameters is present, it will be used to populate
+  !! the \c array data member of the \c quantum_yield_parms_t object.
+  !! If a NetCDF variable named \c temperature is present, it will be
+  !! used to populate the \c temperature data member of the
+  !! \c quantum_yield_parms_t object.
   subroutine base_constructor( this, config, grid_warehouse,                  &
       profile_warehouse )
 
@@ -149,6 +158,9 @@ file_loop: &
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !> Calculates the quantum yield
+  !!
+  !! Uses the interpolated first quantum yield parameter as the quantum
+  !! yield.
   function run( this, grid_warehouse, profile_warehouse )                     &
       result( quantum_yield )
 
