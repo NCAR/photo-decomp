@@ -30,7 +30,7 @@ contains
     class(profile_warehouse_t), pointer :: profiles
     class(cross_section_t),     pointer :: cross_section
 
-    character(len=*), parameter :: Iam = "nitroxy_ethanol cross section tests"
+    character(len=*), parameter :: Iam = "rayliegh cross section tests"
     type(config_t) :: config, cs_set, cs_config
     class(iterator_t), pointer :: iter
     real(kind=dk), allocatable :: results(:,:)
