@@ -35,7 +35,19 @@ The base functionality for quantum yield calculations is described in
 ``src/quantum_yield.F90``. The base quantum yield type ``quantum_yield_t``
 defined in this module includes a constructor that reads a set of
 NetCDF files specified in the configuration JSON object as an
-array of file paths with the key ``netcdf files``.
+array of file paths with the key ``netcdf files`` if present, or
+can set the value of the quantum yield to a constant when the
+``constant value`` key is present and set to a real number.
+
+Here is an example configuration for a quantum yield:
+
+.. code-block:: JSON
+
+   {
+     "type": "base",
+     "constant value": 1.0
+   }
+
 
 Data from each NetCDF file will be loaded into an element of the
 ``quantum_yield_parms`` data member. If a NetCDF variable named
@@ -72,6 +84,7 @@ If you determine that a new quantum yield subclass is needed, this can be
 done in three steps:
 
 - :ref:`qy-create-subclass`
+- :ref:`qy-add-to-build-scripts`
 - :ref:`qy-add-to-factory`
 - :ref:`qy-create-unit-test`
 
@@ -127,7 +140,7 @@ for this example, but should be included in an actual module):
        use tuvx_grid_warehouse,           only : grid_warehouse_t
        use tuvx_profile_warehouse,        only : profile_warehouse_t
 
-       class(quantum_yield_t),    pointer :: this
+       class(quantum_yield_t),    pointer       :: this
        type(config_t),            intent(inout) :: config
        type(grid_warehouse_t),    intent(inout) :: grid_warehouse
        type(profile_warehouse_t), intent(inout) :: profile_warehouse
@@ -183,8 +196,38 @@ or in data members you've added to your subclass to perform your calculations.
 See the files in ``src/quantum_yields/`` for examples of how to access this
 data in the ``run()`` function.
 
+.. _qy-add-to-build-scripts:
+
+Add subclass module to build scripts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 To include your new class in the build, edit the ``src/quantum_yields/CMakeLists.txt``
-file and add your file name to the list saved to ``SRC``.
+file and add your file name to the list saved to ``SRC``. Files are listed in
+alphabetical order.
+
+.. code-block:: cmake
+   :emphasize-lines: 12
+
+   set(SRC acetone-ch3co_ch3.F90
+        c2h5cho.F90
+        ch2chcho.F90
+        ch2o.F90
+        ch3cho-ch3_hco.F90
+        ch3coch2ch3-ch3co_ch2ch3.F90
+        ch3cocho.F90
+        clo-cl_o1d.F90
+        clo-cl_o3p.F90
+        clono2-clo_no2.F90
+        clono2-cl_no3.F90
+        foo.F90
+        ho2-oh_o.F90
+        mvk.F90
+        no2_tint.F90
+        no3_aq.F90
+        o3-o2_o1d.F90
+        o3-o2_o3p.F90
+        tint.F90
+        )
 
 .. _qy-add-to-factory:
 
