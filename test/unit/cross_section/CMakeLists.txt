@@ -30,5 +30,6 @@ create_standard_test(NAME cross_section_o3_tint SOURCES o3_tint_test.F90 cross_s
 create_standard_test(NAME cross_section_oclo SOURCES oclo_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_rayliegh SOURCES rayliegh_test.F90 cross_section_test_utils.F90)
 create_standard_test(NAME cross_section_rono2 SOURCES rono2_test.F90 cross_section_test_utils.F90)
+create_standard_test(NAME cross_section_t_butyl_nitrate SOURCES t_butyl_nitrate_test.F90 cross_section_test_utils.F90)
 
 ################################################################################
