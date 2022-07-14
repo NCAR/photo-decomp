@@ -37,37 +37,52 @@ contains
     real(dk), allocatable :: no_extrap(:,:)
     real(dk), allocatable :: lower_extrap(:,:)
     real(dk), allocatable :: upper_extrap(:,:)
-    allocate(no_extrap(5, 6))
-    allocate(lower_extrap(5, 6))
-    allocate(upper_extrap(5, 6))
+    allocate(no_extrap(10, 6))
+    allocate(lower_extrap(10, 6))
+    allocate(upper_extrap(10, 6))
 
     ! All of these values were produced by one run of the cross section.
     ! So, these tests are testing that any changes don't produce unexpected
     ! changes. The values here are meaningless.
     no_extrap = reshape([ real::                                              &
-      8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20, 8.37e-20,             &                             
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19,             &                             
       0, 0, 0, 0, 0, 0,                                                       &
-      0, 0, 0, 0, 0, 0],                                                      &
+      3.3431e-19, 3.3391e-19, 3.3351e-19, 3.3311e-19, 3.3271e-19, 3.3231e-19, &
+      3.4057e-19, 3.4006e-19, 3.3954e-19, 3.3903e-19, 3.3851e-19, 3.3800e-19, &
+      3.2812e-19, 3.2756e-19, 3.2701e-19, 3.2645e-19, 3.2590e-19, 3.2535e-19, &
+      3.1880e-19, 3.1835e-19, 3.1789e-19, 3.1743e-19, 3.1698e-19, 3.1652e-19, &
+      3.1385e-19, 3.1348e-19, 3.1312e-19, 3.1275e-19, 3.1238e-19, 3.1201e-19, &
+      3.1361e-19, 3.1332e-19, 3.1303e-19, 3.1274e-19, 3.1245e-19, 3.1215e-19, &
+      3.1889e-19, 3.1864e-19, 3.1838e-19, 3.1813e-19, 3.1788e-19, 3.1763e-19, &
+      3.2980e-19, 3.2961e-19, 3.2942e-19, 3.2924e-19, 3.2905e-19, 3.2886e-19, &
+      2.1600e-20, 2.1586e-20, 2.1572e-20, 2.1559e-20, 2.1545e-20, 2.1532e-20],&
       (/ size(no_extrap, 2), size(no_extrap, 1) /)                            &
     )
 
     lower_extrap = reshape([ real::                                           &
-      115.04, 115.04, 115.04, 115.04, 115.04, 115.04,                         &                 
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19, 1.06e-19,             &                             
-      0, 0, 0, 0, 0, 0,                                                       &
-      0, 0, 0, 0, 0, 0],                                                      &
+      0.1000, 0.1000, 0.1000, 0.1000, 0.1000, 0.1000,                         &
+      0.0060, 0.0060, 0.0060, 0.0060, 0.0060, 0.0060,                         &
+      3.4057e-19, 3.4006e-19, 3.3954e-19, 3.3903e-19, 3.3851e-19, 3.3800e-19, &
+      3.2812e-19, 3.2756e-19, 3.2701e-19, 3.2645e-19, 3.2590e-19, 3.2535e-19, &
+      3.1880e-19, 3.1835e-19, 3.1789e-19, 3.1743e-19, 3.1698e-19, 3.1652e-19, &
+      3.1385e-19, 3.1348e-19, 3.1312e-19, 3.1275e-19, 3.1238e-19, 3.1201e-19, &
+      3.1361e-19, 3.1332e-19, 3.1303e-19, 3.1274e-19, 3.1245e-19, 3.1215e-19, &
+      3.1889e-19, 3.1864e-19, 3.1838e-19, 3.1813e-19, 3.1788e-19, 3.1763e-19, &
+      3.2980e-19, 3.2961e-19, 3.2942e-19, 3.2924e-19, 3.2905e-19, 3.2886e-19, &
+      2.1600e-20, 2.1586e-20, 2.1572e-20, 2.1559e-20, 2.1545e-20, 2.1532e-20],&
       (/ size(lower_extrap, 2), size(lower_extrap, 1) /)                      &
     )
 
     upper_extrap = reshape([ real::                                           &
-      1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19, 1.34e-19,             &                             
-      1.46e-19, 1.46e-19, 1.45e-19, 1.45e-19, 1.45e-19, 1.45e-19,             &                             
-      98.80, 98.80, 98.80, 98.80, 98.80, 98.80,                               &           
-      310, 310, 310, 310, 310, 310,                                           &
-      310, 310, 310, 310, 310, 310],                                          &
+      3.4855e-19, 3.4813e-19, 3.4771e-19, 3.4728e-19, 3.4686e-19, 3.4644e-19, &
+      3.5616e-19, 3.5573e-19, 3.5531e-19, 3.5489e-19, 3.5446e-19, 3.5404e-19, &
+      3.4057e-19, 3.4006e-19, 3.3954e-19, 3.3903e-19, 3.3851e-19, 3.3800e-19, &
+      3.2812e-19, 3.2756e-19, 3.2701e-19, 3.2645e-19, 3.2590e-19, 3.2535e-19, &
+      3.1880e-19, 3.1835e-19, 3.1789e-19, 3.1743e-19, 3.1698e-19, 3.1652e-19, &
+      3.1385e-19, 3.1348e-19, 3.1312e-19, 3.1275e-19, 3.1238e-19, 3.1201e-19, &
+      3.1361e-19, 3.1332e-19, 3.1303e-19, 3.1274e-19, 3.1245e-19, 3.1215e-19, &
+      3.1889e-19, 3.1864e-19, 3.1838e-19, 3.1813e-19, 3.1788e-19, 3.1763e-19, &
+      3.2980e-19, 3.2961e-19, 3.2942e-19, 3.2924e-19, 3.2905e-19, 3.2886e-19, &
+      0.9360, 0.9360, 0.9360, 0.9360, 0.9360, 0.9360],                        &
       (/ size(upper_extrap, 2), size(upper_extrap, 1) /)                      &
     )
 
@@ -89,7 +104,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_o3_tint_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, no_extrap, .01_dk )
+    call check_values( results, no_extrap, .01_dk )
     deallocate( cross_section )
 
     ! load and test cross section with lower extrapolation
@@ -97,7 +112,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_o3_tint_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, lower_extrap, .01_dk )
+    call check_values( results, lower_extrap, .01_dk )
     deallocate( cross_section )
 
     ! load and test cross section with upper extrapolation
@@ -105,7 +120,7 @@ contains
     call cs_set%get( iter, cs_config, Iam )
     cross_section => cross_section_o3_tint_t( cs_config, grids, profiles )
     results = cross_section%calculate( grids, profiles )
-    ! call check_values( results, upper_extrap, .01_dk )
+    call check_values( results, upper_extrap, .01_dk )
     deallocate( cross_section )
 
     ! clean up
