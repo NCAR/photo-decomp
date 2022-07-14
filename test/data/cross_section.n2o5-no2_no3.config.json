@@ -2,21 +2,21 @@
   "cross sections" : [
     {
       "name": "no extrapolation",
-      "netcdf files": [ "test/data/cross_section.n2o5.nc" ],
+      "netcdf files": [ "test/data/cross_section.n2o5_1.nc", "test/data/cross_section.n2o5_2.nc"],
       "type": "N2O5+hv->NO2+NO3"
     },
     {
       "name": "lower extrapolation",
       "type": "N2O5+hv->NO2+NO3",
-      "netcdf files": [ "test/data/cross_section.n2o5.nc" ],
-      "lower extrapolation": { "type": "constant", "value" : 198 }
+      "netcdf files": [ "test/data/cross_section.n2o5_1.nc", "test/data/cross_section.n2o5_2.nc"],
+      "lower extrapolation": { "type": "constant", "value" : 0.1 }
     },
     {
       "name": "upper extrapolation",
       "type": "N2O5+hv->NO2+NO3",
-      "netcdf files": [ "test/data/cross_section.n2o5.nc" ],
+      "netcdf files": [ "test/data/cross_section.n2o5_1.nc", "test/data/cross_section.n2o5_2.nc"],
       "lower extrapolation": { "type": "boundary" },
-      "upper extrapolation": { "type": "constant", "value": 212 }
+      "upper extrapolation": { "type": "constant", "value": 1 }
     }
   ]
 }
