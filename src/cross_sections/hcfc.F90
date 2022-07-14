@@ -46,11 +46,11 @@ contains
     type(grid_warehouse_t),    intent(inout) :: grid_warehouse
     type(profile_warehouse_t), intent(inout) :: profile_warehouse
 
-    type(string_t) :: required_keys(2), optional_keys(3)
+    type(string_t) :: required_keys(2), optional_keys(1)
 
     required_keys(1) = "type"
     required_keys(2) = "netcdf files"
-    optional_keys(3) = "name"
+    optional_keys(1) = "name"
     call assert_msg( 369759228,                                               &
                      config%validate( required_keys, optional_keys ),         &
                      "Bad configuration data format for "//                   &
