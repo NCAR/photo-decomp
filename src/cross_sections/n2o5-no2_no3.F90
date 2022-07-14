@@ -60,6 +60,11 @@ contains
     allocate( cross_section_n2o5_no2_no3_t :: this )
     call base_constructor( this, config, grid_warehouse, profile_warehouse )
 
+    ! make sure all NetCDF files have been included
+    call assert_msg( 590380798, size( this%cross_section_parms ) >= 2,        &
+                     "n2o5_no2_no3 cross section type requires 2 NetCDF "//   &
+                     "files." )
+
   end function constructor
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
