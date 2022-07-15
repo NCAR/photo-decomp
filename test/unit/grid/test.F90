@@ -66,7 +66,6 @@ contains
     character(len=*), parameter :: config_flsp = 'test/data/grid.test.config.json'
     type(config_t) :: grid_tst_config
     type(grid_warehouse_t), pointer :: thewarehouse
-    type(string_t) :: Handle
     class(grid_t), pointer   :: aGrid
     integer :: i
 

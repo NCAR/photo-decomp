@@ -95,7 +95,6 @@ contains
 
     ! local variables
     character(len=*), parameter   :: Iam = "Base radiator constructor"
-    type(string_t)                :: handle
     class(grid_t),    pointer     :: z_grid, lambda_grid
     type(string_t)                :: required_keys(5), optional_keys(0)
 
@@ -155,7 +154,6 @@ contains
     ! Local variables
     character(len=*), parameter     :: Iam = 'Base radiator update state'
     real(dk) ,        parameter     :: km2cm = 1.e5_dk
-    type(string_t)                  :: handle
     integer                         :: w_index
     real(dk),         allocatable   :: cross_section(:,:)
     class(grid_t),          pointer :: z_grid
