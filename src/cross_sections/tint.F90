@@ -68,7 +68,6 @@ contains
     type(netcdf_t), allocatable :: netcdf_obj
     type(string_t), allocatable :: netcdfFiles(:)
     class(grid_t),  pointer     :: lambdaGrid => null( )
-    type(string_t)              :: Handle
     type(string_t) :: required_keys(2), optional_keys(3)
 
     required_keys(1) = "type"
@@ -223,7 +222,6 @@ file_loop:                                                                    &
     class(grid_t),    pointer     :: zGrid => null( )
     class(grid_t),    pointer     :: lambdaGrid => null( )
     class(profile_t), pointer     :: mdlTemperature => null( )
-    type(string_t)                :: Handle
 
     zGrid => grid_warehouse%get_grid( "height", "km" )
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

@@ -83,7 +83,6 @@ contains
     real(dk),      allocatable :: wrkQuantumYield(:)
     class(grid_t), pointer     :: lambdaGrid => null( )
     class(grid_t), pointer     :: zGrid => null( )
-    type(string_t) :: Handle
 
     ! Get model wavelength grid
     zGrid => grid_warehouse%get_grid( "height", "km" )

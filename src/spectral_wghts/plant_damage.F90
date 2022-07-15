@@ -87,7 +87,6 @@ contains
     real(dk), parameter  :: a2 = .01274_dk
     real(dk), parameter  :: a3 = -1.13118e-5_dk
 
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid => null()
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

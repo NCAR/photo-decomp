@@ -66,7 +66,6 @@ contains
     logical(lk)                 :: found
     type(string_t)              :: keyString
     type(config_t)              :: core_config, child_config
-    type(string_t)              :: Handle
     class(iterator_t), pointer  :: iter
     class(profile_t),  pointer  :: aProfile
     type(string_t)              :: required_keys(3), optional_keys(2)
@@ -172,7 +171,6 @@ contains
   class(profile_t),       pointer :: SZAngles => null( )
   class(radiator_t),      pointer :: aRadiator => null()
   class(radField_t),      pointer :: radiationFld => null( )
-  type(string_t)                  :: Handle
 
   write(*,*) ' '
   write(*,*) Iam // 'entering'

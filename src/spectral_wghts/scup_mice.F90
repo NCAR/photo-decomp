@@ -84,7 +84,6 @@ contains
     character(len=*), parameter :: Iam = 'scup mice calculate: '
     real(dk), allocatable       :: factor(:)
 
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid => null()
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

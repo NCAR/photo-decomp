@@ -89,7 +89,6 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable   :: netcdf_obj
-    type(string_t)                :: Handle
     type(string_t), allocatable   :: netcdfFiles(:)
     class(grid_t),  pointer       :: lambdaGrid => null( )
 
@@ -181,7 +180,6 @@ file_loop: &
     character(len=*), parameter :: Iam = 'base quantum yield calculate'
     integer                     :: vertNdx
     class(grid_t),  pointer     :: zGrid => null( )
-    type(string_t)              :: Handle
     real(dk),       allocatable :: wrkQuantumYield(:,:)
 
     zGrid => grid_warehouse%get_grid( "height", "km" )

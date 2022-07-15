@@ -92,7 +92,6 @@ contains
     integer     :: wNdx, vertNdx
     real(dk)    :: kt, q1, q2, T300, lambda
     real(dk)    :: qfac1, qfac2
-    type(string_t)            :: Handle
     class(grid_t),    pointer :: lambdaGrid => null( )
     class(grid_t),    pointer :: zGrid => null( )
     class(profile_t), pointer :: temperature => null( )

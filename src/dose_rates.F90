@@ -69,7 +69,6 @@ contains
     character(len=64)           :: keychar
     type(string_t)              :: netcdfFile, Object
     type(string_t)              :: wght_key
-    type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
 
     allocate( dose_rates )
@@ -129,7 +128,6 @@ contains
     real(dk), allocatable :: spectral_wght(:)
     real(dk), allocatable :: tmp_spectral_wght(:)
     real(dk), allocatable :: sirrad(:,:)
-    type(string_t)        :: Handle
     character(len=64), allocatable :: annotatedslabel(:)
     class(grid_t),    pointer :: zGrid => null()
     class(grid_t),    pointer :: lambdaGrid => null()

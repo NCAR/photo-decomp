@@ -50,7 +50,6 @@ contains
     real(dk)    :: tmzone, ut, soldst
     real(dk)    :: Lon, Lat
     character(len=*), parameter :: Iam = 'earth sun distance initialize: '
-    type(string_t) :: Handle
     class(grid_t), pointer :: timeGrid
 
     allocate ( this )

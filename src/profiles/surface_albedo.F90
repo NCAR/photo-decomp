@@ -42,7 +42,6 @@ contains
     ! Local variables
     real(dk)                    :: uniformValue
     integer(ik)                 :: ndx
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid
     character(len=*), parameter :: Iam = 'From config profile initialize: '
 

@@ -95,7 +95,6 @@ module tuvx_delta_eddington
     real(dk), allocatable                :: dscat_accum(:,:)
     real(dk), allocatable                :: dabs_accum(:,:)
     real(dk), allocatable                :: asym_accum(:,:)
-    type(string_t)                       :: Handle
     type(warehouse_iterator_t), pointer  :: iter => null( )
     class(radiator_t),          pointer  :: aRadiator
     type(radiator_state_t)               :: atmRadiatorState

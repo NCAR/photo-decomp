@@ -61,7 +61,6 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     type(netcdf_t),   allocatable :: netcdf_obj
-    type(string_t)                :: Handle
     type(string_t),   allocatable :: netcdfFiles(:)
     class(grid_t),    pointer     :: lambdaGrid => null( )
     class(grid_t),    pointer     :: zGrid => null( )

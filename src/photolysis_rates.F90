@@ -84,7 +84,6 @@ contains
     character(len=64)           :: keychar
     type(string_t)              :: netcdfFile, Object
     type(string_t)              :: reaction_key
-    type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
 
     allocate( photolysis_rates )

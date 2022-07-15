@@ -97,7 +97,6 @@ contains
     class(grid_t),    pointer     :: lambdaGrid
     class(grid_t),    pointer     :: zGrid
     class(profile_t), pointer     :: temperature
-    type(string_t)                :: Handle
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )
     zGrid => grid_warehouse%get_grid( "height", "km" )

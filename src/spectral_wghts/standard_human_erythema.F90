@@ -83,7 +83,6 @@ contains
     !> Local variables
     character(len=*), parameter :: Iam = 'standard human erythema calculate: '
 
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid => null()
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

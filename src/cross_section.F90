@@ -123,7 +123,6 @@ contains
     logical :: found
     character(len=:), allocatable :: msg
     type(netcdf_t), allocatable :: netcdf_obj
-    type(string_t)              :: Handle
     type(string_t), allocatable :: netcdfFiles(:)
     class(grid_t), pointer :: lambdaGrid
 
@@ -211,7 +210,6 @@ file_loop: &
     character(len=*), parameter :: Iam =                                      &
         'radXfer base cross section calculate: '
     class(grid_t), pointer     :: zGrid => null( )
-    type(string_t)             :: Handle
     real(dk),      allocatable :: wrkCrossSection(:,:)
 
     zGrid => grid_warehouse%get_grid( "height", "km" )

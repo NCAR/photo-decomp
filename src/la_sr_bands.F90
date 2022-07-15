@@ -75,7 +75,6 @@ module tuvx_la_sr_bands
       character(len=*), parameter :: Iam = 'la_srb initialize: '
 
       integer(ik) :: iw, nw
-      type(string_t)                     :: Handle
       class(grid_t), pointer      :: lambdaGrid
 
       write(*,*) ' '
@@ -201,7 +200,6 @@ has_la_srb: &
     class(grid_t),    pointer :: zGrid => null( )
     class(grid_t),    pointer :: lambdaGrid => null( )
     class(profile_t), pointer :: temperature => null( )
-    type(string_t) :: Handle
 
 !----------------------------------------------------------------------
 ! Lyman-alpha variables
@@ -331,7 +329,6 @@ has_la_srb: &
     class(grid_t), pointer :: zGrid
     class(grid_t), pointer :: lambdaGrid
     class(profile_t), pointer :: temperature
-    type(string_t) :: Handle
 
 !----------------------------------------------------------------------
 ! Lyman-alpha variables

@@ -53,7 +53,6 @@ contains
     logical(lk) :: found
     character(len=132) :: InputLine
     type(string_t)     :: Filespec, Interpolator
-    type(string_t)     :: Handle
     real(dk), allocatable :: zdata(:)
     real(dk), allocatable :: profile(:)
     class(abs_interpolator_t), pointer :: theInterpolator

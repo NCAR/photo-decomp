@@ -93,7 +93,6 @@ contains
     class(grid_t),    pointer     :: lambdaGrid => null( )
     class(profile_t), pointer     :: mdlTemperature => null( )
     class(profile_t), pointer     :: mdlDensity => null( )
-    type(string_t)                :: Handle
 
     ! w = wavelength, nm
     ! T = temperature, K

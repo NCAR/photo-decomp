@@ -66,7 +66,6 @@ contains
     type(netcdf_t),   allocatable :: netcdf_obj
     type(string_t),   allocatable :: netcdfFiles(:)
     type(config_t)                :: tmp_config, extrap_config
-    type(string_t)                :: Handle
     class(grid_t),    pointer     :: lambdaGrid => null( )
     type(string_t) :: required_keys(2), optional_keys(3)
 

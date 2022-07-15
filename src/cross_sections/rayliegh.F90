@@ -96,7 +96,6 @@ contains
     class(grid_t),    pointer     :: zGrid => null( )
     class(grid_t),    pointer     :: lambdaGrid => null( )
     character(len=*), parameter   :: Iam = 'rayliegh cross section calculate'
-    type(string_t)                :: Handle
     real(musica_dk)               :: wmicrn
     real(musica_dk), allocatable  :: pwr(:), wrk(:)
     real(musica_dk), allocatable  :: wrkCrossSection(:,:)

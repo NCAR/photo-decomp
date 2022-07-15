@@ -73,7 +73,6 @@ contains
     real(dk), allocatable :: data_parameter(:)
     logical     :: found, monopos
     character(len=:), allocatable :: msg
-    type(string_t)                :: Handle
     type(netcdf_t),   allocatable :: netcdf_obj
     type(string_t),   allocatable :: netcdfFiles(:)
     class(grid_t),    pointer     :: lambdaGrid => null( )
@@ -201,7 +200,6 @@ file_loop: &
     integer     :: fileNdx, tNdx, vertNdx
     real(dk)    :: Tadj, Tstar
     real(dk),         allocatable :: WrkQuantumYield(:,:)
-    type(string_t)                :: Handle
     class(grid_t),    pointer     :: zGrid => null( )
     class(grid_t),    pointer     :: lambdaGrid => null( )
     class(profile_t), pointer     :: mdlTemperature => null( )

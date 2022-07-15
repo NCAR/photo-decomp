@@ -64,7 +64,6 @@ contains
     logical(lk) :: found
     character(len=132)                 :: InputLine, trimInputLine
     character(len=512)                 :: IoMsg
-    type(string_t)                     :: Handle
     type(string_t)                     :: defaultInterpolator
     type(string_t), allocatable        :: Filespec(:), Interpolator(:)
     class(abs_interpolator_t), pointer :: theInterpolator

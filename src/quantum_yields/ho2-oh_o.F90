@@ -81,7 +81,6 @@ contains
     integer                :: vertNdx
     class(grid_t), pointer :: lambdaGrid => null( )
     class(grid_t), pointer :: zGrid => null( )
-    type(string_t)         :: Handle
     real(dk), allocatable  :: wrkQuantumYield(:)
 
     zGrid => grid_warehouse%get_grid( "height", "km" )

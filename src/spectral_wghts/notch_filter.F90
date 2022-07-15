@@ -96,7 +96,6 @@ contains
     real(dk), parameter         :: rONE  = 1.0_dk
     character(len=*), parameter :: Iam = 'notch_filter calculate: '
 
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid => null()
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

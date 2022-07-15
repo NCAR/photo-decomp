@@ -49,7 +49,6 @@ contains
     real(dk)    :: tmzone, ut, solarElevation
     real(dk)    :: Lon, Lat
     character(len=*), parameter :: Iam = 'sza from time initialize: '
-    type(string_t) :: Handle
     class(grid_t), pointer :: timeGrid
 
     allocate( this )

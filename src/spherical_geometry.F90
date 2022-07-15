@@ -45,7 +45,6 @@ module tuvx_spherical_geometry
           !> Local variables
           character(len=*), parameter            :: Iam = 'sphers initialize: '
 
-          type(string_t)                         :: Handle
           class(grid_t), pointer          :: zGrid
 
           write(*,*) ' '
@@ -123,7 +122,6 @@ module tuvx_spherical_geometry
       real(dk)    :: sinrad, zenrad, rpsinz, rj, rjp1, dsj, dhj, ga, gb, sm
       real(dk), allocatable    :: zd(:)
 
-      type(string_t)         :: Handle
       class(grid_t), pointer :: zGrid => null( )
 
       write(*,*) ' '

@@ -99,7 +99,6 @@ contains
     real(dk),      allocatable :: wrkCrossSection(:)
     class(grid_t), pointer     :: zGrid => null( )
     class(grid_t), pointer     :: lambdaGrid => null( )
-    type(string_t)             :: Handle
 
     zGrid => grid_warehouse%get_grid( "height", "km" )
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )

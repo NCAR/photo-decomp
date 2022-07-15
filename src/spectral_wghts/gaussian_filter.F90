@@ -93,7 +93,6 @@ contains
     character(len=*), parameter :: Iam = 'gaussian calculate: '
     real(dk)                    :: accum
 
-    type(string_t)              :: Handle
     class(grid_t), pointer      :: lambdaGrid => null()
 
     lambdaGrid => grid_warehouse%get_grid( "wavelength", "nm" )
