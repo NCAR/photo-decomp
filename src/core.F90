@@ -260,7 +260,6 @@ sza_loop: &
 
     type(netcdf_file) :: output_file
     integer           :: i_rxn
-    type(string_t)    :: key
     type(string_t), allocatable :: rxn_names(:)
     class(profile_t),   pointer :: sza
     class(grid_t),      pointer :: time, vertical
