@@ -1,11 +1,11 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
 !
-!> \file
-!> This cross_section module
 
-!> The cross_section type and related functions
 module tuvx_cross_section
+! Cross Section
+! ^^^^^^^^^^^^^
+! The base cross section type and related functions
 
   use musica_constants,                only : dk => musica_dk
 
@@ -51,9 +51,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Create an instance of the base cross section type
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result( new_obj )
+    ! Create an instance of the base cross section type
 
     use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
@@ -88,9 +88,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize cross_section_t objects
   subroutine base_constructor( new_obj, config, grid_warehouse,               &
       profile_warehouse )
+    ! Initialize cross_section_t objects
 
     use musica_config,                 only : config_t
     use musica_string,                 only : string_t
@@ -182,9 +182,9 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the cross section for a given set of environmental conditions
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
+    ! Calculate the cross section for a given set of environmental conditions
 
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : grid_t
@@ -237,8 +237,8 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Adds points to the cross section grid based on configuration data
   subroutine add_points( this, config, data_lambda, data_parameter )
+    ! Adds points to the cross section grid based on configuration data
 
     use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
@@ -321,8 +321,8 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> finalize the cross section type
   subroutine finalize( this )
+    ! finalize the cross section type
 
     type(cross_section_t), intent(inout) :: this
 

@@ -4,7 +4,7 @@ API
 ===
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    cross_sections
    grid

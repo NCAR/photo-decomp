@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> This bro+hv->br_o cross_section module
 
-!> The bro+hv->br+o_cross_section type and related functions
 module tuvx_cross_section_bro_br_o
+! :math:`BrO+hv \rightarrow Br + O`
+! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   use tuvx_cross_section,              only : cross_section_t
 
@@ -27,9 +25,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize cross_section_bro_br_o_t object
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result( this )
+    ! Initialize cross_section_bro_br_o_t object
 
     use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t

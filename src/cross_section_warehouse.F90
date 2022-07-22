@@ -1,12 +1,11 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The tuvx_radXfer_xsect_warehouse module
 
-!> The cross_section_warehouse_t type and related functions
-!!
 module tuvx_cross_section_warehouse
+! Cross Section Warehouse
+! ^^^^^^^^^^^^^^^^^^^^^^^
+! A type to store all cross sections needed for a particular run
+!
 
   use musica_constants,                only : musica_dk
   use musica_string,                   only : string_t
@@ -40,9 +39,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Constructor of cross_section_warehouse_t objects
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result( new_obj )
+    ! Constructor of cross_section_warehouse_t objects
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
@@ -96,8 +95,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Get a copy of a specific radXfer cross section object
   function get( this, cross_section_name ) result( cross_section_ptr )
+    ! Get a copy of a specific radXfer cross section object
 
     use musica_assert,                 only : die_msg
     use musica_string,                 only : string_t
@@ -134,8 +133,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Finalize the cross section warehouse
   subroutine finalize( this )
+    ! Finalize the cross section warehouse
 
     !> cross section warehouse
     type(cross_section_warehouse_t), intent(inout) :: this
