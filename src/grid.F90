@@ -3,7 +3,6 @@
 module tuvx_grid
 ! The base grid type
 ! ^^^^^^^^^^^^^^^^^^
-!
 ! A one dimensional grid type.
 !
 

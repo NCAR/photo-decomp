@@ -76,6 +76,8 @@ html_static_path = ['_static']
 # -- Options for sphinx-fortran
 fortran_src = [
     '../src/grid.F90',
+    '../src/grid_factory.F90',
+    '../src/grid_warehouse.F90',
     '../src/grids/*.F90',
     '../src/cross_section.F90',
     '../src/cross_section_factory.F90',

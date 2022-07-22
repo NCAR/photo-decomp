@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The tuvx_grid_factory module
 
-!> Build grid objects
 module tuvx_grid_factory
+! Grid Factory
+! ^^^^^^^^^^^^
 
   use tuvx_grid,                       only : grid_t
   use tuvx_grid_equal_delta,           only : equal_delta_t
