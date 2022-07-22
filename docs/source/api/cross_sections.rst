@@ -2,3 +2,5 @@
 
 Cross Sections
 ==============
+
+.. f:automodule:: tuvx_grid
