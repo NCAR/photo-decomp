@@ -3,7 +3,15 @@
 Cross Sections
 ==============
 
-Chemical cross sections for various chemical reactions.
+:f:type::
+A ``cross_section_t``, or one of its subclasses, calculates a chemical cross 
+section for one or more chemical reactions.
+
+The cross sections used by ``tuv-x`` are specified by the configuration.
+See :ref:`configuration-cross-section` for more information.
+Each cross section is built by the
+``tuvx_cross_section_factory_t`` and stored in the 
+``tuvx_cross_section_warehouse_t``.
 
 .. f:automodule:: tuvx_cross_section
 

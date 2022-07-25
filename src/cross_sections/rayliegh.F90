@@ -65,7 +65,6 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
->
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
     ! Calculate the cross section for a given set of environmental conditions
