@@ -3,16 +3,16 @@
 Cross Sections
 ==============
 
-f:type:: tuvx_cross_section/cross_section_t
 
-A ``cross_section_t``, or one of its subclasses, calculates a chemical cross 
+
+A :f:type:`~tuvx_cross_section/cross_section_t`, or one of its subclasses, calculates a chemical cross 
 section for one or more chemical reactions.
 
 The cross sections used by ``tuv-x`` are specified by the configuration.
 See :ref:`configuration-cross-section` for more information.
 Each cross section is built by the
-``tuvx_cross_section_factory_t`` and stored in the 
-``tuvx_cross_section_warehouse_t``.
+:f:mod:`tuvx_cross_section_factory` and stored in the 
+:f:type:`~tuvx_cross_section_warehouse/cross_section_warehouse_t`.
 
 .. f:automodule:: tuvx_cross_section
 
