@@ -83,4 +83,5 @@ fortran_src = [
     '../src/cross_section_factory.F90',
     '../src/cross_section_warehouse.F90',
     '../src/cross_sections/*.F90',
+    '../src/radiator.F90',
 ]

@@ -2,3 +2,5 @@
 
 Radiative Transfer
 ==================
+
+.. f:automodule:: tuvx_radiator

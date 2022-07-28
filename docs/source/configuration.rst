@@ -18,7 +18,6 @@ Grids
 Cross Sections
 --------------
 
-Soieing thinew
 <describe cross sections>
 
 Profiles
