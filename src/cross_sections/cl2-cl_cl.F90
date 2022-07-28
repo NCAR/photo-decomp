@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> This cl2_cl_cl_cross_section module
 
-!> The cl2+hv->cl_cl cross_section type and related functions
 module tuvx_cross_section_cl2_cl_cl
+! :math:`Cl_2+hv \rightarrow Cl + Cl`
+! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   use tuvx_cross_section,              only : cross_section_t
 
@@ -30,9 +28,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize the cross section
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
+    ! Initialize the cross section
 
     use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
@@ -61,9 +59,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the cross section for a given set of environmental conditions
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
+    ! Calculate the cross section for a given set of environmental conditions
 
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t

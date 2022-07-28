@@ -31,7 +31,9 @@ release = 'v0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'myst_parser'
+    'myst_parser',
+    'sphinxfortran.fortran_domain',
+    'sphinxfortran.fortran_autodoc',
 ]
 
 source_suffix = {
@@ -70,3 +72,14 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# -- Options for sphinx-fortran
+fortran_src = [
+    '../src/grid*.F90',
+    '../src/grids/*.F90',
+    '../src/cross_section*.F90',
+    '../src/cross_sections/*.F90',
+    '../src/radiator*.F90',
+    '../src/radiative_transfer*.F90',
+    '../src/radiators/*.F90',
+]

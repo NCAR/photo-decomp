@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The aerosol_tuvx_radiator module
 
-!> The radiator_aerosol_t type and related functions
 module tuvx_radiator_aerosol
+  ! Aersol Radiator
+  ! ^^^^^^^^^^^^^^^
 
   use musica_constants,                only : dk => musica_dk
   use musica_string,                   only : string_t
@@ -16,16 +14,16 @@ module tuvx_radiator_aerosol
   private
   public :: radiator_aerosol_t
 
-  !> aerosol radiator type
   type, extends(radiator_t) :: radiator_aerosol_t
+    ! aerosol radiator type
   contains
     !> Initialize radiator
     !> Update radiator for new environmental conditions
     procedure :: update_state
   end type radiator_aerosol_t
 
-  !> Constructor
   interface radiator_aerosol_t
+    ! Constructor
     module procedure constructor
   end interface radiator_aerosol_t
 
@@ -33,8 +31,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize radiator_t object
   function constructor( config, grid_warehouse ) result( this )
+    ! Initialize radiator_t object
 
     use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
@@ -172,9 +170,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Update radiator state
   subroutine update_state( this, grid_warehouse, profile_warehouse,           &
       cross_section_warehouse )
+    ! Update radiator state
 
     use musica_assert,                 only : assert_msg
     use tuvx_cross_section_warehouse,  only : cross_section_warehouse_t

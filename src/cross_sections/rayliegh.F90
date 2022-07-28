@@ -1,12 +1,16 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> This rayliegh_cross_section module
 
-!> The rayliegh_cross_section type and related functions
 module tuvx_cross_section_rayliegh
-
+! Rayliegh
+! ^^^^^^^^
+!
+! Rayleigh scattering cross section from WMO 1985 (originally from
+! Nicolet, M., On the molecular scattering in the terrestrial atmosphere:
+! An empirical formula for its calculation in the homoshpere, Planet.
+! Space Sci., 32, 1467-1468, 1984. 
+! `doi:10.1016/10.1016/0032-0633(84)90089-8 
+! <https://doi.org/10.1016/0032-0633(84)90089-8>`_
   use tuvx_cross_section,              only : cross_section_t
 
   implicit none
@@ -30,9 +34,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize the cross section
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
+    ! Initialize the cross section
 
     use musica_assert,                 only : assert_msg
     use musica_config,                 only : config_t
@@ -61,14 +65,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the cross section for a given set of environmental conditions
-  !!
-  !! Rayleigh scattering cross section from WMO 1985 (originally from
-  !! Nicolet, M., On the molecular scattering in the terrestrial atmosphere:
-  !! An empirical formula for its calculation in the homoshpere, Planet.
-  !! Space Sci., 32, 1467-1468, 1984.
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
+    ! Calculate the cross section for a given set of environmental conditions
 
     use musica_constants,              only : musica_dk
     use musica_string,                 only : string_t

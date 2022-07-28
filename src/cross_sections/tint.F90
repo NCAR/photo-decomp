@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> This tint_cross_section module
 
-!> The temperature interpolation cross_section type and related functions
 module tuvx_cross_section_tint
+! Temperature Interpolation
+! ^^^^^^^^^^^^^^^^^^^^^^^^^
 
   use tuvx_cross_section,              only : cross_section_t
 
@@ -32,9 +30,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initializecross_section_tint_t object
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
+    ! Initializecross_section_tint_t object
 
     use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
@@ -183,9 +181,9 @@ file_loop:                                                                    &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the cross section for a given set of environmental conditions
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
+    ! Calculate the cross section for a given set of environmental conditions
 
     use musica_constants,              only : dk => musica_dk
     use musica_string,                 only : string_t
@@ -273,29 +271,29 @@ file_loop:                                                                    &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> finalize the cross section type
   subroutine finalize( this )
+  ! finalize the cross section type
 
-  type(cross_section_tint_t), intent(inout) :: this
+    type(cross_section_tint_t), intent(inout) :: this
 
-  integer :: ndx
+    integer :: ndx
 
-  if( allocated( this%cross_section_parms ) ) then
-    do ndx = 1, size( this%cross_section_parms )
-      associate( Xsection => this%cross_section_parms( ndx ) )
-      if( allocated( Xsection%array ) ) then
-        deallocate( Xsection%array )
-      endif
-      if( allocated( Xsection%temperature ) ) then
-        deallocate( Xsection%temperature )
-      endif
-      if( allocated( Xsection%deltaT ) ) then
-        deallocate( Xsection%deltaT )
-      endif
-      end associate
-    enddo
-    deallocate( this%cross_section_parms )
-  endif
+    if( allocated( this%cross_section_parms ) ) then
+      do ndx = 1, size( this%cross_section_parms )
+        associate( Xsection => this%cross_section_parms( ndx ) )
+        if( allocated( Xsection%array ) ) then
+          deallocate( Xsection%array )
+        endif
+        if( allocated( Xsection%temperature ) ) then
+          deallocate( Xsection%temperature )
+        endif
+        if( allocated( Xsection%deltaT ) ) then
+          deallocate( Xsection%deltaT )
+        endif
+        end associate
+      enddo
+      deallocate( this%cross_section_parms )
+    endif
 
   end subroutine finalize
 

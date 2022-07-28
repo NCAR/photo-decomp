@@ -2,10 +2,10 @@
 ! SPDX-License-Identifier: Apache-2.0
 !
 !> \file
-!> The tuvx_radiator_factory module
 
-!> Build radiator objects
 module tuvx_radiator_factory
+  ! Radiator Factory
+  ! ^^^^^^^^^^^^^^^^
 
   use tuvx_radiator,                   only : radiator_t
   use tuvx_radiator_aerosol,           only : radiator_aerosol_t
@@ -19,8 +19,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Builder of radiator_t objects
   function radiator_builder( config, gridWareHouse ) result( new_radiator )
+    ! Builder of radiator_t objects
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t

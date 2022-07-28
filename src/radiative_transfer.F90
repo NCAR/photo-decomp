@@ -1,11 +1,9 @@
 ! Copyright (C) 2021 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The radXfer component module
 
-!> The radXfer_component_t type and related functions
 module tuvx_radiative_transfer
+  ! Radiative Transfer
+  ! ^^^^^^^^^^^^^^^^^^
 
   use musica_config,                   only : config_t
   use musica_constants,                only : dk => musica_dk, ik => musica_ik
@@ -23,10 +21,11 @@ module tuvx_radiative_transfer
 
   public :: radXfer_component_core_t
 
-  !> radXfer component core
-  !!
-  !! Calculates the atmospheric radiation field
-  type :: radXfer_component_core_t
+  type radXfer_component_core_t
+    ! radXfer component core
+    !
+    ! Calculates the atmospheric radiation field
+
     private
     integer(ik)                              :: nStreams_ = 0_ik
     class(abstract_radXfer_t), pointer       :: radXferSolver_ => null()
@@ -47,8 +46,8 @@ module tuvx_radiative_transfer
     final :: finalize
   end type radXfer_component_core_t
 
-  !> Constructor
   interface radXfer_component_core_t
+    ! Constructor
     module procedure constructor
   end interface radXfer_component_core_t
 
@@ -56,12 +55,12 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> radXfer component core constructor
-  !!
-  !! Sets up radXfer solver objects
   function constructor( config, gridWareHouse, ProfileWareHouse ) result( radXfer_component )
 
     use musica_assert,                 only : die_msg
+    ! radXfer component core constructor
+    !
+    ! Sets up radXfer solver objects
 
     !> New radXfer component core
     type(radXfer_component_core_t), pointer :: radXfer_component
@@ -105,8 +104,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Model component name
   type(string_t) function component_name( this )
+    ! Model component name
 
     !> Arguments
     class(radXfer_component_core_t), intent(in) :: this
@@ -117,8 +116,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Model component description
   type(string_t) function description( this )
+    ! Model component description
 
     !> Arguments
     class(radXfer_component_core_t), intent(in) :: this
@@ -129,8 +128,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the radiation field
   subroutine upDate( this, la_srb, SphericalGeom, GridWareHouse, ProfileWareHouse, radiationFld )
+    ! Calculate the radiation field
 
     use musica_assert,                 only : die_msg
     use musica_string,                 only : to_char
@@ -210,10 +209,10 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Finalize the radXfer component core
   subroutine finalize( this )
+    ! Finalize the radXfer component core
 
-    !> radXfer component
+    !>radXfer component
     type(radXfer_component_core_t), intent(inout) :: this
 
     if( associated( this%radXferXsectWareHouse_ ) ) deallocate( this%radXferXsectWareHouse_ )
