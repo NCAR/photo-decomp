@@ -80,4 +80,6 @@ fortran_src = [
     '../src/cross_section*.F90',
     '../src/cross_sections/*.F90',
     '../src/radiator*.F90',
+    '../src/radiative_transfer*.F90',
+    '../src/radiators/*.F90',
 ]
