@@ -17,7 +17,7 @@ module tuvx_cross_section_warehouse
   public :: cross_section_warehouse_t
 
   !> Radiative xfer cross section type
-  type :: cross_section_warehouse_t
+  type cross_section_warehouse_t
     private
     !> cross section calculators
     type(cross_section_ptr), allocatable :: cross_section_objs_(:)

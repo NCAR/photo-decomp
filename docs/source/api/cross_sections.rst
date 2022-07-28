@@ -3,7 +3,8 @@
 Cross Sections
 ==============
 
-:f:type::
+f:type:: tuvx_cross_section/cross_section_t
+
 A ``cross_section_t``, or one of its subclasses, calculates a chemical cross 
 section for one or more chemical reactions.
 

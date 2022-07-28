@@ -15,17 +15,15 @@ module tuvx_cross_section
   public :: cross_section_t, cross_section_parms_t, base_constructor,         &
             cross_section_ptr
 
-  !> Common cross section parameters
   type cross_section_parms_t
-    !> \todo what are these used for, what axis are they on, and what units?
-    real(dk), allocatable :: temperature(:)
-    real(dk), allocatable :: deltaT(:)
+    real(dk), allocatable :: temperature(:) ! in kelvin
+    real(dk), allocatable :: deltaT(:) 
     real(dk), allocatable :: array(:,:)
   end type cross_section_parms_t
 
-  !> Calculator for cross_section
-  type :: cross_section_t
-    !> The cross section array \todo what axis are these on?
+  type cross_section_t
+    ! Calculator for cross_section
+    ! The cross section array \todo what axis are these on?
     type(cross_section_parms_t), allocatable :: cross_section_parms(:)
   contains
     !> Calculate the cross section
@@ -39,8 +37,8 @@ module tuvx_cross_section
     module procedure :: constructor
   end interface
 
-  !> Pointer type for building sets of photo rate constants
-  type :: cross_section_ptr
+  type cross_section_ptr
+    ! Pointer type for building sets of photo rate constants
     class(cross_section_t), pointer :: val_ => null( )
   end type cross_section_ptr
 
