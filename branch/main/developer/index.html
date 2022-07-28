@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Science Contributions &#8212; TUV-x v0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="prev" title="API" href="../api/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../">
+<p class="title">TUV-x</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../installation/">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../usage/">
+  Usage
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../configuration/">
+  Configuration
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api/">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  Science Contributions
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        v0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables developer and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': 'v0.1'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "developer.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://ncar.github.io/photo-decomp/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "developer.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's  variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "v0.1") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/NCAR/photo-decomp" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search/" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cross-sections">
+   Cross Sections
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dose-rates">
+   Dose Rates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#quantum-yields">
+   Quantum Yields
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-subclass-module">
+     Create subclass module
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#add-subclass-module-to-build-scripts">
+     Add subclass module to build scripts
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#add-subclass-to-factory-function">
+     Add subclass to factory function
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-unit-test">
+     Create unit test
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#radiators">
+   Radiators
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="science-contributions">
+<h1>Science Contributions<a class="headerlink" href="#science-contributions" title="Permalink to this headline">#</a></h1>
+<p>To submit a new feature or bug-fix, first create an issue on the
+<a class="reference external" href="https://github.com/NCAR/photo-decomp">TUV-x GitHub repository</a>
+that describes the new feature or bug. The software contribution can
+then be submitted as a pull request. Please reference the issue in
+the pull request description.</p>
+<p>Software contributions must apply the
+<a class="reference external" href="https://ncar.github.io/musica-core/html/coding_style.html">MUSICA FORTRAN Style Guide</a>.
+See also the <a class="reference external" href="https://ncar.github.io/musica-core/html/contributors.html">MUSICA Recommendations for Contributors</a>.</p>
+<p>Developers must ensure that new features have complete unit test
+coverage. Pull requests that decrease the test coverage of the
+TUV-x code base will not be accepted. Developers must also ensure that
+new features are fully run-time configurable.</p>
+<section id="cross-sections">
+<h2>Cross Sections<a class="headerlink" href="#cross-sections" title="Permalink to this headline">#</a></h2>
+<p>&lt;describe adding cross sections&gt;</p>
+</section>
+<section id="dose-rates">
+<h2>Dose Rates<a class="headerlink" href="#dose-rates" title="Permalink to this headline">#</a></h2>
+<p>&lt;describe adding dose rates&gt;</p>
+</section>
+<section id="quantum-yields">
+<h2>Quantum Yields<a class="headerlink" href="#quantum-yields" title="Permalink to this headline">#</a></h2>
+<p>The base functionality for quantum yield calculations is described in
+<code class="docutils literal notranslate"><span class="pre">src/quantum_yield.F90</span></code>. The base quantum yield type <code class="docutils literal notranslate"><span class="pre">quantum_yield_t</span></code>
+defined in this module includes a constructor that reads a set of
+NetCDF files specified in the configuration JSON object as an
+array of file paths with the key <code class="docutils literal notranslate"><span class="pre">netcdf</span> <span class="pre">files</span></code> if present, or
+can set the value of the quantum yield to a constant when the
+<code class="docutils literal notranslate"><span class="pre">constant</span> <span class="pre">value</span></code> key is present and set to a real number.</p>
+<p>Here is an example configuration for a quantum yield:</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;base&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;constant value&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Data from each NetCDF file will be loaded into an element of the
+<code class="docutils literal notranslate"><span class="pre">quantum_yield_parms</span></code> data member. If a NetCDF variable named
+<code class="docutils literal notranslate"><span class="pre">quantum_yield_parameters</span></code> is present, it will be used to populate
+the <code class="docutils literal notranslate"><span class="pre">array(:,:)</span></code> data member of the <code class="docutils literal notranslate"><span class="pre">quantum_yield_parms_t</span></code> object.
+This first dimension of the array is wavelength, and will be interpolated
+to the native TUV-x wavelength grid if this differs from the wavelength
+grid in the netcdf file (named <code class="docutils literal notranslate"><span class="pre">wavelength</span></code>). The second dimension
+is used to accomodate multiple wavelength-resolved parameters for
+quantum yield calculations.</p>
+<p>If a NetCDF variable named <code class="docutils literal notranslate"><span class="pre">temperature</span></code> is present, it will be
+used to populate the <code class="docutils literal notranslate"><span class="pre">temperature(:)</span></code> data member of the
+<code class="docutils literal notranslate"><span class="pre">quantum_yield_parms_t</span></code> object.</p>
+<p>The calculation of quantum yields is done by calling the <code class="docutils literal notranslate"><span class="pre">calculate()</span></code>
+type-bound procedure on a <code class="docutils literal notranslate"><span class="pre">quantum_yield_t</span></code> object.</p>
+<p>The base-class calculation of quantum yields returns the
+wavelength-interpolated first parameter (<code class="docutils literal notranslate"><span class="pre">array(:,1)</span></code>) from the first
+NetCDF file (<code class="docutils literal notranslate"><span class="pre">quantum_yield_parms(1)</span></code>) specified in the configuration
+data.</p>
+<p>Quantum yield subclasses are located in the <code class="docutils literal notranslate"><span class="pre">src/quantum_yields/</span></code> folder.
+These each provide unique algorithms for calculating quantum yields.</p>
+<p>Before adding a new quantum yield class, first check to make sure there
+is not an existing class that can be configured to accomodate your
+needs. If you find that an existing quantum yield subclass could be used
+by moving one or more hard-coded parameters to the configuration data, this
+is preferable to adding a new subclass.</p>
+<p>If you determine that a new quantum yield subclass is needed, this can be
+done in three steps:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#qy-create-subclass"><span class="std std-ref">Create subclass module</span></a></p></li>
+<li><p><a class="reference internal" href="#qy-add-to-build-scripts"><span class="std std-ref">Add subclass module to build scripts</span></a></p></li>
+<li><p><a class="reference internal" href="#qy-add-to-factory"><span class="std std-ref">Add subclass to factory function</span></a></p></li>
+<li><p><a class="reference internal" href="#qy-create-unit-test"><span class="std std-ref">Create unit test</span></a></p></li>
+</ul>
+<section id="create-subclass-module">
+<span id="qy-create-subclass"></span><h3>Create subclass module<a class="headerlink" href="#create-subclass-module" title="Permalink to this headline">#</a></h3>
+<p>First, choose a unique name for your quantum yield calculation. Ideally,
+this name will describe the algorithm, rather than the specific photolysis
+reaction you are applying it to. However, many subclasses currently in TUV-x
+are named for specific photolysis reactions. For this example, we will use
+the name <code class="docutils literal notranslate"><span class="pre">foo</span></code> for our quantum yield algorithm.</p>
+<p><strong>Pay special attention to naming of files, modules, types, and functions
+in these instructions.</strong></p>
+<p>Create a file to hold your new subclass module in <code class="docutils literal notranslate"><span class="pre">src/quantum_yields/</span></code> named
+<code class="docutils literal notranslate"><span class="pre">foo.F90</span></code>. The general layout of the module will be (comments have been omitted
+for this example, but should be included in an actual module):</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="c">! Copyright (C) 2020 National Center for Atmospheric Research</span>
+<span class="c">! SPDX-License-Identifier: Apache-2.0</span>
+<span class="c">!</span>
+<span class="k">module </span><span class="n">tuvx_quantum_yield_foo</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">use </span><span class="n">tuvx_quantum_yield</span><span class="p">,</span><span class="w">              </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">quantum_yield_t</span><span class="p">,</span><span class="w"> </span><span class="n">base_constructor</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">implicit none</span>
+<span class="k">  private</span>
+
+<span class="k">  public</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">quantum_yield_foo_t</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">type</span><span class="p">,</span><span class="w"> </span><span class="k">extends</span><span class="p">(</span><span class="n">quantum_yield_t</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">quantum_yield_foo_t</span><span class="w"></span>
+<span class="w">  </span><span class="k">contains</span>
+<span class="k">    procedure</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">calculate</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">run</span><span class="w"></span>
+<span class="w">  </span><span class="k">end type </span><span class="n">quantum_yield_foo_t</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">interface </span><span class="n">quantum_yield_foo_t</span><span class="w"></span>
+<span class="w">    </span><span class="k">module procedure </span><span class="n">constructor</span><span class="w"></span>
+<span class="w">  </span><span class="k">end interface</span>
+
+<span class="k">contains</span><span class="w"></span>
+
+<span class="c">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+
+<span class="w">  </span><span class="k">function </span><span class="n">constructor</span><span class="p">(</span><span class="w"> </span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="p">,</span><span class="w"> </span><span class="n">profile_warehouse</span><span class="w"> </span><span class="p">)</span><span class="w">           </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">      </span><span class="k">result</span><span class="p">(</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">use </span><span class="n">musica_config</span><span class="p">,</span><span class="w">                 </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">config_t</span><span class="w"></span>
+<span class="w">    </span><span class="k">use </span><span class="n">tuvx_grid_warehouse</span><span class="p">,</span><span class="w">           </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">grid_warehouse_t</span><span class="w"></span>
+<span class="w">    </span><span class="k">use </span><span class="n">tuvx_profile_warehouse</span><span class="p">,</span><span class="w">        </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">profile_warehouse_t</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">class</span><span class="p">(</span><span class="n">quantum_yield_t</span><span class="p">),</span><span class="w">    </span><span class="k">pointer</span><span class="w">       </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span><span class="w"></span>
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">config_t</span><span class="p">),</span><span class="w">            </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">config</span><span class="w"></span>
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">grid_warehouse_t</span><span class="p">),</span><span class="w">    </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="w"></span>
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">profile_warehouse_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">profile_warehouse</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">allocate</span><span class="p">(</span><span class="w"> </span><span class="n">quantum_yield_foo_t</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="c">! You can call the base_constructor function to load data from NetCDF</span>
+<span class="w">    </span><span class="c">! files into the `quantum_yield_parms(:)` data member according to the</span>
+<span class="w">    </span><span class="c">! standard base class logic. Alternatively, you can perform custom</span>
+<span class="w">    </span><span class="c">! initialization of the subclass object here.</span>
+<span class="w">    </span><span class="k">call </span><span class="n">base_constructor</span><span class="p">(</span><span class="w"> </span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="p">,</span><span class="w"> </span><span class="n">profile_warehouse</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">end function </span><span class="n">constructor</span><span class="w"></span>
+
+<span class="c">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+
+<span class="w">  </span><span class="k">function </span><span class="n">run</span><span class="p">(</span><span class="w"> </span><span class="n">this</span><span class="p">,</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="p">,</span><span class="w"> </span><span class="n">profile_warehouse</span><span class="w"> </span><span class="p">)</span><span class="w">                     </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">      </span><span class="k">result</span><span class="p">(</span><span class="w"> </span><span class="n">quantum_yield</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">use </span><span class="n">musica_constants</span><span class="p">,</span><span class="w">              </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">dk</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">musica_dk</span><span class="w"></span>
+<span class="w">    </span><span class="k">use </span><span class="n">tuvx_grid_warehouse</span><span class="p">,</span><span class="w">           </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">grid_warehouse_t</span><span class="w"></span>
+<span class="w">    </span><span class="k">use </span><span class="n">tuvx_profile_warehouse</span><span class="p">,</span><span class="w">        </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">profile_warehouse_t</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">class</span><span class="p">(</span><span class="n">quantum_yield_foo_t</span><span class="p">),</span><span class="w"> </span><span class="k">intent</span><span class="p">(</span><span class="n">in</span><span class="p">)</span><span class="w">    </span><span class="kd">::</span><span class="w"> </span><span class="n">this</span><span class="w"></span>
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">grid_warehouse_t</span><span class="p">),</span><span class="w">     </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="w"></span>
+<span class="w">    </span><span class="k">type</span><span class="p">(</span><span class="n">profile_warehouse_t</span><span class="p">),</span><span class="w">  </span><span class="k">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span><span class="w"> </span><span class="kd">::</span><span class="w"> </span><span class="n">profile_warehouse</span><span class="w"></span>
+<span class="w">    </span><span class="kt">real</span><span class="p">(</span><span class="nb">kind</span><span class="o">=</span><span class="n">dk</span><span class="p">),</span><span class="w"> </span><span class="k">allocatable</span><span class="w">                </span><span class="kd">::</span><span class="w"> </span><span class="n">quantum_yield</span><span class="p">(:,:)</span><span class="w"></span>
+
+<span class="w">    </span><span class="c">! Do your calculations here</span>
+
+<span class="w">  </span><span class="k">end function </span><span class="n">run</span><span class="w"></span>
+
+<span class="c">!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+
+<span class="k">end module </span><span class="n">tuvx_quantum_yield_foo</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The constructor function is reponsible for initializing new instances of your
+quantum yield subclass. First, you allocate the pointer to be returned as
+your new type (<code class="docutils literal notranslate"><span class="pre">quantum_yield_foo_t</span></code> in this example). Then you initialize
+its data members. If you just want to use the default initialization of the
+base class, you can call the <code class="docutils literal notranslate"><span class="pre">base_constructor()</span></code> function as shown above.
+You can alternatively initialize data members of the base class
+(<code class="docutils literal notranslate"><span class="pre">quantum_yield_parms(:)</span></code>) directly in this function or add data members
+to your subclass and initialize them here (see
+<code class="docutils literal notranslate"><span class="pre">src/quantum_yields/tint.F90</span></code> for an example).</p>
+<p>The run function overrides the base-class run function and will be called when
+a user calls the <code class="docutils literal notranslate"><span class="pre">calculate()</span></code> type-bound procedure on an instance of your
+new subclass. You can access grid and profile data from the “warehouse” objects
+passed in as function arguments, and any data in the base-class data members
+or in data members you’ve added to your subclass to perform your calculations.
+See the files in <code class="docutils literal notranslate"><span class="pre">src/quantum_yields/</span></code> for examples of how to access this
+data in the <code class="docutils literal notranslate"><span class="pre">run()</span></code> function.</p>
+</section>
+<section id="add-subclass-module-to-build-scripts">
+<span id="qy-add-to-build-scripts"></span><h3>Add subclass module to build scripts<a class="headerlink" href="#add-subclass-module-to-build-scripts" title="Permalink to this headline">#</a></h3>
+<p>To include your new class in the build, edit the <code class="docutils literal notranslate"><span class="pre">src/quantum_yields/CMakeLists.txt</span></code>
+file and add your file name to the list saved to <code class="docutils literal notranslate"><span class="pre">SRC</span></code>. Files are listed in
+alphabetical order.</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">SRC</span><span class="w"> </span><span class="s">acetone-ch3co_ch3.F90</span>
+<span class="w">     </span><span class="s">c2h5cho.F90</span>
+<span class="w">     </span><span class="s">ch2chcho.F90</span>
+<span class="w">     </span><span class="s">ch2o.F90</span>
+<span class="w">     </span><span class="s">ch3cho-ch3_hco.F90</span>
+<span class="w">     </span><span class="s">ch3coch2ch3-ch3co_ch2ch3.F90</span>
+<span class="w">     </span><span class="s">ch3cocho.F90</span>
+<span class="w">     </span><span class="s">clo-cl_o1d.F90</span>
+<span class="w">     </span><span class="s">clo-cl_o3p.F90</span>
+<span class="w">     </span><span class="s">clono2-clo_no2.F90</span>
+<span class="w">     </span><span class="s">clono2-cl_no3.F90</span>
+<span class="hll"><span class="w">     </span><span class="s">foo.F90</span>
+</span><span class="w">     </span><span class="s">ho2-oh_o.F90</span>
+<span class="w">     </span><span class="s">mvk.F90</span>
+<span class="w">     </span><span class="s">no2_tint.F90</span>
+<span class="w">     </span><span class="s">no3_aq.F90</span>
+<span class="w">     </span><span class="s">o3-o2_o1d.F90</span>
+<span class="w">     </span><span class="s">o3-o2_o3p.F90</span>
+<span class="w">     </span><span class="s">tint.F90</span>
+<span class="w">     </span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="add-subclass-to-factory-function">
+<span id="qy-add-to-factory"></span><h3>Add subclass to factory function<a class="headerlink" href="#add-subclass-to-factory-function" title="Permalink to this headline">#</a></h3>
+<p>In order to use your new subclass, you will need to add it to the
+<code class="docutils literal notranslate"><span class="pre">tuvx_quantum_yield_factory</span></code> module in <code class="docutils literal notranslate"><span class="pre">src/quantum_yield_factory.F90</span></code>.
+First use-associate your new class at the module level:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="k">use </span><span class="n">tuvx_quantum_yield_foo</span><span class="p">,</span><span class="w">            </span><span class="k">only</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">quantum_yield_foo_t</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Then, inside the <code class="docutils literal notranslate"><span class="pre">quantum_yield_builder()</span></code> function, add these lines to the
+<code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">case</span></code> block:</p>
+<div class="highlight-fortran notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="p">(</span><span class="w"> </span><span class="s1">&#39;foo&#39;</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+<span class="w">  </span><span class="n">quantum_yield</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">quantum_yield_foo_t</span><span class="p">(</span><span class="w"> </span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">grid_warehouse</span><span class="p">,</span><span class="w">              </span><span class="p">&amp;</span><span class="w"></span>
+<span class="w">                                        </span><span class="n">profile_warehouse</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Now, when you add a quantum yield of type <code class="docutils literal notranslate"><span class="pre">foo</span></code> to the configuration data,
+an instance of your new subclass will be created.</p>
+</section>
+<section id="create-unit-test">
+<span id="qy-create-unit-test"></span><h3>Create unit test<a class="headerlink" href="#create-unit-test" title="Permalink to this headline">#</a></h3>
+<p>The last step to adding a quantum yield is to create a unit test. This will ensure
+that your calculations are doing what you intended. It will also serve as an example
+for how users can configure and use your new subclass.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Add instructions for creating quantum yield tests when tests for existing classes
+have been added.</p>
+</div>
+</section>
+</section>
+<section id="radiators">
+<h2>Radiators<a class="headerlink" href="#radiators" title="Permalink to this headline">#</a></h2>
+<p>&lt;describe adding radiators&gt;</p>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../api/" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">API</p>
+        </div>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, NCAR/UCAR.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

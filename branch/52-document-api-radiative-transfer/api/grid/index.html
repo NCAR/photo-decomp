@@ -1,0 +1,756 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Grids &#8212; TUV-x v0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Photolysis Rates" href="../photolysis_rates/" />
+    <link rel="prev" title="Cross Sections" href="../cross_sections/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../../">
+<p class="title">TUV-x</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../installation/">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../usage/">
+  Usage
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../configuration/">
+  Configuration
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../developer/">
+  Science Contributions
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        v0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables api/grid and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': 'v0.1'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "api/grid.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://ncar.github.io/photo-decomp/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "api/grid.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's  variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "v0.1") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/NCAR/photo-decomp" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search/" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../cross_sections/">
+   Cross Sections
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Grids
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../photolysis_rates/">
+   Photolysis Rates
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../profiles/">
+   Profiles
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../radiative_transfer/">
+   Radiative Transfer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../quantum_yield/">
+   Quantum Yield
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-base-grid-type">
+   The base grid type
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#grid-factory">
+   Grid Factory
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#grid-warehouse">
+   Grid Warehouse
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#grid-from-equal-delta">
+   Grid from equal delta
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#grid-from-configuration-file">
+   Grid from configuration file
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#grid-from-csv-file">
+   Grid from CSV File
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="grids">
+<h1>Grids<a class="headerlink" href="#grids" title="Permalink to this headline">#</a></h1>
+<p>A <a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_t</span></code></a> object defines the vertical extent of the model.
+There are three
+classes that can be used to configure TUV-x. Typically, the type of grid used
+at runtime is configurd from the configuration file. See
+<a class="reference internal" href="../../configuration/#configuration-grid"><span class="std std-ref">Grids</span></a> for more information.</p>
+<p>All grid configurations are generated by the factory pattern inside the
+<a class="reference internal" href="#f/tuvx_grid_factory" title="f/tuvx_grid_factory: Grid Factory ^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_factory</span></code></a>. Each grid is
+created once and lives in the <a class="reference internal" href="#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_warehouse_t</span></code></a>
+class. A copy of the grid is returned each time the grid is needed. Each class
+the depends on a grid will take a
+<a class="reference internal" href="#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_warehouse_t</span></code></a> object as an
+argument and pull the type of grid that is desired out of the warehosue,
+like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">run</span><span class="p">(</span> <span class="n">grid_warehouse</span> <span class="p">)</span> <span class="n">result</span><span class="p">(</span> <span class="n">thing</span> <span class="p">)</span>
+    <span class="n">use</span> <span class="n">tuvx_grid</span><span class="p">,</span>           <span class="n">only</span> <span class="p">:</span> <span class="n">grid_t</span>
+    <span class="n">use</span> <span class="n">tuvx_grid_warehouse</span><span class="p">,</span> <span class="n">only</span> <span class="p">:</span> <span class="n">grid_warehouse_t</span>
+
+    <span class="n">integer</span>                               <span class="p">::</span> <span class="n">thing</span>
+    <span class="nb">type</span><span class="p">(</span><span class="n">grid_warehouse_t</span><span class="p">),</span> <span class="n">intent</span><span class="p">(</span><span class="n">inout</span><span class="p">)</span> <span class="p">::</span> <span class="n">grid_warehouse</span>
+    <span class="n">class</span><span class="p">(</span><span class="n">grid_t</span><span class="p">),</span>          <span class="n">pointer</span>       <span class="p">::</span> <span class="n">zGrid</span> <span class="o">=&gt;</span> <span class="n">null</span><span class="p">(</span> <span class="p">)</span>
+
+    <span class="n">zGrid</span> <span class="o">=&gt;</span> <span class="n">grid_warehouse</span><span class="o">%</span><span class="n">get_grid</span><span class="p">(</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="s2">&quot;km&quot;</span> <span class="p">)</span>
+    <span class="o">...</span>
+  <span class="n">end</span> <span class="n">function</span> <span class="n">run</span>
+</pre></div>
+</div>
+<span class="target" id="f/tuvx_grid"></span><p class="rubric">Description</p>
+<section id="the-base-grid-type">
+<h2>The base grid type<a class="headerlink" href="#the-base-grid-type" title="Permalink to this headline">#</a></h2>
+<p>A one dimensional grid type.</p>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid/grid_ptr" title="f/tuvx_grid/grid_ptr"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_ptr</span></code></a>, <a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_grid/units" title="f/tuvx_grid/units"><code class="xref f f-func docutils literal notranslate"><span class="pre">units()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">musica_dk()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">musica_ik()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid/grid_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid/</span></span><span class="sig-name descname"><span class="pre">grid_t</span></span><a class="headerlink" href="#f/tuvx_grid/grid_t" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">delta_</span> (*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">edge_</span> (*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">handle</span><em> [</em><em>string_t </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">mid_</span> (*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">ncells</span><em> [</em><em>integer </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">units</span><em> [</em><em>string_t </em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid/grid_ptr">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid/</span></span><span class="sig-name descname"><span class="pre">grid_ptr</span></span><a class="headerlink" href="#f/tuvx_grid/grid_ptr" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid/units">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid/</span></span><span class="sig-name descname"><span class="pre">units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid/units" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the units for the grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>units</strong><em> [</em><em>string_t </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Called from</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_warehouse/get_grid_char" title="f/tuvx_grid_warehouse/get_grid_char"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_grid_char()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_grid_factory"></span><p class="rubric">Description</p>
+</section>
+<section id="grid-factory">
+<h2>Grid Factory<a class="headerlink" href="#grid-factory" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Routines</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_factory/grid_builder" title="f/tuvx_grid_factory/grid_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_builder()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>): The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type….</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid_equal_delta" title="f/tuvx_grid_equal_delta: Grid from equal delta ^^^^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_equal_delta</span></code></a> (<a class="reference internal" href="#f/tuvx_grid_equal_delta/equal_delta_t" title="f/tuvx_grid_equal_delta/equal_delta_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">equal_delta_t()</span></code></a>): Grid from equal delta ^^^^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid_from_csv_file" title="f/tuvx_grid_from_csv_file: Grid from CSV File ^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_from_csv_file</span></code></a> (<a class="reference internal" href="#f/tuvx_grid_from_csv_file/from_csv_file_t" title="f/tuvx_grid_from_csv_file/from_csv_file_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">from_csv_file_t()</span></code></a>): Grid from CSV File ^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid_from_config" title="f/tuvx_grid_from_config: Grid from configuration file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 1d grid specified in json config file"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_from_config</span></code></a> (<a class="reference internal" href="#f/tuvx_grid_from_config/from_config_t" title="f/tuvx_grid_from_config/from_config_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">from_config_t()</span></code></a>): Grid from configuration file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 1d grid specified in json config file</p></li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_factory/grid_builder">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_factory/</span></span><span class="sig-name descname"><span class="pre">grid_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_factory/grid_builder" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>new_grid_t</strong><em> [</em><em>integer </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_grid_warehouse"></span><p class="rubric">Description</p>
+</section>
+<section id="grid-warehouse">
+<h2>Grid Warehouse<a class="headerlink" href="#grid-warehouse" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">grid_warehouse_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_grid_warehouse/get_grid_char" title="f/tuvx_grid_warehouse/get_grid_char"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_grid_char()</span></code></a>, <a class="reference internal" href="#f/tuvx_grid_warehouse/get_grid_string" title="f/tuvx_grid_warehouse/get_grid_string"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_grid_string()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_ptr" title="f/tuvx_grid/grid_ptr"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_ptr()</span></code></a>): The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type….</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_warehouse/grid_warehouse_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_warehouse/</span></span><span class="sig-name descname"><span class="pre">grid_warehouse_t</span></span><a class="headerlink" href="#f/tuvx_grid_warehouse/grid_warehouse_t" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">grid_objs_</span> (*)<em> [</em><em>grid_ptr </em><em>,</em><em>private/allocatable</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_warehouse/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_warehouse/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_warehouse/constructor" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>grid_warehouse</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_iterator</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">iterator_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="#f/tuvx_grid_factory" title="f/tuvx_grid_factory: Grid Factory ^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_factory</span></code></a> (<a class="reference internal" href="#f/tuvx_grid_factory/grid_builder" title="f/tuvx_grid_factory/grid_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_builder()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../radiative_transfer/#f/tuvx_radiator_warehouse/get_iterator" title="f/tuvx_radiator_warehouse/get_iterator"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_iterator()</span></code></a>, <a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a>, <a class="reference internal" href="#f/tuvx_grid_factory/grid_builder" title="f/tuvx_grid_factory/grid_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_builder()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_warehouse/get_grid_char">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_grid_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">units</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_warehouse/get_grid_char" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>name</strong><em> [</em><em>character(len=*)</em><em>,</em><em>in</em><em>]</em></p></li>
+<li><p><strong>units</strong><em> [</em><em>character(len=*)</em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>grid_ptr</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Called from</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_grid_warehouse/get_grid_string" title="f/tuvx_grid_warehouse/get_grid_string"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_grid_string()</span></code></a></p>
+</dd>
+<dt class="field-odd">Call to</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid/units" title="f/tuvx_grid/units"><code class="xref f f-func docutils literal notranslate"><span class="pre">units()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_warehouse/get_grid_string">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_grid_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">name</span></em>, <em class="sig-param"><span class="pre">units</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_warehouse/get_grid_string" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>name</strong><em> [</em><em>string_t </em><em>,</em><em>in</em><em>]</em></p></li>
+<li><p><strong>units</strong><em> [</em><em>string_t </em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>grid_ptr</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_grid_warehouse/get_grid_char" title="f/tuvx_grid_warehouse/get_grid_char"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_grid_char()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_warehouse/finalize">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_warehouse/</span></span><span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_warehouse/finalize" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Use </dt>
+<dd class="field-even"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_grid_equal_delta"></span><p class="rubric">Description</p>
+</section>
+<section id="grid-from-equal-delta">
+<h2>Grid from equal delta<a class="headerlink" href="#grid-from-equal-delta" title="Permalink to this headline">#</a></h2>
+<p>one dimension, equally spaced  grid type</p>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_equal_delta/equal_delta_t" title="f/tuvx_grid_equal_delta/equal_delta_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">equal_delta_t</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code>)</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>): The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type….</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_equal_delta/equal_delta_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_equal_delta/</span></span><span class="sig-name descname"><span class="pre">equal_delta_t</span></span><a class="headerlink" href="#f/tuvx_grid_equal_delta/equal_delta_t" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_equal_delta/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_equal_delta/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">grid_config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_equal_delta/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid_config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>this</strong><em> [</em><em>equal_delta_t </em><em>,</em><em>pointer</em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_grid_from_config"></span><p class="rubric">Description</p>
+</section>
+<section id="grid-from-configuration-file">
+<h2>Grid from configuration file<a class="headerlink" href="#grid-from-configuration-file" title="Permalink to this headline">#</a></h2>
+<p>1d grid specified in json config file</p>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_from_config/from_config_t" title="f/tuvx_grid_from_config/from_config_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">from_config_t</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code>)</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>): The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type….</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_from_config/from_config_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_from_config/</span></span><span class="sig-name descname"><span class="pre">from_config_t</span></span><a class="headerlink" href="#f/tuvx_grid_from_config/from_config_t" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_from_config/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_from_config/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">grid_config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_from_config/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid_config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>this</strong><em> [</em><em>from_config_t </em><em>,</em><em>pointer</em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_grid_from_csv_file"></span><p class="rubric">Description</p>
+</section>
+<section id="grid-from-csv-file">
+<h2>Grid from CSV File<a class="headerlink" href="#grid-from-csv-file" title="Permalink to this headline">#</a></h2>
+<p>one dimension, equally spaced  grid type</p>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_grid_from_csv_file/from_csv_file_t" title="f/tuvx_grid_from_csv_file/from_csv_file_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">from_csv_file_t</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">lk()</span></code>)</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>): The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type….</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_from_csv_file/from_csv_file_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_from_csv_file/</span></span><span class="sig-name descname"><span class="pre">from_csv_file_t</span></span><a class="headerlink" href="#f/tuvx_grid_from_csv_file/from_csv_file_t" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_grid_from_csv_file/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_grid_from_csv_file/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">grid_config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_grid_from_csv_file/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid_config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>this</strong><em> [</em><em>from_csv_file_t </em><em>,</em><em>pointer</em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../cross_sections/" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Cross Sections</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../photolysis_rates/" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Photolysis Rates</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, NCAR/UCAR.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

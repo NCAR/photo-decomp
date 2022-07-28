@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fortran Module Index &#8212; TUV-x v0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+
+    <script>
+      DOCUMENTATION_OPTIONS.COLLAPSE_INDEX = true;
+    </script>
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../">
+<p class="title">TUV-x</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../installation/">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../usage/">
+  Usage
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../configuration/">
+  Configuration
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api/">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../developer/">
+  Science Contributions
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        v0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables f-modindex and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': 'v0.1'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "f-modindex.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://ncar.github.io/photo-decomp/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "f-modindex.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's  variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "v0.1") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/NCAR/photo-decomp" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search/" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+
+   <h1>Fortran Module Index</h1>
+
+   <div class="modindex-jumpbox">
+   <a href="#cap-t"><strong>t</strong></a>
+   </div>
+
+   <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-t"><td></td><td>
+       <strong>t</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section"><code class="xref">tuvx_cross_section</code></a></td><td>
+       <em>Cross Section ^^^^^^^^^^^^^ The base cross section type and related functions</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_bro_br_o"><code class="xref">tuvx_cross_section_bro_br_o</code></a></td><td>
+       <em>:math:`BrO+hv \rightarrow Br + O` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_ccl4"><code class="xref">tuvx_cross_section_ccl4</code></a></td><td>
+       <em>:math:`CCl_4 \rightarrow` Products ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_cfc11"><code class="xref">tuvx_cross_section_cfc11</code></a></td><td>
+       <em>CFC-11 :math:`\rightarrow` Products ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_ch2o"><code class="xref">tuvx_cross_section_ch2o</code></a></td><td>
+       <em>:math:`CH_2O` ^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_ch3coch3_ch3co_ch3"><code class="xref">tuvx_cross_section_ch3coch3_ch3co_ch3</code></a></td><td>
+       <em>:math:`CH_3COCH_3+hv \rightarrow CH_3CO+CH_3` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_ch3ono2_ch3o_no2"><code class="xref">tuvx_cross_section_ch3ono2_ch3o_no2</code></a></td><td>
+       <em>:math:`CH_3ONO_2 \rightarrow CH_3O+NO_2` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_chbr3"><code class="xref">tuvx_cross_section_chbr3</code></a></td><td>
+       <em>:math:`CHBr_3` ^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_chcl3"><code class="xref">tuvx_cross_section_chcl3</code></a></td><td>
+       <em>:math:`CHCl_3+hv \rightarrow` Products ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_cl2_cl_cl"><code class="xref">tuvx_cross_section_cl2_cl_cl</code></a></td><td>
+       <em>:math:`Cl_2+hv \rightarrow Cl + Cl` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_clono2"><code class="xref">tuvx_cross_section_clono2</code></a></td><td>
+       <em>:math:`ClONO_2+hv \rightarrow N_2+O(^1D)` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_factory"><code class="xref">tuvx_cross_section_factory</code></a></td><td>
+       <em>Cross Section Factory ^^^^^^^^^^^^^^^^^^^^^ Builder of cross section calculators</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_h2o2_oh_oh"><code class="xref">tuvx_cross_section_h2o2_oh_oh</code></a></td><td>
+       <em>:math:`H_2O_2+hv \rightarrow OH+OH` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_hcfc"><code class="xref">tuvx_cross_section_hcfc</code></a></td><td>
+       <em>:math:`HCFC+hv \rightarrow` Products ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_hno3_oh_no2"><code class="xref">tuvx_cross_section_hno3_oh_no2</code></a></td><td>
+       <em>:math:`HNO_3 \rightarrow OH+NO_2` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_hobr_oh_br"><code class="xref">tuvx_cross_section_hobr_oh_br</code></a></td><td>
+       <em>:math:`HOBr \rightarrow OH+Br` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_n2o5_no2_no3"><code class="xref">tuvx_cross_section_n2o5_no2_no3</code></a></td><td>
+       <em>:math:`N_2O5+hv \rightarrow NO_2+NO_3` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_n2o_n2_o1d"><code class="xref">tuvx_cross_section_n2o_n2_o1d</code></a></td><td>
+       <em>:math:`N_2O+hv \rightarrow N_2+O(^1D)` ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_nitroxy_acetone"><code class="xref">tuvx_cross_section_nitroxy_acetone</code></a></td><td>
+       <em>Nitroxy Acetone ^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_nitroxy_ethanol"><code class="xref">tuvx_cross_section_nitroxy_ethanol</code></a></td><td>
+       <em>Nitroxy Ethanol ^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_no2_tint"><code class="xref">tuvx_cross_section_no2_tint</code></a></td><td>
+       <em>:math:`NO_2` Temperature Interpolation ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_o3_tint"><code class="xref">tuvx_cross_section_o3_tint</code></a></td><td>
+       <em>:math:`O_3` Temperature Interpolation ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_oclo"><code class="xref">tuvx_cross_section_oclo</code></a></td><td>
+       <em>:math:`OClO` ^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_rayliegh"><code class="xref">tuvx_cross_section_rayliegh</code></a></td><td>
+       <em>Rayliegh ^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_rono2"><code class="xref">tuvx_cross_section_rono2</code></a></td><td>
+       <em>:math:`RONO_2` ^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_t_butyl_nitrate"><code class="xref">tuvx_cross_section_t_butyl_nitrate</code></a></td><td>
+       <em>T-Butyl-nitrate ^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_tint"><code class="xref">tuvx_cross_section_tint</code></a></td><td>
+       <em>Temperature Interpolation ^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/cross_sections/#f/tuvx_cross_section_warehouse"><code class="xref">tuvx_cross_section_warehouse</code></a></td><td>
+       <em>Cross Section Warehouse ^^^^^^^^^^^^^^^^^^^^^^^ A type to store all cross sections needed for a particular run</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid"><code class="xref">tuvx_grid</code></a></td><td>
+       <em>The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type....</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid_equal_delta"><code class="xref">tuvx_grid_equal_delta</code></a></td><td>
+       <em>Grid from equal delta ^^^^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid_factory"><code class="xref">tuvx_grid_factory</code></a></td><td>
+       <em>Grid Factory ^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid_from_config"><code class="xref">tuvx_grid_from_config</code></a></td><td>
+       <em>Grid from configuration file ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 1d grid specified in json config file</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid_from_csv_file"><code class="xref">tuvx_grid_from_csv_file</code></a></td><td>
+       <em>Grid from CSV File ^^^^^^^^^^^^^^^^^^ one dimension, equally spaced  grid type</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/grid/#f/tuvx_grid_warehouse"><code class="xref">tuvx_grid_warehouse</code></a></td><td>
+       <em>Grid Warehouse ^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiative_transfer"><code class="xref">tuvx_radiative_transfer</code></a></td><td>
+       <em>Radiative Transfer ^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiative_transfer_solver"><code class="xref">tuvx_radiative_transfer_solver</code></a></td><td>
+       <em>Radiative Transfer Solver ^^^^^^^^^^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiator"><code class="xref">tuvx_radiator</code></a></td><td>
+       <em>Radiator ^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiator_aerosol"><code class="xref">tuvx_radiator_aerosol</code></a></td><td>
+       <em>Aersol Radiator ^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiator_factory"><code class="xref">tuvx_radiator_factory</code></a></td><td>
+       <em>Radiator Factory ^^^^^^^^^^^^^^^^</em></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="../api/radiative_transfer/#f/tuvx_radiator_warehouse"><code class="xref">tuvx_radiator_warehouse</code></a></td><td>
+       <em>Radiator Warehouse ^^^^^^^^^^^^^^^^^^</em></td></tr>
+   </table>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, NCAR/UCAR.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+[
+    {
+        "name": "v0.1 (stable)",
+        "version": "stable",
+        "url": "https://ncar.github.io/photo-decomp/versions/stable"
+    },
+    {
+        "name": "v0.1",
+        "version": "0.1",
+        "url": "https://ncar.github.io/photo-decomp/versions/0.1"
+    }
+]

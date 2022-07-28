@@ -1,0 +1,997 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Radiative Transfer &#8212; TUV-x v0.1 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Quantum Yield" href="../quantum_yield/" />
+    <link rel="prev" title="Profiles" href="../profiles/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../../">
+<p class="title">TUV-x</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../installation/">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../usage/">
+  Usage
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../configuration/">
+  Configuration
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../developer/">
+  Science Contributions
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <div class="dropdown" id="version_switcher">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
+        v0.1  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+
+<!-- NOTE: this JS must live here (not in our global JS file) because it relies
+     on being processed by Jinja before it is run (specifically for replacing
+     variables api/radiative_transfer and {'json_url': 'https://ncar.github.io/photo-decomp/switcher.json', 'version_match': 'v0.1'}.
+-->
+
+<script type="text/javascript">
+// Check if corresponding page path exists in other version of docs
+// and, if so, go there instead of the homepage of the other docs version
+function checkPageExistsAndRedirect(event) {
+    const currentFilePath = "api/radiative_transfer.html",
+          tryUrl = event.target.getAttribute("href");
+    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
+    $.ajax({
+        type: 'HEAD',
+        url: tryUrl,
+        // if the page exists, go there
+        success: function() {
+            location.href = tryUrl;
+        }
+    }).fail(function() {
+        location.href = otherDocsHomepage;
+    });
+    // this prevents the browser from following the href of the clicked node
+    // (which is fine because this function takes care of redirecting)
+    return false;
+}
+
+// Populate the version switcher from the JSON config file
+(function () {
+    $.getJSON("https://ncar.github.io/photo-decomp/switcher.json", function(data, textStatus, jqXHR) {
+        const currentFilePath = "api/radiative_transfer.html";
+        // create links to the corresponding page in the other docs versions
+        $.each(data, function(index, entry) {
+            // if no custom name specified (e.g., "latest"), use version string
+            if (!("name" in entry)) {
+                entry.name = entry.version;
+            }
+            // create the node
+            const node = document.createElement("a");
+            node.setAttribute("class", "list-group-item list-group-item-action py-1");
+            node.textContent = `${entry.name}`;
+            node.setAttribute("href", `${entry.url}${currentFilePath}`);
+            // on click, AJAX calls will check if the linked page exists before
+            // trying to redirect, and if not, will redirect to the homepage
+            // for that version of the docs.
+            node.onclick = checkPageExistsAndRedirect;
+            // Add dataset values for the version and name in case people want
+            // to apply CSS styling based on this information.
+            node.dataset["versionName"] = entry.name;
+            node.dataset["version"] = entry.version;
+
+            $("#version_switcher_menu").append(node);
+            // replace dropdown button text with the preferred display name of
+            // this version, rather than using sphinx's  variable.
+            // also highlight the dropdown entry for the currently-viewed
+            // version's entry
+            if (entry.version == "v0.1") {
+                node.classList.add("active");
+                let btn = document.getElementById("version_switcher_button");
+                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
+                btn.dataset["activeVersion"] = entry.version;
+            }
+        });
+    });
+})();
+</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/NCAR/photo-decomp" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search/" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../cross_sections/">
+   Cross Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../grid/">
+   Grids
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../photolysis_rates/">
+   Photolysis Rates
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../profiles/">
+   Profiles
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Radiative Transfer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../quantum_yield/">
+   Quantum Yield
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#radiator">
+   Radiator
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#radiator-warehouse">
+   Radiator Warehouse
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#radiator-factory">
+   Radiator Factory
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id1">
+   Radiative Transfer
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#radiative-transfer-solver">
+   Radiative Transfer Solver
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#aersol-radiator">
+   Aersol Radiator
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="f/tuvx_radiator">
+<span id="radiative-transfer"></span><h1>Radiative Transfer<a class="headerlink" href="#f/tuvx_radiator" title="Permalink to this headline">#</a></h1>
+<p class="rubric">Description</p>
+<section id="radiator">
+<h2>Radiator<a class="headerlink" href="#radiator" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator/radiator_ptr" title="f/tuvx_radiator/radiator_ptr"><code class="xref f f-type docutils literal notranslate"><span class="pre">radiator_ptr</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator/radiator_state_t" title="f/tuvx_radiator/radiator_state_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radiator_state_t</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radiator_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiator/base_constructor" title="f/tuvx_radiator/base_constructor"><code class="xref f f-func docutils literal notranslate"><span class="pre">base_constructor()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator/finalize" title="f/tuvx_radiator/finalize"><code class="xref f f-func docutils literal notranslate"><span class="pre">finalize()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/radiator_state_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">radiator_state_t</span></span><a class="headerlink" href="#f/tuvx_radiator/radiator_state_t" title="Permalink to this definition">#</a></dt>
+<dd><p>Optical properties for a radiator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">layer_g_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">layer_od_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">layer_ssa_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/radiator_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">radiator_t</span></span><a class="headerlink" href="#f/tuvx_radiator/radiator_t" title="Permalink to this definition">#</a></dt>
+<dd><p>Optically active species</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">cross_section_name</span><em> [</em><em>string_t </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">handle</span><em> [</em><em>string_t </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">state</span><em> [</em><em>radiator_state_t </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">vertical_profile_name</span><em> [</em><em>string_t </em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">vertical_profile_units</span><em> [</em><em>string_t </em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/radiator_ptr">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">radiator_ptr</span></span><a class="headerlink" href="#f/tuvx_radiator/radiator_ptr" title="Permalink to this definition">#</a></dt>
+<dd><p>Pointer type for building sets of radiator objects</p>
+</dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a base_radiator_t object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>new_radiator</strong><em> [</em><em>integer </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiator/base_constructor" title="f/tuvx_radiator/base_constructor"><code class="xref f f-func docutils literal notranslate"><span class="pre">base_constructor()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/base_constructor">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">base_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator/base_constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Initializes a radiator_t object</p>
+<p>This should only be called by subclasses of radiator_t</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Use </dt>
+<dd class="field-even"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>), <a class="reference internal" href="../grid/#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>)</p>
+</dd>
+<dt class="field-odd">Call to</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/update_state">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">update_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em>, <em class="sig-param"><span class="pre">profile_warehouse</span></em>, <em class="sig-param"><span class="pre">cross_section_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator/update_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Update radiator state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>profile_warehouse</strong><em> [</em><em>profile_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>cross_section_warehouse</strong><em> [</em><em>cross_section_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Use </dt>
+<dd class="field-even"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <a class="reference internal" href="../cross_sections/#f/tuvx_cross_section" title="f/tuvx_cross_section: Cross Section ^^^^^^^^^^^^^ The base cross section type and related functions"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_cross_section</span></code></a> (<a class="reference internal" href="../cross_sections/#f/tuvx_cross_section/cross_section_t" title="f/tuvx_cross_section/cross_section_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">cross_section_t()</span></code></a>), <a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse" title="f/tuvx_cross_section_warehouse: Cross Section Warehouse ^^^^^^^^^^^^^^^^^^^^^^^ A type to store all cross sections needed for a particular run"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_cross_section_warehouse</span></code></a> (<a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/cross_section_warehouse_t" title="f/tuvx_cross_section_warehouse/cross_section_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">cross_section_warehouse_t()</span></code></a>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_diagnostic_util</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">diagout()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile_warehouse</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_warehouse_t()</span></code>)</p>
+</dd>
+<dt class="field-odd">Call to</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator/finalize">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator/</span></span><span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator/finalize" title="Permalink to this definition">#</a></dt>
+<dd><p>Finalizes a radiator state object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>radiator_state_t </em><em>]</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_radiator_warehouse"></span><p class="rubric">Description</p>
+</section>
+<section id="radiator-warehouse">
+<h2>Radiator Warehouse<a class="headerlink" href="#radiator-warehouse" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator_warehouse/radiator_warehouse_t" title="f/tuvx_radiator_warehouse/radiator_warehouse_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radiator_warehouse_t</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/warehouse_iterator_t" title="f/tuvx_radiator_warehouse/warehouse_iterator_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">warehouse_iterator_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiator_warehouse/get_iterator" title="f/tuvx_radiator_warehouse/get_iterator"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_iterator()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/get_radiator_from_handle" title="f/tuvx_radiator_warehouse/get_radiator_from_handle"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_radiator_from_handle()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/get_radiator_from_iterator" title="f/tuvx_radiator_warehouse/get_radiator_from_iterator"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_radiator_from_iterator()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle" title="f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_radiator_ndx_from_handle()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/in_warehouse" title="f/tuvx_radiator_warehouse/in_warehouse"><code class="xref f f-func docutils literal notranslate"><span class="pre">in_warehouse()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">musica_dk()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_iterator</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">iterator_t()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_ptr" title="f/tuvx_radiator/radiator_ptr"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_ptr()</span></code></a>): Radiator ^^^^^^^^</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/radiator_warehouse_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">radiator_warehouse_t</span></span><a class="headerlink" href="#f/tuvx_radiator_warehouse/radiator_warehouse_t" title="Permalink to this definition">#</a></dt>
+<dd><p>Radiator warehouse</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">handle_</span> (*)<em> [</em><em>string_t </em><em>,</em><em>private/allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">radiators_</span> (*)<em> [</em><em>radiator_ptr </em><em>,</em><em>private/allocatable</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/warehouse_iterator_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">warehouse_iterator_t</span></span><a class="headerlink" href="#f/tuvx_radiator_warehouse/warehouse_iterator_t" title="Permalink to this definition">#</a></dt>
+<dd><p>Radiator warehouse iterator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">id</span><em> [</em><em>integer </em><em>,</em><em>optional/default=0</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">null</span><em> [</em><em>radiator_warehouse_t </em><em>,</em><em>pointer</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">warehouse</span><em> [</em><em>radiator_warehouse_t </em><em>,</em><em>pointer/optional/default=&gt;</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs radiator_warehouse_t abjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>radiator_warehouse</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_iterator</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">iterator_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>), <a class="reference internal" href="#f/tuvx_radiator_factory" title="f/tuvx_radiator_factory: Radiator Factory ^^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator_factory</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator_factory/radiator_builder" title="f/tuvx_radiator_factory/radiator_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_builder()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiator_warehouse/get_iterator" title="f/tuvx_radiator_warehouse/get_iterator"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_iterator()</span></code></a>, <a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_factory/radiator_builder" title="f/tuvx_radiator_factory/radiator_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_builder()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/get_radiator_from_handle">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_radiator_from_handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">radiator_handle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/get_radiator_from_handle" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a pointer to a requested radiator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>radiator_handle</strong><em> [</em><em>string_t </em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>radiator</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_t()</span></code></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_radiator_ndx_from_handle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">radiator_handle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the index associated with a given radiator</p>
+<p>If the radiator is not found, returns -1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>radiator_handle</strong><em> [</em><em>string_t </em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>index</strong><em> [</em><em>integer </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_t()</span></code></a>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p>
+</dd>
+<dt class="field-even">Called from</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiative_transfer/update" title="f/tuvx_radiative_transfer/update"><code class="xref f f-func docutils literal notranslate"><span class="pre">update()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/get_radiator_from_iterator">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_radiator_from_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">iterator</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/get_radiator_from_iterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a pointer to a radiator in the warehouse from an iterator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>iterator</strong><em> [</em><em>warehouse_iterator_t </em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>radiator</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_t()</span></code></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/in_warehouse">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">in_warehouse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">radiator_handle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/in_warehouse" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns whether a radiator exists in the warehouse</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>radiator_handle</strong><em> [</em><em>string_t </em><em>,</em><em>in</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>in_warehouse</strong><em> [</em><em>logical </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_warehouse/get_iterator">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_warehouse/</span></span><span class="sig-name descname"><span class="pre">get_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_warehouse/get_iterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Gets an interator for the radiator warehouse</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>get_iterator</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert()</span></code>)</p>
+</dd>
+<dt class="field-even">Called from</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiative_transfer/update" title="f/tuvx_radiative_transfer/update"><code class="xref f f-func docutils literal notranslate"><span class="pre">update()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_radiator_factory"></span><p class="rubric">Description</p>
+</section>
+<section id="radiator-factory">
+<h2>Radiator Factory<a class="headerlink" href="#radiator-factory" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Routines</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator_factory/radiator_builder" title="f/tuvx_radiator_factory/radiator_builder"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_builder()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_t()</span></code></a>): Radiator ^^^^^^^^</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_radiator_aerosol" title="f/tuvx_radiator_aerosol: Aersol Radiator ^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator_aerosol</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator_aerosol/radiator_aerosol_t" title="f/tuvx_radiator_aerosol/radiator_aerosol_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_aerosol_t()</span></code></a>): Aersol Radiator ^^^^^^^^^^^^^^^</p></li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_factory/radiator_builder">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_factory/</span></span><span class="sig-name descname"><span class="pre">radiator_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">gridwarehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_factory/radiator_builder" title="Permalink to this definition">#</a></dt>
+<dd><p>Builder of radiator_t objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>gridwarehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>new_radiator</strong><em> [</em><em>integer </em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_radiative_transfer"></span><p class="rubric">Description</p>
+</section>
+<section id="id1">
+<h2>Radiative Transfer<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiative_transfer/radxfer_component_core_t" title="f/tuvx_radiative_transfer/radxfer_component_core_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radxfer_component_core_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiative_transfer/component_name" title="f/tuvx_radiative_transfer/component_name"><code class="xref f f-func docutils literal notranslate"><span class="pre">component_name()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiative_transfer/description" title="f/tuvx_radiative_transfer/description"><code class="xref f f-func docutils literal notranslate"><span class="pre">description()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiative_transfer/update" title="f/tuvx_radiative_transfer/update"><code class="xref f f-func docutils literal notranslate"><span class="pre">update()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p></li>
+<li><p><a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>): Grid Warehouse ^^^^^^^^^^^^^^</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile_warehouse</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_warehouse_t()</span></code>)</p></li>
+<li><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse" title="f/tuvx_cross_section_warehouse: Cross Section Warehouse ^^^^^^^^^^^^^^^^^^^^^^^ A type to store all cross sections needed for a particular run"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_cross_section_warehouse</span></code></a> (<a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/cross_section_warehouse_t" title="f/tuvx_cross_section_warehouse/cross_section_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">cross_section_warehouse_t()</span></code></a>): Cross Section Warehouse ^^^^^^^^^^^^^^^^^^^^^^^ A type to store all cross sections needed for a particular run</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_radiator_warehouse" title="f/tuvx_radiator_warehouse: Radiator Warehouse ^^^^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator_warehouse</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator_warehouse/radiator_warehouse_t" title="f/tuvx_radiator_warehouse/radiator_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_warehouse_t()</span></code></a>): Radiator Warehouse ^^^^^^^^^^^^^^^^^^</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_radiative_transfer_solver" title="f/tuvx_radiative_transfer_solver: Radiative Transfer Solver ^^^^^^^^^^^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiative_transfer_solver</span></code></a> (<a class="reference internal" href="#f/tuvx_radiative_transfer_solver/abstract_radxfer_t" title="f/tuvx_radiative_transfer_solver/abstract_radxfer_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">abstract_radxfer_t()</span></code></a>): Radiative Transfer Solver ^^^^^^^^^^^^^^^^^^^^^^^^^</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_delta_eddington</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">delta_eddington_t()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_la_sr_bands</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">la_srb_t()</span></code>)</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/radxfer_component_core_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">radxfer_component_core_t</span></span><a class="headerlink" href="#f/tuvx_radiative_transfer/radxfer_component_core_t" title="Permalink to this definition">#</a></dt>
+<dd><p>radXfer component core</p>
+<p>Calculates the atmospheric radiation field</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">config</span><em> [</em><em>config_t </em><em>,</em><em>private</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">nstreams</span><em> [</em><em>integer </em><em>,</em><em>private/optional/default=0</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">null</span><em> [</em><em>cross_section_warehouse_t </em><em>,</em><em>public/pointer</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">radiatorwarehouse</span><em> [</em><em>radiator_warehouse_t </em><em>,</em><em>pointer/public/optional/default=&gt;</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">radxferxsectwarehouse</span><em> [</em><em>cross_section_warehouse_t </em><em>,</em><em>private/pointer/optional/default=&gt;</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">gridwarehouse</span></em>, <em class="sig-param"><span class="pre">profilewarehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer/constructor" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>gridwarehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>profilewarehouse</strong><em> [</em><em>profile_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>radxfer_component</strong><em> [</em><em>radxfer_component_core_t </em><em>,</em><em>pointer</em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/component_name">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">component_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer/component_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Model component name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>component_name</strong><em> [</em><em>string_t </em><em>]</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/description">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer/description" title="Permalink to this definition">#</a></dt>
+<dd><p>Model component description</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>description</strong><em> [</em><em>string_t </em><em>]</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/update">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">la_srb</span></em>, <em class="sig-param"><span class="pre">sphericalgeom</span></em>, <em class="sig-param"><span class="pre">gridwarehouse</span></em>, <em class="sig-param"><span class="pre">profilewarehouse</span></em>, <em class="sig-param"><span class="pre">radiationfld</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer/update" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the radiation field</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>la_srb</strong><em> [</em><em>la_srb_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>sphericalgeom</strong><em> [</em><em>spherical_geom_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>gridwarehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>profilewarehouse</strong><em> [</em><em>profile_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>radiationfld</strong><em> [</em><em>real </em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Use </dt>
+<dd class="field-even"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">die_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">to_char()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>), <a class="reference internal" href="#f/tuvx_radiator_warehouse" title="f/tuvx_radiator_warehouse: Radiator Warehouse ^^^^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator_warehouse</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator_warehouse/warehouse_iterator_t" title="f/tuvx_radiator_warehouse/warehouse_iterator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">warehouse_iterator_t()</span></code></a>), <a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_state_t" title="f/tuvx_radiator/radiator_state_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_state_t()</span></code></a>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_spherical_geometry</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">spherical_geom_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_la_sr_bands</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">la_srb_t()</span></code>), <a class="reference internal" href="#f/tuvx_radiative_transfer_solver" title="f/tuvx_radiative_transfer_solver: Radiative Transfer Solver ^^^^^^^^^^^^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiative_transfer_solver</span></code></a> (<a class="reference internal" href="#f/tuvx_radiative_transfer_solver/radfield_t" title="f/tuvx_radiative_transfer_solver/radfield_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radfield_t()</span></code></a>)</p>
+</dd>
+<dt class="field-odd">Call to</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator_warehouse/get_iterator" title="f/tuvx_radiator_warehouse/get_iterator"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_iterator()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle" title="f/tuvx_radiator_warehouse/get_radiator_ndx_from_handle"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_radiator_ndx_from_handle()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer/finalize">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer/</span></span><span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer/finalize" title="Permalink to this definition">#</a></dt>
+<dd><p>Finalize the radXfer component core</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>radxfer_component_core_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_radiative_transfer_solver"></span><p class="rubric">Description</p>
+</section>
+<section id="radiative-transfer-solver">
+<h2>Radiative Transfer Solver<a class="headerlink" href="#radiative-transfer-solver" title="Permalink to this headline">#</a></h2>
+<p>The interface for the radiative transfer solver</p>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiative_transfer_solver/abstract_radxfer_t" title="f/tuvx_radiative_transfer_solver/abstract_radxfer_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">abstract_radxfer_t</span></code></a>, <a class="reference internal" href="#f/tuvx_radiative_transfer_solver/radfield_t" title="f/tuvx_radiative_transfer_solver/radfield_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radfield_t</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">ik()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>)</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer_solver/radfield_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer_solver/</span></span><span class="sig-name descname"><span class="pre">radfield_t</span></span><a class="headerlink" href="#f/tuvx_radiative_transfer_solver/radfield_t" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type fields</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">edn_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">edr_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">eup_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">fdn_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">fdr_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+<li><p><span class="sig-name descname">% </span><span class="sig-name descname">fup_</span> (*,*)<em> [</em><em>real </em><em>,</em><em>allocatable</em><em>]</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</li>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer_solver/abstract_radxfer_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer_solver/</span></span><span class="sig-name descname"><span class="pre">abstract_radxfer_t</span></span><a class="headerlink" href="#f/tuvx_radiative_transfer_solver/abstract_radxfer_t" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiative_transfer_solver/finalize">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiative_transfer_solver/</span></span><span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiative_transfer_solver/finalize" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>this</strong><em> [</em><em>radfield_t </em><em>,</em><em>inout</em><em>]</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="f/tuvx_radiator_aerosol"></span><p class="rubric">Description</p>
+</section>
+<section id="aersol-radiator">
+<h2>Aersol Radiator<a class="headerlink" href="#aersol-radiator" title="Permalink to this headline">#</a></h2>
+<p class="rubric">Quick access</p>
+<dl class="field-list simple">
+<dt class="field-odd">Types</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#f/tuvx_radiator_aerosol/radiator_aerosol_t" title="f/tuvx_radiator_aerosol/radiator_aerosol_t"><code class="xref f f-type docutils literal notranslate"><span class="pre">radiator_aerosol_t</span></code></a></p>
+</dd>
+<dt class="field-even">Routines</dt>
+<dd class="field-even"><p><a class="reference internal" href="#f/tuvx_radiator_aerosol/constructor" title="f/tuvx_radiator_aerosol/constructor"><code class="xref f f-func docutils literal notranslate"><span class="pre">constructor()</span></code></a>, <a class="reference internal" href="#f/tuvx_radiator_aerosol/update_state" title="f/tuvx_radiator_aerosol/update_state"><code class="xref f f-func docutils literal notranslate"><span class="pre">update_state()</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code> =&gt; <code class="xref f f-func docutils literal notranslate"><span class="pre">dk()</span></code>)</p></li>
+<li><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_string</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">string_t()</span></code>)</p></li>
+<li><p><a class="reference internal" href="#f/tuvx_radiator" title="f/tuvx_radiator: Radiator ^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_radiator</span></code></a> (<a class="reference internal" href="#f/tuvx_radiator/radiator_t" title="f/tuvx_radiator/radiator_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">radiator_t()</span></code></a>): Radiator ^^^^^^^^</p></li>
+</ul>
+<p class="rubric">Types</p>
+<ul>
+<li><dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_aerosol/radiator_aerosol_t">
+<em class="property"><span class="pre">type</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_aerosol/</span></span><span class="sig-name descname"><span class="pre">radiator_aerosol_t</span></span><a class="headerlink" href="#f/tuvx_radiator_aerosol/radiator_aerosol_t" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p class="rubric">Variables</p>
+<p class="rubric">Subroutines and functions</p>
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_aerosol/constructor">
+<em class="property"><span class="pre">function</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_aerosol/</span></span><span class="sig-name descname"><span class="pre">constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_aerosol/constructor" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize radiator_t object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong><em> [</em><em>config_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return</dt>
+<dd class="field-even"><p><strong>this</strong><em> [</em><em>radiator_aerosol_t </em><em>,</em><em>pointer</em><em>]</em></p>
+</dd>
+<dt class="field-odd">Use </dt>
+<dd class="field-odd"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_config</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">config_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_constants</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">nzero()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">pzero()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_diagnostic_util</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">diagout()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_interpolate</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">abs_interpolator_t()</span></code>, <code class="xref f f-func docutils literal notranslate"><span class="pre">interp3_t()</span></code>), <a class="reference internal" href="../grid/#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Call to</dt>
+<dd class="field-even"><p><a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/get" title="f/tuvx_cross_section_warehouse/get"><code class="xref f f-func docutils literal notranslate"><span class="pre">get()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl>
+<dt class="sig sig-object f" id="f/tuvx_radiator_aerosol/update_state">
+<em class="property"><span class="pre">subroutine</span>&#160; </em><span class="sig-prename descclassname"><span class="pre">tuvx_radiator_aerosol/</span></span><span class="sig-name descname"><span class="pre">update_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">this</span></em>, <em class="sig-param"><span class="pre">grid_warehouse</span></em>, <em class="sig-param"><span class="pre">profile_warehouse</span></em>, <em class="sig-param"><span class="pre">cross_section_warehouse</span></em><span class="sig-paren">)</span><a class="headerlink" href="#f/tuvx_radiator_aerosol/update_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Update radiator state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this</strong><em> [</em><em>real </em><em>]</em></p></li>
+<li><p><strong>grid_warehouse</strong><em> [</em><em>grid_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>profile_warehouse</strong><em> [</em><em>profile_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+<li><p><strong>cross_section_warehouse</strong><em> [</em><em>cross_section_warehouse_t </em><em>,</em><em>inout</em><em>]</em></p></li>
+</ul>
+</dd>
+<dt class="field-even">Use </dt>
+<dd class="field-even"><p><code class="xref f f-mod docutils literal notranslate"><span class="pre">musica_assert</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">assert_msg()</span></code>), <a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse" title="f/tuvx_cross_section_warehouse: Cross Section Warehouse ^^^^^^^^^^^^^^^^^^^^^^^ A type to store all cross sections needed for a particular run"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_cross_section_warehouse</span></code></a> (<a class="reference internal" href="../cross_sections/#f/tuvx_cross_section_warehouse/cross_section_warehouse_t" title="f/tuvx_cross_section_warehouse/cross_section_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">cross_section_warehouse_t()</span></code></a>), <a class="reference internal" href="../grid/#f/tuvx_grid" title="f/tuvx_grid: The base grid type ^^^^^^^^^^^^^^^^^^ A one dimensional grid type...."><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid/grid_t" title="f/tuvx_grid/grid_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_t()</span></code></a>), <a class="reference internal" href="../grid/#f/tuvx_grid_warehouse" title="f/tuvx_grid_warehouse: Grid Warehouse ^^^^^^^^^^^^^^"><code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_grid_warehouse</span></code></a> (<a class="reference internal" href="../grid/#f/tuvx_grid_warehouse/grid_warehouse_t" title="f/tuvx_grid_warehouse/grid_warehouse_t"><code class="xref f f-func docutils literal notranslate"><span class="pre">grid_warehouse_t()</span></code></a>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_t()</span></code>), <code class="xref f f-mod docutils literal notranslate"><span class="pre">tuvx_profile_warehouse</span></code> (<code class="xref f f-func docutils literal notranslate"><span class="pre">profile_warehouse_t()</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../profiles/" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Profiles</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../quantum_yield/" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quantum Yield</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, NCAR/UCAR.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
