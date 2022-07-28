@@ -5,6 +5,8 @@ Configuration
 
 <High level description>
 
+.. _configuration-grid:
+
 Grids
 -----
 

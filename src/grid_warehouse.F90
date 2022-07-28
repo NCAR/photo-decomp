@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The tuvx_grid_warehouse module
 
-!> The grid warehouse type and related functions
 module tuvx_grid_warehouse
+! Grid Warehouse
+! ^^^^^^^^^^^^^^
 
   use tuvx_grid, only : grid_ptr
 
