@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The tuvx_radiator warehouse module
 
-!> The radiator_warehouse_t type and related functions
 module tuvx_radiator_warehouse
+  ! Radiator Warehouse
+  ! ^^^^^^^^^^^^^^^^^^
 
   use musica_constants,                only : musica_dk
   use musica_iterator,                 only : iterator_t
@@ -17,8 +15,9 @@ module tuvx_radiator_warehouse
   private
   public :: radiator_warehouse_t, warehouse_iterator_t
 
-  !> Radiator warehouse
-  type :: radiator_warehouse_t
+  type radiator_warehouse_t
+    ! Radiator warehouse
+
     private
     !> Radiators
     type(radiator_ptr), allocatable :: radiators_(:)
@@ -41,8 +40,9 @@ module tuvx_radiator_warehouse
     final     :: finalize
   end type radiator_warehouse_t
 
-  !>  Radiator warehouse iterator
-  type :: warehouse_iterator_t
+  type warehouse_iterator_t
+    !  Radiator warehouse iterator
+
     !> Pointer to the radiator warehouse
     type(radiator_warehouse_t), pointer :: warehouse_ => null( )
     !> Current index in the data set
@@ -54,8 +54,8 @@ module tuvx_radiator_warehouse
     procedure :: reset => iterator_reset
   end type warehouse_iterator_t
 
-  !> radiator_warehouse_t constructor
   interface radiator_warehouse_t
+    ! radiator_warehouse_t constructor
     module procedure :: constructor
   end interface
 
@@ -63,8 +63,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Constructs radiator_warehouse_t abjects
   function constructor( config, grid_warehouse ) result( radiator_warehouse )
+    ! Constructs radiator_warehouse_t abjects
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
@@ -108,9 +108,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Returns a pointer to a requested radiator
   function get_radiator_from_handle( this, radiator_handle )                  &
       result( radiator )
+    ! Returns a pointer to a requested radiator
 
     use musica_assert,                 only : assert_msg
     use musica_string,                 only : string_t
@@ -144,11 +144,11 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Returns the index associated with a given radiator
-  !!
-  !! If the radiator is not found, returns -1
   function get_radiator_ndx_from_handle( this, radiator_handle )              &
       result( index )
+    ! Returns the index associated with a given radiator
+    !
+    ! If the radiator is not found, returns -1
 
     use tuvx_radiator,                 only : radiator_t
     use musica_string,                 only : string_t
@@ -178,8 +178,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Returns a pointer to a radiator in the warehouse from an iterator
   function get_radiator_from_iterator( this, iterator ) result( radiator )
+    ! Returns a pointer to a radiator in the warehouse from an iterator
 
     use tuvx_radiator,                 only : radiator_t
 
@@ -200,8 +200,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Returns whether a radiator exists in the warehouse
   function in_warehouse( this, radiator_handle )
+    ! Returns whether a radiator exists in the warehouse
 
     use musica_string,      only : string_t
     use musica_assert,      only : die_msg
@@ -229,8 +229,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Gets an interator for the radiator warehouse
   function get_iterator( this )
+    ! Gets an interator for the radiator warehouse
 
     use musica_assert,                 only : assert
 
@@ -250,10 +250,10 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Advances the iterator
-  !!
-  !! Returns false if the end of the collection has been reached
   function iterator_next( this ) result( continue )
+    ! Advances the iterator
+    !
+    ! Returns false if the end of the collection has been reached
 
     !> Iterator
     class(warehouse_iterator_t), intent(inout) :: this
@@ -267,8 +267,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Resets the iterator
   subroutine iterator_reset( this )
+    ! Resets the iterator
 
     !> Iterator
     class(warehouse_iterator_t), intent(inout) :: this
@@ -279,8 +279,8 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Finalize the radiator warehouse
   subroutine finalize( this )
+    ! Finalize the radiator warehouse
 
     !> Radiator warehouse
     type(radiator_warehouse_t), intent(inout) :: this
