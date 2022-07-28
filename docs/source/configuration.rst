@@ -5,10 +5,21 @@ Configuration
 
 <High level description>
 
+.. _configuration-grid:
+
 Grids
 -----
 
 <describe grids>
+
+
+.. _configuration-cross-section:
+
+Cross Sections
+--------------
+
+Soieing thinew
+<describe cross sections>
 
 Profiles
 --------

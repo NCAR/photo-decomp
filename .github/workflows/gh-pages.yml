@@ -34,6 +34,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r docs/requirements.txt
+          git clone https://github.com/VACUMM/sphinx-fortran.git
+          cd sphinx-fortran
+          pip install .
+          cd ../
 
       - name: Debugging information
         run: |

@@ -22,6 +22,6 @@ interest through simple configuration options.
    installation
    usage
    configuration
-   api
+   api/index
    developer
 

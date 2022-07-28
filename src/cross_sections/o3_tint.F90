@@ -1,11 +1,9 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> This o3_tint_cross_section module
 
-!> The o3 temperature interpolation cross_section type and related functions
 module tuvx_cross_section_o3_tint
+! :math:`O_3` Temperature Interpolation
+! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   use musica_constants,                only : dk => musica_dk
   use tuvx_cross_section_tint,         only : cross_section_tint_t
@@ -34,9 +32,9 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Initialize cross_section_o3_tint_t object
   function constructor( config, grid_warehouse, profile_warehouse )           &
       result ( this )
+    ! Initialize cross_section_o3_tint_t object
 
     use musica_assert,                 only : assert_msg, die_msg
     use musica_config,                 only : config_t
@@ -189,9 +187,9 @@ file_loop: &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the cross section for a given set of environmental conditions
   function run( this, grid_warehouse, profile_warehouse, at_mid_point )       &
       result( cross_section )
+    ! Calculate the cross section for a given set of environmental conditions
 
     use musica_string,                 only : string_t
     use tuvx_grid,                     only : grid_t
@@ -293,13 +291,13 @@ lambda_loop:                                                                  &
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !> Calculate the refractive index for standard air
-  !!
-  !! (dry air at 15 deg. C, 101.325 kPa, 0.03% CO2)
-  !! from CRC Handbook, originally from Edlen, B., Metrologia, 2, 71, 1966.
-  !! valid from 200 nm to 2000 nm
-  !! beyond this range, use constant value
   function refraction( this, wavelength, atmDensity ) result( refrac )
+    ! Calculate the refractive index for standard air
+    !
+    ! (dry air at 15 deg. C, 101.325 kPa, 0.03% CO2)
+    ! from CRC Handbook, originally from Edlen, B., Metrologia, 2, 71, 1966.
+    ! valid from 200 nm to 2000 nm
+    ! beyond this range, use constant value
 
     !> O3 tint cross section
     class(cross_section_o3_tint_t), intent(in) :: this

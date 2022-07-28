@@ -1,11 +1,10 @@
 ! Copyright (C) 2020 National Center for Atmospheric Research
 ! SPDX-License-Identifier: Apache-2.0
-!
-!> \file
-!> The tuvx_cross_section_factory module
 
-!> Builder of cross section calculators
 module tuvx_cross_section_factory
+! Cross Section Factory
+! ^^^^^^^^^^^^^^^^^^^^^
+! Builder of cross section calculators
 
   use tuvx_cross_section,              only : cross_section_t
   use tuvx_cross_section_bro_br_o,     only : cross_section_bro_br_o_t
@@ -50,6 +49,7 @@ contains
 
   function cross_section_builder( config, grid_warehouse, profile_warehouse ) &
       result( new_cross_section )
+      ! Build cross sections from a configuration
 
     use musica_assert,                 only : die_msg
     use musica_config,                 only : config_t
